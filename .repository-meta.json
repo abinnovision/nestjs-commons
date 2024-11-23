@@ -1,0 +1,9 @@
+{
+	"$schema": "https://storage.googleapis.com/abi-hk-schemas/repository-meta.json",
+	"options": {
+		"serviceAccount": true,
+		"githubApps": {
+			"releaser": true
+		}
+	}
+}

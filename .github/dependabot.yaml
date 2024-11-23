@@ -1,0 +1,39 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    versioning-strategy: increase
+    open-pull-requests-limit: 15
+    schedule:
+      interval: weekly
+      day: monday
+      time: "13:00"
+      timezone: Europe/Berlin
+    labels:
+      - dependencies
+    # Dependabot limits the commit messages to 15 characters.
+    # Those messages fit exactly in this requirement :)
+    commit-message:
+      prefix: "build(deps)"
+      prefix-development: "build(deps/dev)"
+    ignore:
+      # Only create updates for Major and Minor versions for now.
+      # Security updates are handled by Dependabot's security updates (even for patch versions).
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+
+    # We're bundling together some related packages into groups.
+    # This allows us to update all packages in a group at once.
+    # See https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
+    groups:
+      formatting-linting-related:
+        patterns:
+          # Core formatting and linting packages
+          - "eslint"
+          - "prettier"
+          - "@commitlint/cli"
+          - "sort-package-json"
+          - "husky"
+          - "lint-staged"
+          - "@abinnovision/eslint*"
+          - "@abinnovision/prettier*"

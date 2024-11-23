@@ -1,0 +1,40 @@
+{
+	"$schema": "https://json.schemastore.org/package.json",
+	"name": "nestjs-commons",
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"check": "yarn format:check && yarn sort:check",
+		"fix": "yarn format:fix && yarn sort:fix",
+		"format:check": "prettier --ignore-path .gitignore --check '{.github/**/*,*}.{json,json5,yaml,yml,md}'",
+		"format:fix": "prettier --ignore-path .gitignore --write '{.github/**/*,*}.{json,json5,yaml,yml,md}'",
+		"postinstall": "husky",
+		"sort:check": "sort-package-json --check",
+		"sort:fix": "sort-package-json"
+	},
+	"commitlint": {
+		"extends": [
+			"@abinnovision/commitlint-config"
+		]
+	},
+	"lint-staged": {
+		"{.github/**/*,k8s/**/*,*}.{json,json5,yaml,yml,md}": [
+			"prettier --write"
+		],
+		"package.json": [
+			"sort-package-json"
+		]
+	},
+	"prettier": "@abinnovision/prettier-config",
+	"devDependencies": {
+		"@abinnovision/commitlint-config": "^2.2.1",
+		"@abinnovision/prettier-config": "^2.1.3",
+		"@commitlint/cli": "^19.5.0",
+		"husky": "^9.1.6",
+		"lint-staged": "^15.2.10",
+		"prettier": "^3.3.3",
+		"sort-package-json": "^2.10.1"
+	},
+	"packageManager": "yarn@4.5.1"
+}

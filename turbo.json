@@ -1,0 +1,38 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"tasks": {
+		"fix": {
+			"dependsOn": ["format:fix", "lint:fix"]
+		},
+		"check": {
+			"dependsOn": ["format:check", "lint:check"]
+		},
+		"format:fix": {},
+		"format:check": {},
+		"lint:fix": {},
+		"lint:check": {},
+		"build": {
+			"inputs": ["src/**/*"],
+			"outputs": ["dist/**/*"],
+			"dependsOn": ["^build", "generate"]
+		},
+		"generate": {
+			"inputs": ["src/**/*"],
+			"outputs": ["generated/**/*"],
+			"dependsOn": ["^generate"]
+		},
+		"test-unit": {
+			"dependsOn": ["generate", "^build"],
+			"outputs": ["coverage/**"],
+			"inputs": ["src/**/*", "test/**/*"]
+		},
+		"test-integration": {
+			"dependsOn": ["generate", "^build"],
+			"inputs": ["src/**/*", "test/**/*"]
+		},
+		"test-e2e": {
+			"dependsOn": ["generate", "^build"],
+			"inputs": ["src/**/*", "test/**/*"]
+		}
+	}
+}

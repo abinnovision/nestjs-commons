@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - main
+jobs:
+  # Configure the commit SHA to use.
+  configure:
+    name: Configure
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      commit-sha: ${{ env.COMMIT_SHA }}
+    steps:
+      - name: Evaluate commit
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request_target" ]]; then
+              echo "PR is #${{ github.event.number }}..."
+              echo "PR Head SHA is ${{ github.event.pull_request.head.sha }}..."
+              echo "COMMIT_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+          else
+              echo "Head SHA is ${{ github.sha }}..."
+              echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+          fi
+
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - configure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.configure.outputs.commit-sha }}
+      - name: Setup Node
+        uses: abinnovision/actions@setup-node-v1
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Check
+        run: yarn check
+      - name: Check dependencies
+        run: |
+          yarn dedupe --check || (echo "yarn.lock is not up to date, run 'yarn dedupe'" && exit 1)
