@@ -7,6 +7,7 @@ on:
   pull_request_target:
     branches:
       - main
+
 jobs:
   # Configure the commit SHA to use.
   configure:
@@ -27,8 +28,11 @@ jobs:
               echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           fi
 
-  check:
-    name: Check
+  # Build and checks are unified into one job. This is because the build
+  # needs to be done before the checks, as the checks will use the built
+  # packages.
+  check_build:
+    name: Check & Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs:
@@ -42,8 +46,55 @@ jobs:
         uses: abinnovision/actions@setup-node-v1
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Check
-        run: yarn check
-      - name: Check dependencies
+      - name: Check (lint & format)
+        run: yarn run check
+      - name: Check Dependencies
         run: |
-          yarn dedupe --check || (echo "yarn.lock is not up to date, run 'yarn dedupe'" && exit 1)
+          yarn dedupe
+          git diff --exit-code --quiet yarn.lock || (echo "yarn.lock is not up to date, run 'yarn dedupe'" && exit 1)
+
+  # Will check if the release is needed and create a release PR if so.
+  release:
+    name: Release
+    needs:
+      - configure
+      - check_build
+    uses: abinnovision/workflows/.github/workflows/release-please.yaml@master
+    secrets: inherit
+    # Only run on push to the "main" branch.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+  # If needed, will publish the release to GitHub Packages and NPM.
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs:
+      - configure
+      - release
+    if: needs.release.outputs.releases_created
+    permissions:
+      contents: "write"
+      id-token: "write"
+      packages: "write"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.configure.outputs.commit-sha }}
+      - name: Setup Node
+        uses: abinnovision/actions@setup-node-v1
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build
+        run: yarn run build
+      - name: Publish
+        run: |
+          echo '${{ needs.release.outputs.paths_released }}' | jq -cr '.[]' | while read path; do
+            # Publish to GitHub Packages
+            yarn config set -H --json npmScopes '{"abinnovision": {"npmPublishRegistry": "https://npm.pkg.github.com", "npmRegistryServer": "https://npm.pkg.github.com", "npmAuthToken": "${{ secrets.GITHUB_TOKEN }}"}}'
+            yarn --cwd "$path" npm publish
+
+            # Publish to NPM
+            yarn config set -H --json npmScopes '{"abinnovision": {"npmPublishRegistry": "https://registry.npmjs.org", "npmRegistryServer": "https://registry.npmjs.org", "npmAuthToken": "${{ secrets.NPM_AUTH_TOKEN }}"}}'
+            yarn --cwd "$path" npm publish --access public
+          done
