@@ -43,7 +43,7 @@
 		"rxjs": "^7.8.1",
 		"typescript": "^5.6.2",
 		"unplugin-swc": "^1.5.1",
-		"vitest": "^2.1.5"
+		"vitest": "^2.1.6"
 	},
 	"dependencies": {
 		"@nestjs/common": "^10.4.8",

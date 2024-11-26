@@ -28,7 +28,6 @@ updates:
     groups:
       formatting-linting-related:
         patterns:
-          # Core formatting and linting packages
           - "eslint"
           - "prettier"
           - "@commitlint/cli"
@@ -37,3 +36,7 @@ updates:
           - "lint-staged"
           - "@abinnovision/eslint*"
           - "@abinnovision/prettier*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"

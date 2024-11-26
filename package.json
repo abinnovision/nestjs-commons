@@ -12,7 +12,8 @@
 		"format:fix": "prettier --ignore-path .gitignore --write '{.github/**/*,*}.{json,json5,yaml,yml,md}'",
 		"postinstall": "husky",
 		"sort:check": "sort-package-json --check",
-		"sort:fix": "sort-package-json"
+		"sort:fix": "sort-package-json",
+		"test:all": "vitest run --coverage"
 	},
 	"commitlint": {
 		"extends": [
@@ -32,11 +33,13 @@
 		"@abinnovision/commitlint-config": "^2.2.1",
 		"@abinnovision/prettier-config": "^2.1.3",
 		"@commitlint/cli": "^19.5.0",
+		"@vitest/coverage-v8": "^2.1.6",
 		"husky": "^9.1.6",
 		"lint-staged": "^15.2.10",
 		"prettier": "^3.4.1",
 		"sort-package-json": "^2.12.0",
-		"vitest": "^2.1.5"
+		"turbo": "^2.3.2",
+		"vitest": "^2.1.6"
 	},
 	"packageManager": "yarn@4.5.1"
 }
