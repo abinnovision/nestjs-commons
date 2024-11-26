@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,intellij,node,yarn
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,intellij,node,yarn
+# Created by https://www.toptal.com/developers/gitignore/api/node,yarn,linux,macos,windows,intellij,turbo
+# Edit at https://www.toptal.com/developers/gitignore?templates=node,yarn,linux,macos,windows,intellij,turbo
 
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -302,6 +302,10 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
+### Turbo ###
+# Turborepo task cache
+.turbo
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -340,16 +344,9 @@ $RECYCLE.BIN/
 
 # if you are NOT using Zero-installs, then:
 # comment the following lines
-#!.yarn/cache
+!.yarn/cache
 
 # and uncomment the following lines
- .pnp.*
+# .pnp.*
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,intellij,node,yarn
-
-*.secret.yaml
-
-# Ignore generated credentials from google-github-actions/auth
-gha-creds-*.json
-
-generated/
+# End of https://www.toptal.com/developers/gitignore/api/node,yarn,linux,macos,windows,intellij,turbo

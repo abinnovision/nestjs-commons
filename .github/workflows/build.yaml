@@ -48,6 +48,8 @@ jobs:
         run: yarn install --immutable
       - name: Check (lint & format)
         run: yarn run check
+      - name: Test
+        run: yarn run test:all
       - name: Check Dependencies
         run: |
           yarn dedupe
