@@ -1,6 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "nestjs-commons",
+	"private": true,
 	"workspaces": [
 		"packages/*"
 	],
@@ -34,7 +35,8 @@
 		"husky": "^9.1.6",
 		"lint-staged": "^15.2.10",
 		"prettier": "^3.3.3",
-		"sort-package-json": "^2.10.1"
+		"sort-package-json": "^2.10.1",
+		"vitest": "^2.1.5"
 	},
 	"packageManager": "yarn@4.5.1"
 }
