@@ -37,7 +37,7 @@
 		"@abinnovision/eslint-config-typescript": "^2.1.1",
 		"@abinnovision/prettier-config": "^2.1.3",
 		"eslint": "^9.13.0",
-		"globals": "^15.11.0",
+		"globals": "^15.13.0",
 		"prettier": "^3.4.1",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
