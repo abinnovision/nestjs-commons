@@ -48,6 +48,6 @@
 	"dependencies": {
 		"@nestjs/common": "^10.4.8",
 		"deepmerge": "^4.3.1",
-		"zod": "^3.23.8"
+		"zod": "^3.24.1"
 	}
 }
