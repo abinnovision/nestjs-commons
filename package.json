@@ -1,9 +1,10 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
-	"name": "nestjs-commons",
+	"name": "@internal/nestjs-commons",
 	"private": true,
 	"workspaces": [
-		"packages/*"
+		"packages/*",
+		"examples/*"
 	],
 	"scripts": {
 		"check": "yarn format:check && yarn sort:check",
@@ -41,5 +42,5 @@
 		"turbo": "^2.3.2",
 		"vitest": "^2.1.6"
 	},
-	"packageManager": "yarn@4.5.1"
+	"packageManager": "yarn@4.6.0"
 }
