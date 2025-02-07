@@ -1,51 +1,31 @@
 import { z } from "zod";
 
-import { ConfigxParseError } from "./configx-parse.error";
+import { ConfigxError } from "./configx.errors";
 
-import type { ConfigxConfig } from "./configx-config";
 import type {
-	ConfigxSharedOptions,
-	ConfigxZodObject,
+	Configx,
+	ConfigxZodRawShape,
 	ConfigxZodValue,
-} from "./types";
+} from "./configx.types";
+import type { ZodObject } from "zod";
 
-interface ResolveConfigArgs<T extends ConfigxZodObject> {
-	config: ConfigxConfig<T>;
-	sharedOptions: ConfigxSharedOptions;
+interface ResolveConfigArgs<T extends ConfigxZodRawShape> {
+	config: Configx<T>;
 }
 
 /**
- * Builds an environment variable name from a given string.
+ * Prepares the value for the given Zod schema.
  *
- * For example, the input "fooBar" will be transformed to "FOO_BAR".
  *
- * @param input The input string.
- * @returns The transformed string.
+ * @param schemaKey The Zod schema of the value.
+ * @param value The value to prepare.
  */
-const buildTargetEnvVar = (input: string): string => {
-	let result = "";
-
-	const chars = input.split("");
-	for (let i = 0; i < chars.length; i++) {
-		const char = chars[i];
-		if (char.toUpperCase() === char && i > 0) {
-			// If the character is uppercase, we prefix it with an underscore.
-			result += `_${char}`;
-		} else {
-			// Otherwise, we just add the character to the result.
-			result += char.toUpperCase();
-		}
-	}
-
-	return result;
-};
-
 const prepareValue = (schemaKey: ConfigxZodValue, value: any): any => {
 	const isFinalType = (it: ConfigxZodValue) =>
 		!(it instanceof z.ZodOptional) && !(it instanceof z.ZodNullable);
 
 	const unwrap = (value: any): any => {
-		let result;
+		let result = value;
 
 		if (value instanceof z.ZodOptional) {
 			result = value.unwrap();
@@ -89,17 +69,14 @@ const prepareValue = (schemaKey: ConfigxZodValue, value: any): any => {
  *
  * @param args The arguments for the function.
  */
-export const resolveConfig = <T extends ConfigxZodObject>(
+export const resolveConfig = <T extends ConfigxZodRawShape>(
 	args: ResolveConfigArgs<T>,
-): z.infer<T> => {
+): z.infer<ZodObject<T>> => {
 	// The object which will later be parsed by the Zod schema.
 	const parsableObject: { [key: string]: any } = {};
 
-	for (let [key, schema] of Object.entries(args.config.schema.shape)) {
-		// Resolve the environment variable name.
-		const envVar = buildTargetEnvVar(key);
-
-		let value = process.env[envVar];
+	for (let [key, schema] of Object.entries(args.config.schema)) {
+		let value = process.env[key];
 
 		// Prepare the value because the environment variables are always strings.
 		value = prepareValue(schema, value);
@@ -107,11 +84,11 @@ export const resolveConfig = <T extends ConfigxZodObject>(
 		parsableObject[key] = value;
 	}
 
-	const result = args.config.schema.safeParse(parsableObject);
+	const result = z.object(args.config.schema).safeParse(parsableObject);
 
 	if (result.success) {
 		return result.data;
 	} else {
-		throw ConfigxParseError.fromZodError(result.error);
+		throw ConfigxError.fromZodError(result.error);
 	}
 };

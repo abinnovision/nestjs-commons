@@ -1,3 +1,3 @@
-export { ConfigxModule } from "./configx.module";
-export { defineConfigx } from "./helpers";
-export { ConfigxType } from "./types";
+export * from "./configx.module";
+export * from "./configx.helpers";
+export * from "./configx.errors";

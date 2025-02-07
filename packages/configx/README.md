@@ -1,1 +1,1 @@
-# @abinnovision/nestjs-commons-configx
+# @abinnovision/nestjs-configx

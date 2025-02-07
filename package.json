@@ -7,14 +7,15 @@
 		"examples/*"
 	],
 	"scripts": {
-		"check": "yarn format:check && yarn sort:check",
-		"fix": "yarn format:fix && yarn sort:fix",
+		"build": "turbo run build",
+		"check": "yarn format:check && yarn sort:check && turbo run check",
+		"fix": "yarn format:fix && yarn sort:fix && turbo run fix",
 		"format:check": "prettier --ignore-path .gitignore --check '{.github/**/*,*}.{json,json5,yaml,yml,md}'",
 		"format:fix": "prettier --ignore-path .gitignore --write '{.github/**/*,*}.{json,json5,yaml,yml,md}'",
 		"postinstall": "husky",
 		"sort:check": "sort-package-json --check",
 		"sort:fix": "sort-package-json",
-		"test:all": "vitest run --coverage"
+		"test": "vitest run --coverage"
 	},
 	"commitlint": {
 		"extends": [
