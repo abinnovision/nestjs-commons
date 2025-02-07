@@ -4,6 +4,9 @@
 	"packageManager": "yarn@4.5.1",
 	"version": "1.0.0",
 	"license": "Apache-2.0",
+	"repository": {
+		"url": "https://github.com/abinnovision/nestjs-commons"
+	},
 	"author": {
 		"name": "AB INNOVISION GmbH",
 		"email": "info@abinnovision.com",
