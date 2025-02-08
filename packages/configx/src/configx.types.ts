@@ -1,23 +1,18 @@
-import type { z } from "zod";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-export type ConfigxZodAllowedTypes = z.ZodString | z.ZodNumber | z.ZodBoolean;
-
-export type ConfigxZodValue =
-	| z.ZodOptional<ConfigxZodAllowedTypes>
-	| z.ZodNullable<ConfigxZodAllowedTypes>
-	| z.ZodOptional<z.ZodNullable<ConfigxZodAllowedTypes>>
-	| z.ZodDefault<ConfigxZodAllowedTypes>
-	| ConfigxZodAllowedTypes;
-
-export interface ConfigxZodRawShape {
-	[k: string]: ConfigxZodValue;
-}
+/**
+ * Describes the allowed types for a Configx schema.
+ */
+export type ConfigxSchema = StandardSchemaV1<
+	Record<string, string | undefined>,
+	Record<string, any>
+>;
 
 /**
  * Describes a Configx class.
  * The instance of the class is used to access the configuration.
  */
-export interface Configx<T extends ConfigxZodRawShape = any> {
+export interface Configx<T extends ConfigxSchema = any> {
 	/**
 	 * The Zod schema of the Configx class.
 	 */
@@ -30,8 +25,7 @@ export interface Configx<T extends ConfigxZodRawShape = any> {
 }
 
 /**
- * Describes the value of a Configx class.
+ * Describes the value of the Configx class.
  */
-export type ConfigxValue<T extends ConfigxZodRawShape> = {
-	[K in keyof T]: z.infer<T[K]>;
-};
+export type ConfigxValue<T extends ConfigxSchema> =
+	StandardSchemaV1.InferOutput<T>;

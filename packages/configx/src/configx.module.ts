@@ -39,10 +39,11 @@ export class ConfigxModule implements OnModuleInit {
 		return configs.map((config) => {
 			return {
 				provide: config,
-				useFactory: async () => {
-					// Resolve the configuration.
-					return resolveConfig({ config });
-				},
+				useFactory: () =>
+					resolveConfig({
+						config,
+						resolveEnv: () => process.env,
+					}),
 			};
 		});
 	}

@@ -48,8 +48,9 @@ __metadata:
     "@abinnovision/eslint-config-typescript": "npm:^2.2.1"
     "@abinnovision/prettier-config": "npm:^2.1.3"
     "@nestjs/common": "npm:^11.0.8"
+    "@standard-schema/spec": "npm:^1.0.0"
     "@swc/core": "npm:^1.10.14"
-    deepmerge: "npm:^4.3.1"
+    arktype: "npm:^2.0.4"
     eslint: "npm:^9.19.0"
     globals: "npm:^15.14.0"
     prettier: "npm:^3.4.2"
@@ -58,7 +59,6 @@ __metadata:
     typescript: "npm:^5.7.3"
     vitest: "npm:^3.0.5"
     zod: "npm:^3.24.1"
-    zod-error: "npm:^1.5.0"
   languageName: unknown
   linkType: soft
 
@@ -170,6 +170,22 @@ __metadata:
     ora: "npm:5.4.1"
     rxjs: "npm:7.8.1"
   checksum: 10c0/2394028ca01e110fc941cffee68476145605e1cc0d501077ce9ffdb0be2e24e52f77c66f6e30c216a67e59c6f7fb0a92f96cdc25f6fb744c7e6ff92f73baa59b
+  languageName: node
+  linkType: hard
+
+"@ark/schema@npm:0.39.0":
+  version: 0.39.0
+  resolution: "@ark/schema@npm:0.39.0"
+  dependencies:
+    "@ark/util": "npm:0.39.0"
+  checksum: 10c0/8a279ac688218937ca5585670e6eb8f3bac9c3ccf5f1868e3223ff9f1edabe713e76b30715510606f154e8f0208cd2e1b6551fd947f6cfae309bd7a65cf6c315
+  languageName: node
+  linkType: hard
+
+"@ark/util@npm:0.39.0":
+  version: 0.39.0
+  resolution: "@ark/util@npm:0.39.0"
+  checksum: 10c0/0e5a580e0e238ef457c07aa68f9382ae34fae8ced93dddd5c3402bce9898b8372e2a2022327b9d234eab8adc7d9a347e731721d329049dad17be37c9257b05f8
   languageName: node
   linkType: hard
 
@@ -1673,6 +1689,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standard-schema/spec@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@standard-schema/spec@npm:1.0.0"
+  checksum: 10c0/a1ab9a8bdc09b5b47aa8365d0e0ec40cc2df6437be02853696a0e377321653b0d3ac6f079a8c67d5ddbe9821025584b1fb71d9cc041a6666a96f1fadf2ece15f
+  languageName: node
+  linkType: hard
+
 "@swc/cli@npm:^0.6.0":
   version: 0.6.0
   resolution: "@swc/cli@npm:0.6.0"
@@ -2739,6 +2762,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"arktype@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "arktype@npm:2.0.4"
+  dependencies:
+    "@ark/schema": "npm:0.39.0"
+    "@ark/util": "npm:0.39.0"
+  checksum: 10c0/2bff7326ffebedee74ada3456147a3adb833df939db0c48cb9a78e6aa433592cc1f1877999a2ed0559f1021b70ab1dfbdfa3a6eee2b52d0a5dd68e0249471acf
+  languageName: node
+  linkType: hard
+
 "array-buffer-byte-length@npm:^1.0.1":
   version: 1.0.1
   resolution: "array-buffer-byte-length@npm:1.0.1"
@@ -3650,7 +3683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.1":
+"deepmerge@npm:^4.2.2":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: 10c0/e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
@@ -9081,16 +9114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-error@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "zod-error@npm:1.5.0"
-  dependencies:
-    zod: "npm:^3.20.2"
-  checksum: 10c0/f7809d1e3a2f2ba4e956631c1a8ebb79bbfdbb7b1009fb6cc4f2fe0292fcc966e985df154811c262f86af61e4605434ebcc9c834c0a1a368804c351c1e68b646
-  languageName: node
-  linkType: hard
-
-"zod@npm:^3.20.2, zod@npm:^3.24.1":
+"zod@npm:^3.24.1":
   version: 3.24.1
   resolution: "zod@npm:3.24.1"
   checksum: 10c0/0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b

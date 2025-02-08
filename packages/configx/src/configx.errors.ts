@@ -1,18 +1,40 @@
-import { generateErrorMessage } from "zod-error";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-import type { z } from "zod";
+/**
+ * Formats an issue for the ConfigxError.
+ *
+ * @param issue The issue to format.
+ * @returns The formatted issue.
+ */
+const formatIssue = (issue: StandardSchemaV1.Issue): string => {
+	let result = "";
+
+	if ((issue.path?.length ?? 0) > 0) {
+		// If there is a path, the issue is a nested issue.
+		result += issue.path?.join(".") + ": ";
+	} else {
+		// If there is no path, the issue is a root issue.
+		result += "@: ";
+	}
+
+	// Add the message.
+	result += issue.message;
+
+	return result;
+};
 
 /**
  * Generic error class for Configx.
  */
 export class ConfigxError extends Error {
-	public static fromZodError(error: z.ZodError): ConfigxError {
-		const message = generateErrorMessage(error.issues, {
-			delimiter: { error: "\n - " },
-			prefix: " - ",
-		});
+	public static fromSchemaIssues(
+		issues: readonly StandardSchemaV1.Issue[],
+	): ConfigxError {
+		const messageHeader = "Invalid config:\n";
 
-		return new ConfigxError(`Invalid config:\n${message}`);
+		const messageBody = issues.map((it) => `- ${formatIssue(it)}`).join("\n");
+
+		return new ConfigxError(`${messageHeader}${messageBody}`);
 	}
 
 	public constructor(message: string) {
