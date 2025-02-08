@@ -8,6 +8,8 @@
 	],
 	"scripts": {
 		"build": "turbo run build",
+		"build:packages": "turbo run build --filter='./packages/*'",
+		"build:packages:watch": "turbo watch build --filter='./packages/*'",
 		"check": "yarn format:check && yarn sort:check && turbo run check",
 		"fix": "yarn format:fix && yarn sort:fix && turbo run fix",
 		"format:check": "prettier --ignore-path .gitignore --check '{.github/**/*,*}.{json,json5,yaml,yml,md}'",
