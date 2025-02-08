@@ -20,7 +20,7 @@ async function bootstrap() {
 	const appConfig = app.get(AppConfigx);
 
 	// Start the server.
-	await app.listen(appConfig.PORT);
+	await app.listen(appConfig.PORT, appConfig.HOST);
 }
 
 bootstrap().catch(console.error);
