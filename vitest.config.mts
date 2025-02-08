@@ -5,7 +5,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			all: true,
-			include: ["**/src/**/*.{ts,tsx}"],
+			include: ["packages/*/src/**/*.{ts,tsx}"],
 			reporter: [["lcovonly", { projectRoot: "./" }], "text"],
 		},
 	},
