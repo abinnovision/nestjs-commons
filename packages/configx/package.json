@@ -12,6 +12,13 @@
 		"email": "info@abinnovision.com",
 		"url": "https://abinnovision.com/"
 	},
+	"keywords": [
+		"nestjs",
+		"config",
+		"configuration",
+		"configuration",
+		"standard-schema"
+	],
 	"files": [
 		"dist"
 	],
