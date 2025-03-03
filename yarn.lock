@@ -50,7 +50,7 @@ __metadata:
     "@nestjs/common": "npm:^11.0.8"
     "@standard-schema/spec": "npm:^1.0.0"
     "@swc/core": "npm:^1.10.14"
-    arktype: "npm:^2.0.4"
+    arktype: "npm:^2.1.2"
     eslint: "npm:^9.21.0"
     globals: "npm:^15.15.0"
     prettier: "npm:^3.5.0"
@@ -173,19 +173,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ark/schema@npm:0.39.0":
-  version: 0.39.0
-  resolution: "@ark/schema@npm:0.39.0"
+"@ark/schema@npm:0.43.1":
+  version: 0.43.1
+  resolution: "@ark/schema@npm:0.43.1"
   dependencies:
-    "@ark/util": "npm:0.39.0"
-  checksum: 10c0/8a279ac688218937ca5585670e6eb8f3bac9c3ccf5f1868e3223ff9f1edabe713e76b30715510606f154e8f0208cd2e1b6551fd947f6cfae309bd7a65cf6c315
+    "@ark/util": "npm:0.43.1"
+  checksum: 10c0/69f129a860bc94f62405471a933274bbc9d78d67f63e371e3e41c5ffdc6f4259a170f19528df1f599d4bfba75cd737bb913113c6d47636cda77231d7503aa00b
   languageName: node
   linkType: hard
 
-"@ark/util@npm:0.39.0":
-  version: 0.39.0
-  resolution: "@ark/util@npm:0.39.0"
-  checksum: 10c0/0e5a580e0e238ef457c07aa68f9382ae34fae8ced93dddd5c3402bce9898b8372e2a2022327b9d234eab8adc7d9a347e731721d329049dad17be37c9257b05f8
+"@ark/util@npm:0.43.1":
+  version: 0.43.1
+  resolution: "@ark/util@npm:0.43.1"
+  checksum: 10c0/cee60a232bde99824f7e2cfbae88fea0ae32e76dfe06f805d7f1f57b70afa2eeebad3ba7ae51491f834b2f908c33cb9b23e40eec840a7221679fcb412f681576
   languageName: node
   linkType: hard
 
@@ -2762,13 +2762,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arktype@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "arktype@npm:2.0.4"
+"arktype@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "arktype@npm:2.1.2"
   dependencies:
-    "@ark/schema": "npm:0.39.0"
-    "@ark/util": "npm:0.39.0"
-  checksum: 10c0/2bff7326ffebedee74ada3456147a3adb833df939db0c48cb9a78e6aa433592cc1f1877999a2ed0559f1021b70ab1dfbdfa3a6eee2b52d0a5dd68e0249471acf
+    "@ark/schema": "npm:0.43.1"
+    "@ark/util": "npm:0.43.1"
+  checksum: 10c0/3f9b9d12216b2dafd98555135d865f42d7f017dafedf16c3e6c7b024cfe10abde767ceba3de0870390732e2c37ae96502b0c548f2875220034f4f89801947fe2
   languageName: node
   linkType: hard
 
