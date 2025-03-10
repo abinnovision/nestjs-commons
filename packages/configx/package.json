@@ -49,7 +49,7 @@
 		"@abinnovision/prettier-config": "^2.1.3",
 		"@swc/core": "^1.11.5",
 		"arktype": "^2.1.9",
-		"eslint": "^9.21.0",
+		"eslint": "^9.22.0",
 		"globals": "^15.15.0",
 		"prettier": "^3.5.0",
 		"reflect-metadata": "^0.2.2",
