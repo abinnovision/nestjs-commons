@@ -21,6 +21,7 @@ export class ConfigxModule implements OnModuleInit {
 		return {
 			module: ConfigxModule,
 			providers: configProviders,
+			exports: configProviders,
 		};
 	}
 
