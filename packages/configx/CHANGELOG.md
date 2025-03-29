@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v1.1.0...nestjs-configx-v1.1.1) (2025-03-29)
+
+
+### Bug Fixes
+
+* export config providers from module ([#40](https://github.com/abinnovision/nestjs-commons/issues/40)) ([112dd80](https://github.com/abinnovision/nestjs-commons/commit/112dd800fd0ca1fc67b9df7fbbc81f3ae66232e8))
+
 ## [1.1.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v1.0.0...nestjs-configx-v1.1.0) (2025-02-08)
 
 
