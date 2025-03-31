@@ -979,7 +979,7 @@ __metadata:
     "@nestjs/core": "npm:^11.0.5"
     "@nestjs/platform-express": "npm:^11.0.5"
     "@nestjs/schematics": "npm:^11.0.0"
-    "@nestjs/swagger": "npm:^11.0.3"
+    "@nestjs/swagger": "npm:^11.1.0"
     "@nestjs/testing": "npm:^11.0.5"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.11.5"
@@ -1095,10 +1095,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/tsdoc@npm:0.15.0":
-  version: 0.15.0
-  resolution: "@microsoft/tsdoc@npm:0.15.0"
-  checksum: 10c0/6beaf6e01ff54daeba69862cb3d27e03bbabfe299d23d0fade885f5b29bf98af01cecc746d23875fe60ba89514e3b630b71140b1b18d37301096f7a1e35451aa
+"@microsoft/tsdoc@npm:0.15.1":
+  version: 0.15.1
+  resolution: "@microsoft/tsdoc@npm:0.15.1"
+  checksum: 10c0/09948691fac56c45a0d1920de478d66a30371a325bd81addc92eea5654d95106ce173c440fea1a1bd5bb95b3a544b6d4def7bb0b5a846c05d043575d8369a20c
   languageName: node
   linkType: hard
 
@@ -1405,16 +1405,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/swagger@npm:^11.0.3":
-  version: 11.0.3
-  resolution: "@nestjs/swagger@npm:11.0.3"
+"@nestjs/swagger@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "@nestjs/swagger@npm:11.1.0"
   dependencies:
-    "@microsoft/tsdoc": "npm:0.15.0"
+    "@microsoft/tsdoc": "npm:0.15.1"
     "@nestjs/mapped-types": "npm:2.1.0"
     js-yaml: "npm:4.1.0"
     lodash: "npm:4.17.21"
     path-to-regexp: "npm:8.2.0"
-    swagger-ui-dist: "npm:5.18.2"
+    swagger-ui-dist: "npm:5.20.1"
   peerDependencies:
     "@fastify/static": ^8.0.0
     "@nestjs/common": ^11.0.1
@@ -1429,7 +1429,7 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 10c0/9fcc96ed523665f91d2e52a3faa16908e5af7353b6010172b3633661a037fe2f1d7425feb0ac7710925e481e09d13822b974cdf39234a3897780125efa5645ba
+  checksum: 10c0/85535dc6d70ac6864e1e0201b174aa200878d3ff68d38f6d21b6a8ad97100eb8d00a11c4f0ac0820d5365326f7db8a660b728a368b92c4a62328cb92b498690c
   languageName: node
   linkType: hard
 
@@ -8088,12 +8088,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swagger-ui-dist@npm:5.18.2":
-  version: 5.18.2
-  resolution: "swagger-ui-dist@npm:5.18.2"
+"swagger-ui-dist@npm:5.20.1":
+  version: 5.20.1
+  resolution: "swagger-ui-dist@npm:5.20.1"
   dependencies:
     "@scarf/scarf": "npm:=1.4.0"
-  checksum: 10c0/254f0d0b14766d505e69c36ea656afe838c32eefe1317aa4a8a2ffae06f1e53c55333130c6cea2f57bb47825b0cc465436f3f7af41254bd24b0601e56f914dba
+  checksum: 10c0/e24b416c3c6987ab4b13e5515a3f0d23b017ce1420ec8d383cce63e509a17a625d81142cce3765100c98dc6caff8df7178dede52089c6c8f17b31d415573ac32
   languageName: node
   linkType: hard
 
