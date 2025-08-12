@@ -1,0 +1,59 @@
+{
+	"name": "@internal/example-hatchet-integration",
+	"version": "0.0.0",
+	"private": true,
+	"author": {
+		"name": "AB INNOVISION GmbH",
+		"email": "info@abinnovision.com",
+		"url": "https://abinnovision.com"
+	},
+	"scripts": {
+		"build": "nest build",
+		"format:check": "prettier --check '{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}'",
+		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}'",
+		"lint:check": "eslint '{src,test}/**/*.{t,j}s{x,}'",
+		"lint:fix": "eslint '{src,test}/**/*.{t,j}s{x,}' --fix",
+		"start": "nest start",
+		"start:debug": "nest start --exec \"node --inspect-brk\" --watch",
+		"start:dev": "nest start --watch"
+	},
+	"lint-staged": {
+		"{src,test}/**/*.{t,j}s{x,}": [
+			"eslint --fix --config eslint.config.mjs"
+		],
+		"{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}": [
+			"prettier --write"
+		]
+	},
+	"prettier": "@abinnovision/prettier-config",
+	"dependencies": {
+		"@abinnovision/nestjs-configx": "workspace:^",
+		"@abinnovision/nestjs-hatchet": "workspace:^",
+		"@nestjs/common": "^11.0.5",
+		"@nestjs/core": "^11.0.5",
+		"@nestjs/platform-express": "^11.0.5",
+		"@nestjs/swagger": "^11.1.0",
+		"arktype": "^2.1.20",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.1",
+		"zod": "^3.24.1"
+	},
+	"devDependencies": {
+		"@abinnovision/eslint-config-base": "^2.2.0",
+		"@abinnovision/eslint-config-typescript": "^2.2.1",
+		"@nestjs/cli": "^11.0.2",
+		"@nestjs/schematics": "^11.0.0",
+		"@nestjs/testing": "^11.0.5",
+		"@swc/cli": "^0.6.0",
+		"@swc/core": "^1.11.5",
+		"@types/eslint": "^9.6.1",
+		"@types/express": "^5.0.0",
+		"@types/node": "^22.10.10",
+		"eslint": "^9.21.0",
+		"globals": "^15.15.0",
+		"prettier": "^3.5.0",
+		"source-map-support": "^0.5.21",
+		"typescript": "^5.9.2",
+		"unplugin-swc": "^1.5.1"
+	}
+}
