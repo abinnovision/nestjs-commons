@@ -1,11 +1,31 @@
 import { ConfigxModule } from "@abinnovision/nestjs-configx";
+import { HatchetModule, taskRef } from "@abinnovision/nestjs-hatchet";
 import { Module } from "@nestjs/common";
+import "dotenv/config";
 
+import { AdminModule } from "./admin/admin.module";
 import { AppConfigx } from "./app.configx";
-import { ProcessDataWorkflow } from "./tasks/process-data.task";
+import { CleanupTask } from "./cleanup.task";
+import { DomainModule } from "./domain/domain.module";
 
 @Module({
-	imports: [ConfigxModule.register(AppConfigx)],
-	providers: [ProcessDataWorkflow],
+	imports: [
+		HatchetModule.forRootAsync({
+			imports: [ConfigxModule.register(AppConfigx)],
+			inject: [AppConfigx],
+			useFactory: (config: AppConfigx) => ({
+				config: {
+					token: config.HATCHET_CLIENT_TOKEN,
+					tls_config: { tls_strategy: "none" },
+				},
+			}),
+		}),
+		HatchetModule.registerWorker({
+			name: "common-worker",
+			workflows: [taskRef(CleanupTask, "task")],
+		}),
+		DomainModule,
+		AdminModule,
+	],
 })
 export class AppModule {}

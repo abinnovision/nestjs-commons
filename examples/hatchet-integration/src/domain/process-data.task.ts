@@ -1,15 +1,12 @@
-/* eslint-disable import/exports-last */
 import {
 	CtxTask,
 	CtxWorkflow,
+	Host,
 	Task,
 	TaskHost,
 	taskRef,
-	Workflow,
 	WorkflowHost,
-	workflowRef,
 	WorkflowTask,
-	workflowTaskRef,
 } from "@abinnovision/nestjs-hatchet";
 import { z } from "zod";
 
@@ -18,7 +15,7 @@ type ProcessDataTaskInput = {
 	data: string;
 };
 
-@Workflow({ name: "process-data" })
+@Host({ name: "process-data" })
 export class ProcessDataTask extends TaskHost<ProcessDataTaskInput> {
 	@Task({})
 	public async task(ctx: CtxTask<typeof this>) {
@@ -34,12 +31,14 @@ export class ProcessDataTask extends TaskHost<ProcessDataTaskInput> {
 	}
 }
 
-@Workflow({
+@Host({
 	name: "process-data-workflow",
 	onEvents: [""],
 })
 export class ProcessDataWorkflow extends WorkflowHost<{ data: string }> {
-	@WorkflowTask<typeof ProcessDataWorkflow>({})
+	@WorkflowTask<typeof ProcessDataWorkflow>({
+		parents: [],
+	})
 	public async cleanUpData(ctx: CtxWorkflow<typeof this>) {
 		console.log("Access to workflow input", ctx.input);
 
@@ -84,26 +83,26 @@ export class ProcessDataWorkflow extends WorkflowHost<{ data: string }> {
 	}
 }
 
-const _refWorkflow = workflowRef(ProcessDataWorkflow);
-const _refWorkflowTask = workflowTaskRef(ProcessDataWorkflow, "cleanUpData");
-const _refTask = taskRef(ProcessDataTask, "task");
-
-const RefTaskOutput: (typeof _refTask)["__types"]["output"] = {} as any;
-const RefTaskInput: (typeof _refTask)["__types"]["input"] = {} as any;
-const RefWorkflowOutput: (typeof _refWorkflow)["__types"]["output"] = {} as any;
-const RefWorkflowTaskOutput: (typeof _refWorkflowTask)["__types"]["output"] =
-	{} as any;
-const RefWorkflowTaskInput: (typeof _refWorkflowTask)["__types"]["input"] =
-	{} as any;
-
-console.log([
-	RefWorkflowOutput.transformOutputData.resultData,
-	RefWorkflowOutput.cleanUpData.output,
-	RefWorkflowOutput.processData.processResult,
-]);
-
-console.log(RefTaskInput.data);
-console.log(RefTaskOutput.result);
-
-console.log(RefWorkflowTaskInput.data);
-console.log(RefWorkflowTaskOutput.output);
+// const _refWorkflow = workflowRef(ProcessDataWorkflow);
+// const _refWorkflowTask = workflowTaskRef(ProcessDataWorkflow, "cleanUpData");
+// const _refTask = taskRef(ProcessDataTask, "task");
+//
+// const RefTaskOutput: (typeof _refTask)["__types"]["output"] = {} as any;
+// const RefTaskInput: (typeof _refTask)["__types"]["input"] = {} as any;
+// const RefWorkflowOutput: (typeof _refWorkflow)["__types"]["output"] = {} as any;
+// const RefWorkflowTaskOutput: (typeof _refWorkflowTask)["__types"]["output"] =
+// 	{} as any;
+// const RefWorkflowTaskInput: (typeof _refWorkflowTask)["__types"]["input"] =
+// 	{} as any;
+//
+// console.log([
+// 	RefWorkflowOutput.transformOutputData.resultData,
+// 	RefWorkflowOutput.cleanUpData.output,
+// 	RefWorkflowOutput.processData.processResult,
+// ]);
+//
+// console.log(RefTaskInput.data);
+// console.log(RefTaskOutput.result);
+//
+// console.log(RefWorkflowTaskInput.data);
+// console.log(RefWorkflowTaskOutput.output);

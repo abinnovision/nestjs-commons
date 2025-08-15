@@ -16,7 +16,6 @@ import type {
 const defineRef = (target: object): any => {
 	Object.defineProperty(target, "__types", {
 		enumerable: false,
-		value: null,
 		get: () => {
 			throw new Error("Cannot access __types in runtime");
 		},

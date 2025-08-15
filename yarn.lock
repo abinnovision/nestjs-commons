@@ -47,7 +47,6 @@ __metadata:
     "@abinnovision/eslint-config-base": "npm:^2.2.0"
     "@abinnovision/eslint-config-typescript": "npm:^2.2.1"
     "@abinnovision/prettier-config": "npm:^2.1.3"
-    "@nestjs/common": "npm:^11.0.8"
     "@standard-schema/spec": "npm:^1.0.0"
     "@swc/core": "npm:^1.11.5"
     arktype: "npm:^2.1.9"
@@ -59,6 +58,8 @@ __metadata:
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.5"
     zod: "npm:^3.24.1"
+  peerDependencies:
+    "@nestjs/common": ^11.0.0
   languageName: unknown
   linkType: soft
 
@@ -70,9 +71,9 @@ __metadata:
     "@abinnovision/eslint-config-typescript": "npm:^2.2.1"
     "@abinnovision/prettier-config": "npm:^2.1.3"
     "@hatchet-dev/typescript-sdk": "npm:^1.9.3"
-    "@nestjs/common": "npm:^11.0.8"
     "@standard-schema/spec": "npm:^1.0.0"
     "@swc/core": "npm:^1.11.5"
+    directed-graph-typed: "npm:^2.0.4"
     eslint: "npm:^9.21.0"
     globals: "npm:^15.15.0"
     prettier: "npm:^3.5.0"
@@ -81,6 +82,9 @@ __metadata:
     typescript: "npm:^5.9.2"
     vitest: "npm:^3.0.5"
     zod: "npm:^3.24.1"
+  peerDependencies:
+    "@nestjs/common": ^11.0.0
+    "@nestjs/core": ^11.0.0
   languageName: unknown
   linkType: soft
 
@@ -1092,6 +1096,7 @@ __metadata:
     "@types/express": "npm:^5.0.0"
     "@types/node": "npm:^22.10.10"
     arktype: "npm:^2.1.20"
+    dotenv: "npm:^17.2.1"
     eslint: "npm:^9.21.0"
     globals: "npm:^15.15.0"
     prettier: "npm:^3.5.0"
@@ -1421,7 +1426,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:^11.0.5, @nestjs/common@npm:^11.0.8":
+"@nestjs/common@npm:^11.0.5":
   version: 11.0.8
   resolution: "@nestjs/common@npm:11.0.8"
   dependencies:
@@ -3796,6 +3801,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"data-structure-typed@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "data-structure-typed@npm:2.0.4"
+  checksum: 10c0/0257804791356851ec6eb8cdf5c40bad891265524da3618ab59f8999f993dd9ae56731c69e9a211dac44949a6b4366479d6a29a14b34405c560678c3c869751e
+  languageName: node
+  linkType: hard
+
 "data-view-buffer@npm:^1.0.1":
   version: 1.0.1
   resolution: "data-view-buffer@npm:1.0.1"
@@ -3990,6 +4002,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"directed-graph-typed@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "directed-graph-typed@npm:2.0.4"
+  dependencies:
+    data-structure-typed: "npm:^2.0.4"
+  checksum: 10c0/dfcf84b214e387e776679f711d276e22dd74da960453ccb9ce7c21411e43705cb2367c1de47c5d747143fba46ce0b2b9f16aa18846f6982f0e40a945bf0a54b0
+  languageName: node
+  linkType: hard
+
 "doctrine@npm:^2.1.0":
   version: 2.1.0
   resolution: "doctrine@npm:2.1.0"
@@ -4005,6 +4026,13 @@ __metadata:
   dependencies:
     is-obj: "npm:^2.0.0"
   checksum: 10c0/93f0d343ef87fe8869320e62f2459f7e70f49c6098d948cc47e060f4a3f827d0ad61e83cb82f2bd90cd5b9571b8d334289978a43c0f98fea4f0e99ee8faa0599
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^17.2.1":
+  version: 17.2.1
+  resolution: "dotenv@npm:17.2.1"
+  checksum: 10c0/918dd2f9d8b8f86b0afabad9534793d51de3718c437f9e7b6525628cf68c1d4ae768cc37a5afff38c066f58a8ecf549f4ac6cd5617485bd328e826112cc2650a
   languageName: node
   linkType: hard
 

@@ -56,7 +56,11 @@
 	},
 	"dependencies": {
 		"@hatchet-dev/typescript-sdk": "^1.9.3",
-		"@nestjs/common": "^11.0.8",
-		"@standard-schema/spec": "^1.0.0"
+		"@standard-schema/spec": "^1.0.0",
+		"directed-graph-typed": "^2.0.4"
+	},
+	"peerDependencies": {
+		"@nestjs/common": "^11.0.0",
+		"@nestjs/core": "^11.0.0"
 	}
 }

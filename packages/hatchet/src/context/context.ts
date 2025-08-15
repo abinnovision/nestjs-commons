@@ -1,23 +1,7 @@
 import type { TaskHost, WorkflowHost } from "../abstracts";
-import type {
-	AnyCallableRef,
-	AnyTaskFn,
-	InputOfRef,
-	OutputOfRef,
-	OutputOfTaskFn,
-} from "../ref";
-import type { HatchetInputType } from "../types";
-import type { Context as HContext, RunOpts } from "@hatchet-dev/typescript-sdk";
-import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
-
-interface CallableRunOpts<W extends boolean> extends RunOpts {
-	/**
-	 * Whether to wait for the task to complete before returning.
-	 *
-	 * @default true
-	 */
-	wait?: W;
-}
+import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
+import type { HatchetInputType, WorkflowCallable } from "../types";
+import type { Context as HContext } from "@hatchet-dev/typescript-sdk";
 
 /**
  * Type for the context when a task is running. This is universal for standalone and workflow tasks.
@@ -38,35 +22,12 @@ export interface BaseCtx<T extends HatchetInputType> {
 }
 
 /**
- * Context type for running child tasks.
- */
-export interface CtxCallables {
-	run: <
-		R extends AnyCallableRef,
-		I extends InputOfRef<R> | InputOfRef<R>[],
-		W extends boolean = true,
-	>(
-		ref: R,
-		input: I,
-		options?: CallableRunOpts<W>,
-	) => Promise<
-		I extends InputOfRef<R>[]
-			? W extends true
-				? OutputOfRef<R>[]
-				: WorkflowRunRef<OutputOfRef<R>>[]
-			: W extends true
-				? OutputOfRef<R>
-				: WorkflowRunRef<OutputOfRef<R>>
-	>;
-}
-
-/**
  * Context type of the run of a standalone task.
  */
 export type CtxTask<T extends TaskHost<any>> = BaseCtx<
 	T extends TaskHost<infer I> ? I : never
 > &
-	CtxCallables;
+	WorkflowCallable;
 
 /**
  * Context type of the run of a workflow task.
@@ -80,4 +41,4 @@ export type CtxWorkflow<T extends WorkflowHost<any>> = BaseCtx<
 	parent: <F extends AnyTaskFn<any, any>>(
 		method: F,
 	) => Promise<OutputOfTaskFn<F>>;
-} & CtxCallables;
+} & WorkflowCallable;
