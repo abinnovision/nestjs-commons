@@ -1,10 +1,13 @@
-import { ConfigxError } from "./configx.errors";
+import { ConfigxError, InvalidConfigError } from "./errors";
 
-import type { Configx, ConfigxSchema } from "./configx.types";
+import type { ConfigxSchema } from "./types";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 interface ResolveConfigArgs<T extends ConfigxSchema> {
-	config: Configx<T>;
+	/**
+	 * Schema of the Configx class.
+	 */
+	schema: T;
 
 	/**
 	 * Resolves the environment variables object.
@@ -17,17 +20,20 @@ interface ResolveConfigArgs<T extends ConfigxSchema> {
  *
  * @param args The arguments for the function.
  */
-export const resolveConfig = async <T extends ConfigxSchema>(
+export const resolveConfig = <T extends ConfigxSchema>(
 	args: ResolveConfigArgs<T>,
-): Promise<StandardSchemaV1.InferOutput<T>> => {
+): StandardSchemaV1.InferOutput<T> => {
 	// The object which will later be parsed by the Zod schema.
 	const parsableObject: { [key: string]: any } = args.resolveEnv();
 
-	const result = await args.config.schema["~standard"].validate(parsableObject);
+	const result = args.schema["~standard"].validate(parsableObject);
+	if (result instanceof Promise) {
+		throw new ConfigxError("Asynchronous schemas are not supported");
+	}
 
 	if (result.issues === undefined) {
 		return result.value;
 	} else {
-		throw ConfigxError.fromSchemaIssues(result.issues);
+		throw InvalidConfigError.fromSchemaIssues(result.issues);
 	}
 };

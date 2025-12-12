@@ -23,7 +23,7 @@ const formatIssue = (issue: StandardSchemaV1.Issue): string => {
 			.join(".");
 
 		// Add the path to the result.
-		result += `${path}: `;
+		result += `'${path}': `;
 	} else {
 		// If there is no path, the issue is a root issue.
 		result += "@: ";
@@ -36,22 +36,25 @@ const formatIssue = (issue: StandardSchemaV1.Issue): string => {
 };
 
 /**
- * Generic error class for Configx.
+ * Base class for all Configx errors.
  */
-export class ConfigxError extends Error {
+export class ConfigxError extends Error {}
+
+/**
+ * Error thrown when the configuration is invalid.
+ */
+export class InvalidConfigError extends ConfigxError {
 	public constructor(message: string) {
 		super(message);
 
-		this.name = "ConfigxError";
+		this.name = "InvalidConfigError";
 	}
 
 	public static fromSchemaIssues(
 		issues: readonly StandardSchemaV1.Issue[],
-	): ConfigxError {
-		const messageHeader = "Invalid config:\n";
+	): InvalidConfigError {
+		const messageBody = issues.map(formatIssue).join("; ");
 
-		const messageBody = issues.map((it) => `- ${formatIssue(it)}`).join("\n");
-
-		return new ConfigxError(`${messageHeader}${messageBody}`);
+		return new InvalidConfigError(messageBody);
 	}
 }

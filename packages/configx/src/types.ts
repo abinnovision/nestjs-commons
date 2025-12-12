@@ -10,22 +10,15 @@ export type ConfigxSchema = StandardSchemaV1<
 
 /**
  * Describes a Configx class.
- * The instance of the class is used to access the configuration.
  */
-export interface Configx<T extends ConfigxSchema = any> {
+export interface ConfigxType<T extends ConfigxSchema = any> {
 	/**
-	 * The Zod schema of the Configx class.
+	 * Standard Schema V1 schema of the Configx class.
 	 */
 	schema: T;
 
 	/**
 	 * Instantiates a new Configx instance.
 	 */
-	new (): ConfigxValue<T>;
+	new (): StandardSchemaV1.InferOutput<T>;
 }
-
-/**
- * Describes the value of the Configx class.
- */
-export type ConfigxValue<T extends ConfigxSchema> =
-	StandardSchemaV1.InferOutput<T>;

@@ -1,12 +1,9 @@
 /* eslint-disable max-nested-callbacks */
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { resolveConfig } from "./resolver.js";
 
-import { ConfigxError } from "./configx.errors.js";
-import { configx } from "./configx.helpers.js";
-import { resolveConfig } from "./configx.resolver.js";
-
-import type { ConfigxSchema } from "./configx.types.js";
+import type { ConfigxSchema } from "./types.js";
 import { type } from "arktype";
 
 type TestCase = [
@@ -135,23 +132,21 @@ describe("resolver.ts", () => {
 	describe("#resolveConfig", () => {
 		testMatrix.forEach(([schema, env, expected], idx) => {
 			it(`should resolve the test case #${idx}`, async () => {
-				class Config extends configx(schema) {}
-
 				if (expected === "rejects") {
 					// This will throw an error.
-					await expect(
+					expect(() =>
 						resolveConfig({
-							config: Config,
+							schema,
 							resolveEnv: () => env,
 						}),
-					).rejects.toThrow(ConfigxError);
+					).toThrowError();
 				} else {
-					await expect(
+					expect(
 						resolveConfig({
-							config: Config,
+							schema,
 							resolveEnv: () => env,
 						}),
-					).resolves.toEqual(expected);
+					).toEqual(expected);
 				}
 			});
 		});

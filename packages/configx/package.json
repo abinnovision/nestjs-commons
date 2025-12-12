@@ -40,7 +40,6 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"@nestjs/common": "^11.0.8",
 		"@standard-schema/spec": "^1.0.0"
 	},
 	"devDependencies": {
