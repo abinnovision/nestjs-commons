@@ -1,3 +1,3 @@
-export * from "./configx.module";
-export * from "./configx.helpers";
-export * from "./configx.errors";
+export * from "./errors";
+export * from "./helper";
+export * from "./types";
