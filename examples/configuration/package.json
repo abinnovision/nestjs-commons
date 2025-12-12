@@ -9,21 +9,20 @@
 	},
 	"scripts": {
 		"build": "nest build",
-		"format:check": "prettier --check '{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}'",
-		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}'",
-		"lint:check": "eslint '{src,test}/**/*.{t,j}s{x,}'",
-		"lint:fix": "eslint '{src,test}/**/*.{t,j}s{x,}' --fix",
+		"format:check": "prettier --check 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
+		"format:fix": "prettier --write 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
+		"lint:check": "eslint 'src/**/*.ts'",
+		"lint:fix": "eslint 'src/**/*.ts' --fix",
 		"start": "nest start",
 		"start:debug": "nest start --exec \"node --inspect-brk\" --watch",
 		"start:dev": "nest start --watch"
 	},
 	"lint-staged": {
-		"{src,test}/**/*.{t,j}s{x,}": [
-			"eslint --fix --config eslint.config.mjs"
-		],
-		"{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}": [
+		"src/**/*.ts": [
+			"eslint --fix",
 			"prettier --write"
-		]
+		],
+		"*.{json{,5},md,y{,a}ml}": "prettier --write"
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
@@ -37,19 +36,17 @@
 		"zod": "^3.24.1"
 	},
 	"devDependencies": {
-		"@abinnovision/eslint-config-base": "^2.2.0",
-		"@abinnovision/eslint-config-typescript": "^2.2.1",
+		"@abinnovision/eslint-config-base": "^3.0.2",
 		"@nestjs/cli": "^11.0.2",
 		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.5",
 		"@swc/cli": "^0.6.0",
 		"@swc/core": "^1.11.5",
-		"@types/eslint": "^9.6.1",
 		"@types/express": "^5.0.0",
 		"@types/node": "^22.10.10",
-		"eslint": "^9.21.0",
-		"globals": "^15.15.0",
-		"prettier": "^3.5.0",
+		"eslint": "^9.39.1",
+		"globals": "^16.5.0",
+		"prettier": "^3.7.4",
 		"source-map-support": "^0.5.21",
 		"typescript": "^5.8.2",
 		"unplugin-swc": "^1.5.1"

@@ -6,6 +6,7 @@ import type { Configx, ConfigxSchema } from "./configx.types";
  * @param schema The Zod schema of the Configx class.
  */
 export function configx<T extends ConfigxSchema>(schema: T): Configx<T> {
+	// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 	class Augmented {
 		public static schema = schema;
 	}
