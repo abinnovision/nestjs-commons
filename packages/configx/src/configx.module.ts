@@ -42,11 +42,13 @@ export class ConfigxModule implements OnModuleInit {
 				provide: config,
 				useFactory: async () => {
 					// Resolve the environment variables.
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 					const configValues = await resolveConfig({
 						config,
 						resolveEnv: () => process.env,
 					});
 
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-argument
 					return Object.assign(Object.create(config.prototype), configValues);
 				},
 			};
