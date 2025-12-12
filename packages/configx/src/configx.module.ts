@@ -40,11 +40,15 @@ export class ConfigxModule implements OnModuleInit {
 		return configs.map((config) => {
 			return {
 				provide: config,
-				useFactory: () =>
-					resolveConfig({
+				useFactory: async () => {
+					// Resolve the environment variables.
+					const configValues = await resolveConfig({
 						config,
 						resolveEnv: () => process.env,
-					}),
+					});
+
+					return Object.assign(Object.create(config.prototype), configValues);
+				},
 			};
 		});
 	}
