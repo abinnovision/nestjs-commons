@@ -17,7 +17,8 @@
 		"postinstall": "husky",
 		"sort:check": "sort-package-json --check",
 		"sort:fix": "sort-package-json",
-		"test": "vitest run --coverage"
+		"test": "vitest run --coverage",
+		"test-unit": "vitest run --project '*#unit' --coverage"
 	},
 	"commitlint": {
 		"extends": [
