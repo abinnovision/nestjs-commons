@@ -1,5 +1,19 @@
 import type { TaskHost, WorkflowHost } from "../abstracts";
-import type { BaseCtx } from "../context";
+import type { BaseCtx, TaskMarker } from "../context/context";
+
+/**
+ * Converts a union to an intersection. Used for detecting if a type is a union.
+ */
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+	k: infer I,
+) => void
+	? I
+	: never;
+
+/**
+ * Checks if a type is a union (more than one member).
+ */
+type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
 
 /**
  * Represents any host instance type.
@@ -28,11 +42,11 @@ export type IsTaskRunnableSignature<
 	C extends BaseCtx<any> = any,
 > = F extends (...args: any[]) => any
 	? Parameters<F> extends [infer CI, ...any[]]
-		? CI extends C
-			? CI extends BaseCtx<any>
-				? true
+		? CI extends { [K in TaskMarker]: true }
+			? CI extends C
+				? true // Has task marker and extends context - is a task method
 				: false
-			: false
+			: false // No task marker - not a task method (e.g., HelperCtx)
 		: false
 	: false;
 
@@ -97,20 +111,6 @@ export type AnyTaskFn<C extends BaseCtx<any>, O> = (ctx: C) => Promise<O> | O;
 
 export type OutputOfTaskFn<T extends AnyTaskFn<any, any>> =
 	IsTaskRunnableSignature<T> extends true ? Awaited<ReturnType<T>> : never;
-
-/**
- * Converts a union to an intersection. Used for detecting if a type is a union.
- */
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-	k: infer I,
-) => void
-	? I
-	: never;
-
-/**
- * Checks if a type is a union (more than one member).
- */
-type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
 
 /**
  * Error type for invalid TaskHost - shows as a readable string literal in error messages.

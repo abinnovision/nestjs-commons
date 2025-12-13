@@ -6,7 +6,6 @@ import {
 import { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
 import { Injectable } from "@nestjs/common";
 import { MetadataScanner, Reflector } from "@nestjs/core";
-import { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
@@ -24,51 +23,46 @@ export class DeclarationBuilderService {
 	) {}
 
 	public async createDeclaration(
-		host: InstanceWrapper<AnyHost>,
+		host: AnyHost,
 	): Promise<WorkflowDeclaration | TaskWorkflowDeclaration> {
-		if (host.instance instanceof WorkflowHost) {
-			return await this.createWorkflow(host as any);
+		if (host instanceof WorkflowHost) {
+			return await this.createWorkflow(host);
 		} else {
-			return await this.createTaskWorkflow(host as any);
+			return await this.createTaskWorkflow(host);
 		}
 	}
 
 	private async createTaskWorkflow(
-		host: InstanceWrapper<TaskHost<any>>,
+		host: TaskHost<any>,
 	): Promise<TaskWorkflowDeclaration> {
 		// First, validate the host.
-		await this.validateTaskHost(host.instance);
+		await this.validateTaskHost(host);
 
 		// Get the host opts from the metadata.
 		const hostOpts = getHostMetadata(host, this.reflector);
 
 		// Get the single decorated method name.
-		const decoratedMethods = getHostAnnotatedMethods(
-			host.instance,
-			this.scanner,
-		);
+		const decoratedMethods = getHostAnnotatedMethods(host, this.scanner);
 		const methodName = decoratedMethods[0]!;
-		const proto = Object.getPrototypeOf(host.instance);
+		const proto = Object.getPrototypeOf(host);
 
 		// Construct an unbound declaration for it.
-		const dec = new TaskWorkflowDeclaration({
+		return new TaskWorkflowDeclaration({
 			...hostOpts,
 			fn: async (_: unknown, ctx: Context<any>) => {
 				const taskCtx = createTaskCtx(ctx);
-				return await proto[methodName].call(host.instance, taskCtx);
+				return await proto[methodName].call(host, taskCtx);
 			},
 		});
-
-		return dec;
 	}
 
 	private async createWorkflow(
-		host: InstanceWrapper<WorkflowHost<any>>,
+		host: WorkflowHost<any>,
 	): Promise<WorkflowDeclaration> {
 		// First, validate the host.
-		await this.validateWorkflowHost(host.instance);
+		await this.validateWorkflowHost(host);
 
-		const graph = await this.buildWorkflowHostGraph(host.instance);
+		const graph = await this.buildWorkflowHostGraph(host);
 
 		const hostOpts = getHostMetadata(host, this.reflector);
 
@@ -77,7 +71,7 @@ export class DeclarationBuilderService {
 			...hostOpts,
 		});
 
-		const proto = Object.getPrototypeOf(host.instance);
+		const proto = Object.getPrototypeOf(host);
 
 		// Mapping of task name to task declaration.
 		const taskDecls = new Map<string, CreateWorkflowTaskOpts>();
@@ -112,7 +106,7 @@ export class DeclarationBuilderService {
 				parents: parentsResolved,
 				fn: async (_: unknown, ctx: Context<any>) => {
 					const workflowCtx = createWorkflowCtx(ctx);
-					return await proto[method].call(host.instance, workflowCtx);
+					return await proto[method].call(host, workflowCtx);
 				},
 			});
 

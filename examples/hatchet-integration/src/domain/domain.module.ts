@@ -11,10 +11,10 @@ import { ProcessDataTask, ProcessDataWorkflow } from "./process-data.task";
 @Module({
 	imports: [
 		// Register the worker for the domain.
-		HatchetModule.registerWorker({
-			name: "domain-worker",
-			workflows: [workflowRef(ProcessDataWorkflow), taskRef(ProcessDataTask)],
-		}),
+		HatchetModule.forFeature(
+			workflowRef(ProcessDataWorkflow),
+			taskRef(ProcessDataTask),
+		),
 	],
 	controllers: [DomainController],
 })

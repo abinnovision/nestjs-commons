@@ -12,11 +12,13 @@ import type { Context as HContext } from "@hatchet-dev/typescript-sdk";
 export function createTaskCtx<I>(sdkCtx: HContext<I, any>): TaskCtx<any> {
 	const run = createHostRunForContext(sdkCtx);
 
+	// Cast needed because TASK_MARKER is a phantom type for compile-time detection only
+	// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 	return {
 		fromSDK: sdkCtx,
 		input: sdkCtx.input,
 		run,
-	};
+	} as TaskCtx<any>;
 }
 
 /**
@@ -36,10 +38,12 @@ export function createWorkflowCtx<I>(
 		return await sdkCtx.parentOutput(methodName);
 	};
 
+	// Cast needed because TASK_MARKER is a phantom type for compile-time detection only
+	// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 	return {
 		fromSDK: sdkCtx,
 		input: sdkCtx.input,
 		run,
 		parent,
-	};
+	} as WorkflowCtx<any>;
 }

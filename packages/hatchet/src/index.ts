@@ -6,7 +6,4 @@ export * from "./decorators";
 export * from "./interaction";
 export * from "./ref";
 
-export {
-	HatchetModuleConfig,
-	HatchetModuleWorkerRegistrationConfig,
-} from "./hatchet.module-config";
+export { HatchetModuleConfig } from "./hatchet.module-config";

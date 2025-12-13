@@ -1,41 +1,66 @@
-import { DynamicModule, Module } from "@nestjs/common";
-import { ConfigurableModuleAsyncOptions } from "@nestjs/common/module-utils/interfaces/configurable-module-async-options.interface";
+import {
+	ConfigurableModuleBuilder,
+	DynamicModule,
+	Global,
+	Module,
+} from "@nestjs/common";
+import { DiscoveryModule } from "@nestjs/core";
 
-import { HatchetCoreModule } from "./hatchet-core.module";
+import { Client } from "./client";
+import { DeclarationBuilderService } from "./explorer/declaration-builder.service";
+import { WorkerManagementService } from "./explorer/worker-management.service";
 import {
 	HatchetModuleConfig,
-	HatchetModuleWorkerRegistrationConfig,
+	hatchetModuleConfigToken,
 } from "./hatchet.module-config";
-import { getWorkerOptsToken } from "./internal";
+import { HatchetFeatureRegistration } from "./internal";
+import { hatchetClientFactory } from "./sdk";
 
+import type { AnyCallableRef, AnyHostCtor } from "./ref";
+
+const { ConfigurableModuleClass } =
+	new ConfigurableModuleBuilder<HatchetModuleConfig>({
+		optionsInjectionToken: hatchetModuleConfigToken,
+		moduleName: "HatchetModule",
+	})
+		.setClassMethodName("forRoot")
+		.setExtras({}, (def) => ({ ...def, global: true }))
+		.build();
+
+/**
+ * Module for feature registration.
+ * Used by forFeature() to avoid re-instantiating core providers.
+ */
 @Module({})
-export class HatchetModule {
-	public static forRoot(options: HatchetModuleConfig): DynamicModule {
-		return {
-			module: HatchetModule,
-			imports: [HatchetCoreModule.forRoot(options)],
-		};
-	}
+class HatchetFeatureModule {}
 
-	public static forRootAsync(
-		options: ConfigurableModuleAsyncOptions<HatchetModuleConfig>,
-	): DynamicModule {
-		return {
-			module: HatchetModule,
-			imports: [HatchetCoreModule.forRootAsync(options)],
-		};
-	}
+@Global()
+@Module({
+	imports: [DiscoveryModule],
+	providers: [
+		hatchetClientFactory,
+		Client,
+		DeclarationBuilderService,
+		WorkerManagementService,
+	],
+	exports: [Client],
+})
+export class HatchetModule extends ConfigurableModuleClass {
+	/**
+	 * Registers workflows and tasks for the global worker.
+	 * Call this in feature modules to register their hosts.
+	 */
+	public static forFeature(...refs: AnyCallableRef[]): DynamicModule {
+		const hostProviders: AnyHostCtor[] = refs.map((ref) => ref.host);
 
-	public static registerWorker(
-		options: HatchetModuleWorkerRegistrationConfig,
-	): DynamicModule {
-		const hostProviders = options.workflows.map((workflow) => workflow.host);
-
 		return {
-			module: HatchetModule,
+			module: HatchetFeatureModule,
 			providers: [
-				{ provide: getWorkerOptsToken(options.name), useValue: options },
-				...hostProviders,
+				...(hostProviders as any[]),
+				{
+					provide: HatchetFeatureRegistration,
+					useValue: new HatchetFeatureRegistration(hostProviders),
+				},
 			],
 			exports: hostProviders,
 		};

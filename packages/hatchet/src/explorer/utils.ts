@@ -8,17 +8,16 @@ import {
 import type { HostOpts, TaskOpts, WorkflowTaskOpts } from "../decorators";
 import type { AnyHost } from "../ref";
 import type { Reflector } from "@nestjs/core";
-import type { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import type { MetadataScanner } from "@nestjs/core/metadata-scanner";
 
 /**
  * Retrieves the host metadata from the given target.
  */
 export const getHostMetadata = (
-	target: InstanceWrapper<AnyHost>,
+	target: AnyHost,
 	reflector: Reflector,
 ): HostOpts => {
-	return reflector.get(METADATA_KEY_HOST_OPTS, target.metatype!);
+	return reflector.get(METADATA_KEY_HOST_OPTS, target.constructor);
 };
 
 /**

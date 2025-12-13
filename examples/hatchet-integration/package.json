@@ -13,9 +13,9 @@
 		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}'",
 		"lint:check": "eslint '{src,test}/**/*.{t,j}s{x,}'",
 		"lint:fix": "eslint '{src,test}/**/*.{t,j}s{x,}' --fix",
-		"start": "nest start",
-		"start:debug": "nest start --exec \"node --inspect-brk\" --watch",
-		"start:dev": "nest start --watch"
+		"start": "dotenv -e .env -- nest start",
+		"start:debug": "dotenv -e .env -- nest start --exec \"node --inspect-brk\" --watch",
+		"start:dev": "dotenv -e .env -- nest start --watch"
 	},
 	"lint-staged": {
 		"{src,test}/**/*.{t,j}s{x,}": [
@@ -50,6 +50,7 @@
 		"@types/eslint": "^9.6.1",
 		"@types/express": "^5.0.0",
 		"@types/node": "^22.10.10",
+		"dotenv-cli": "^11.0.0",
 		"eslint": "^9.21.0",
 		"globals": "^15.15.0",
 		"prettier": "^3.5.0",

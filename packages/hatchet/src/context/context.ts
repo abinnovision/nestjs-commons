@@ -3,6 +3,9 @@ import type { HostRunFn } from "../interaction";
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
 import type { Context } from "@hatchet-dev/typescript-sdk";
 
+declare const TASK_MARKER: unique symbol;
+export type TaskMarker = typeof TASK_MARKER;
+
 /**
  * Type for the context when a task is running. This is universal for standalone and workflow tasks.
  * This partially implements the `Context` type from the SDK.
@@ -28,17 +31,20 @@ export interface BaseCtx<I> {
 
 /**
  * Context type of the run of a standalone task.
+ * Branded with TASK_MARKER for compile-time task method detection.
  */
 export type TaskCtx<T extends TaskHost<any>> = BaseCtx<
 	T extends TaskHost<infer I> ? I : never
->;
+> & { [TASK_MARKER]: true };
 
 /**
  * Context type of the run of a workflow task.
+ * Branded with TASK_MARKER for compile-time task method detection.
  */
 export type WorkflowCtx<T extends WorkflowHost<any>> = BaseCtx<
 	T extends WorkflowHost<infer I> ? I : never
 > & {
+	[TASK_MARKER]: true;
 	/**
 	 * Provides the output of a parent task.
 	 */
@@ -46,3 +52,12 @@ export type WorkflowCtx<T extends WorkflowHost<any>> = BaseCtx<
 		method: F,
 	) => Promise<OutputOfTaskFn<F>>;
 };
+
+/**
+ * Context type for helper methods that need access to the task context
+ * but should not be counted as task methods.
+ * This is essentially BaseCtx with the input type extracted from the host.
+ */
+export type HelperCtx<T extends TaskHost<any> | WorkflowHost<any>> = BaseCtx<
+	T extends TaskHost<infer I> ? I : T extends WorkflowHost<infer I> ? I : never
+>;

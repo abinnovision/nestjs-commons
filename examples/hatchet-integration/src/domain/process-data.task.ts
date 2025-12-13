@@ -1,4 +1,5 @@
 import {
+	HelperCtx,
 	Host,
 	Task,
 	TaskCtx,
@@ -14,6 +15,18 @@ import { z } from "zod";
 export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 	@Task({})
 	public async task(ctx: TaskCtx<typeof this>) {
+		console.log("Access to task input", ctx.input.data);
+
+		const helperResult = await this.helper(ctx);
+
+		console.log("Access to helper result", helperResult.result);
+
+		return {
+			result: helperResult.result,
+		};
+	}
+
+	private async helper(ctx: HelperCtx<typeof this>) {
 		return {
 			result: ctx.input.data,
 		};
@@ -66,27 +79,3 @@ export class ProcessDataWorkflow extends workflowHost(
 		};
 	}
 }
-
-// const _refWorkflow = workflowRef(ProcessDataWorkflow);
-// const _refWorkflowTask = workflowTaskRef(ProcessDataWorkflow, "cleanUpData");
-// const _refTask = taskRef(ProcessDataTask);
-//
-// const RefTaskOutput: (typeof _refTask)["__types"]["output"] = {} as any;
-// const RefTaskInput: (typeof _refTask)["__types"]["input"] = {} as any;
-// const RefWorkflowOutput: (typeof _refWorkflow)["__types"]["output"] = {} as any;
-// const RefWorkflowTaskOutput: (typeof _refWorkflowTask)["__types"]["output"] =
-// 	{} as any;
-// const RefWorkflowTaskInput: (typeof _refWorkflowTask)["__types"]["input"] =
-// 	{} as any;
-//
-// console.log([
-// 	RefWorkflowOutput.transformOutputData.resultData,
-// 	RefWorkflowOutput.cleanUpData.output,
-// 	RefWorkflowOutput.processData.processResult,
-// ]);
-//
-// console.log(RefTaskInput.data);
-// console.log(RefTaskOutput.result);
-//
-// console.log(RefWorkflowTaskInput.data);
-// console.log(RefWorkflowTaskOutput.output);

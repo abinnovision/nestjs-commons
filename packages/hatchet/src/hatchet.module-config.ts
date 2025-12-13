@@ -1,4 +1,3 @@
-import type { AnyCallableRef } from "./ref";
 import type { CreateWorkerOpts } from "@hatchet-dev/typescript-sdk";
 import type { ClientConfig } from "@hatchet-dev/typescript-sdk/clients/hatchet-client";
 
@@ -11,12 +10,16 @@ export interface HatchetModuleConfig {
 	 * Certain, internally managed options are omitted.
 	 */
 	config: Partial<Omit<ClientConfig, "logger" | "log_level">>;
-}
 
-export interface HatchetModuleWorkerRegistrationConfig {
-	name: string;
-	options?: Omit<CreateWorkerOpts, "workflows" | "handleKill">;
-	workflows: AnyCallableRef[];
+	/**
+	 * Name of the global worker.
+	 */
+	workerName: string;
+
+	/**
+	 * Optional configuration for the worker.
+	 */
+	workerOpts?: Omit<CreateWorkerOpts, "workflows">;
 }
 
 export const hatchetModuleConfigToken = Symbol("hatchet:module:config");
