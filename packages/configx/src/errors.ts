@@ -38,7 +38,13 @@ const formatIssue = (issue: StandardSchemaV1.Issue): string => {
 /**
  * Base class for all Configx errors.
  */
-export class ConfigxError extends Error {}
+export class ConfigxError extends Error {
+	public constructor(message: string) {
+		super(message);
+
+		this.name = "ConfigxError";
+	}
+}
 
 /**
  * Error thrown when the configuration is invalid.

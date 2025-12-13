@@ -23,7 +23,7 @@ interface ResolveConfigArgs<T extends ConfigxSchema> {
 export const resolveConfig = <T extends ConfigxSchema>(
 	args: ResolveConfigArgs<T>,
 ): StandardSchemaV1.InferOutput<T> => {
-	// The object which will later be parsed by the Zod schema.
+	// The object which will later be parsed by the schema.
 	const parsableObject: { [key: string]: any } = args.resolveEnv();
 
 	const result = args.schema["~standard"].validate(parsableObject);
