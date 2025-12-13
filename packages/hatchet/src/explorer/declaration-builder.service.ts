@@ -11,9 +11,10 @@ import { DirectedGraph } from "directed-graph-typed";
 import { TaskHost, WorkflowHost } from "../abstracts";
 import { createTaskCtx, createWorkflowCtx } from "../context";
 import { WorkflowTaskOpts } from "../decorators";
+import { EVENT_MARKER } from "../events";
 import { METADATA_KEY_WORKFLOW_TASK_OPTS } from "../internal";
-import { getHostAnnotatedMethods, getHostMetadata } from "./utils";
 import { AnyHost } from "../ref";
+import { getHostAnnotatedMethods, getHostMetadata } from "./utils";
 
 @Injectable()
 export class DeclarationBuilderService {
@@ -184,7 +185,7 @@ export class DeclarationBuilderService {
 		// Validate that there is exactly one parameter.
 		if (params.length !== 1) {
 			throw new Error(
-				`TaskHost '${input.constructor.name}' method '${targetMethod}' must have exactly one parameter of type 'CtxTask<typeof this>'`,
+				`TaskHost '${input.constructor.name}' method '${targetMethod}' must have exactly one parameter of type 'TaskCtx<typeof this>'`,
 			);
 		}
 	}
@@ -240,26 +241,43 @@ export class DeclarationBuilderService {
 
 	/**
 	 * Validates and transforms input using the host's schema.
-	 * Returns the transformed input if schema exists, otherwise returns original input.
+	 * Skips validation if input is from an event trigger (contains EVENT_MARKER).
+	 * Event validation is handled by the event's isCtx() method instead.
+	 *
+	 * @returns The transformed input if schema exists, otherwise returns original input.
 	 */
 	private async validateAndTransformInput<I>(
 		host: AnyHost,
 		input: I,
 	): Promise<I> {
+		// Skip validation for event-triggered inputs.
+		// Event validation is handled by the event type-guard.
+		if (
+			typeof input === "object" &&
+			input !== null &&
+			input !== undefined &&
+			EVENT_MARKER in input
+		) {
+			return input;
+		}
+
 		const schema = host.inputSchema();
 
+		// If there is no schema, return the input as-is.
 		if (!schema) {
 			return input;
 		}
 
+		// Validate the input against the schema.
 		const result = await schema["~standard"].validate(input);
 
-		if ("issues" in result && result.issues) {
-			throw new Error(
-				`Input validation failed: ${JSON.stringify(result.issues)}`,
-			);
+		// If the result is successfuly, return the transformed value.
+		if ("value" in result) {
+			return result.value;
 		}
 
-		return (result as { value: I }).value;
+		throw new Error(
+			`Input validation failed: ${JSON.stringify(result.issues)}`,
+		);
 	}
 }

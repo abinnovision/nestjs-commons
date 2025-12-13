@@ -6,6 +6,7 @@ import {
 import { Module } from "@nestjs/common";
 
 import { DomainController } from "./domain.controller";
+import { EventHandlerWorkflow } from "./event-handler.workflow";
 import { ProcessDataTask, ProcessDataWorkflow } from "./process-data.task";
 
 @Module({
@@ -14,6 +15,8 @@ import { ProcessDataTask, ProcessDataWorkflow } from "./process-data.task";
 		HatchetModule.forFeature(
 			workflowRef(ProcessDataWorkflow),
 			taskRef(ProcessDataTask),
+			// Event-triggered workflow
+			workflowRef(EventHandlerWorkflow),
 		),
 	],
 	controllers: [DomainController],
