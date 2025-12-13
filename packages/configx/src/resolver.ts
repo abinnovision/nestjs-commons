@@ -16,9 +16,14 @@ interface ResolveConfigArgs<T extends ConfigxSchema> {
 }
 
 /**
- * Resolves the configuration with the given ConfigxConfig.
+ * Resolves and validates configuration from environment variables using the provided schema.
  *
- * @param args The arguments for the function.
+ * @param args The resolution arguments.
+ * @param args.schema A Standard Schema V1 compatible schema (Zod, ArkType, etc.).
+ * @param args.resolveEnv Function that returns the environment variables object.
+ * @returns The validated and transformed configuration object.
+ * @throws {ConfigxError} If the schema uses asynchronous validation.
+ * @throws {InvalidConfigError} If the environment variables fail schema validation.
  */
 export const resolveConfig = <T extends ConfigxSchema>(
 	args: ResolveConfigArgs<T>,
