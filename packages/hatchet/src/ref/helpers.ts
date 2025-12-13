@@ -1,5 +1,12 @@
+import { METADATA_KEY_HOST_OPTS } from "../internal";
+
 import type { TaskCtx, WorkflowCtx } from "../context";
-import type { TaskRef, WorkflowRef, WorkflowTaskRef } from "./refs";
+import type {
+	AnyCallableRef,
+	TaskRef,
+	WorkflowRef,
+	WorkflowTaskRef,
+} from "./refs";
 import type {
 	AnyTaskInput,
 	AnyTaskOutput,
@@ -54,4 +61,12 @@ export function workflowTaskRef<
 	method: M,
 ): WorkflowTaskRef<AnyTaskInput<C, M>, AnyTaskOutput<C, M>> {
 	return defineRef({ host, method });
+}
+
+/**
+ * Gets the workflow name from a callable reference.
+ */
+export function getRefWorkflowName(ref: AnyCallableRef): string {
+	const hostOpts = Reflect.getMetadata(METADATA_KEY_HOST_OPTS, ref.host);
+	return hostOpts.name;
 }

@@ -1,6 +1,5 @@
 import type { TaskHost, WorkflowHost } from "../abstracts";
 import type { BaseCtx } from "../context";
-import type { HatchetInputType, HatchetOutputType } from "../types";
 
 /**
  * Represents any host instance type.
@@ -30,12 +29,8 @@ export type IsTaskRunnableSignature<
 > = F extends (...args: any[]) => any
 	? Parameters<F> extends [infer CI, ...any[]]
 		? CI extends C
-			? CI extends BaseCtx<infer I>
-				? I extends HatchetInputType
-					? Awaited<ReturnType<F>> extends HatchetOutputType
-						? true
-						: false
-					: false
+			? CI extends BaseCtx<any>
+				? true
 				: false
 			: false
 		: false
@@ -98,9 +93,7 @@ export type WorkflowTasksOutputMap<C extends WorkflowHost<any>> = {
 export type WorkflowOutput<T extends WorkflowHostCtor<any>> =
 	WorkflowTasksOutputMap<InstanceType<T>>;
 
-export type AnyTaskFn<C extends BaseCtx<any>, O extends HatchetOutputType> = (
-	ctx: C,
-) => Promise<O> | O;
+export type AnyTaskFn<C extends BaseCtx<any>, O> = (ctx: C) => Promise<O> | O;
 
 export type OutputOfTaskFn<T extends AnyTaskFn<any, any>> =
 	IsTaskRunnableSignature<T> extends true ? Awaited<ReturnType<T>> : never;

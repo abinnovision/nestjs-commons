@@ -10,6 +10,7 @@ import { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
+import { createTaskCtx, createWorkflowCtx } from "../context";
 import { WorkflowTaskOpts } from "../decorators";
 import { METADATA_KEY_WORKFLOW_TASK_OPTS } from "../internal";
 import { getHostAnnotatedMethods, getHostMetadata } from "./utils";
@@ -41,11 +42,20 @@ export class DeclarationBuilderService {
 		// Get the host opts from the metadata.
 		const hostOpts = getHostMetadata(host, this.reflector);
 
+		// Get the single decorated method name.
+		const decoratedMethods = getHostAnnotatedMethods(
+			host.instance,
+			this.scanner,
+		);
+		const methodName = decoratedMethods[0]!;
+		const proto = Object.getPrototypeOf(host.instance);
+
 		// Construct an unbound declaration for it.
 		const dec = new TaskWorkflowDeclaration({
 			...hostOpts,
-			fn: (input: any, ctx: Context<any>) => {
-				console.log(input, ctx);
+			fn: async (_: unknown, ctx: Context<any>) => {
+				const taskCtx = createTaskCtx(ctx);
+				return await proto[methodName].call(host.instance, taskCtx);
 			},
 		});
 
@@ -100,8 +110,9 @@ export class DeclarationBuilderService {
 				...metadata,
 				name: method,
 				parents: parentsResolved,
-				fn: (input: any, ctx: Context<any>) => {
-					console.log(input, ctx);
+				fn: async (_: unknown, ctx: Context<any>) => {
+					const workflowCtx = createWorkflowCtx(ctx);
+					return await proto[method].call(host.instance, workflowCtx);
 				},
 			});
 

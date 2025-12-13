@@ -1,7 +1,7 @@
 import type { TaskHost, WorkflowHost } from "../abstracts";
+import type { HostRunFn } from "../interaction";
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
-import type { WorkflowCallable } from "../types";
-import type { Context as HContext } from "@hatchet-dev/typescript-sdk";
+import type { Context } from "@hatchet-dev/typescript-sdk";
 
 /**
  * Type for the context when a task is running. This is universal for standalone and workflow tasks.
@@ -13,12 +13,17 @@ export interface BaseCtx<I> {
 	/**
 	 * Provides access to the underlying SDK context.
 	 */
-	fromSDK: HContext<I, any>;
+	fromSDK: Context<I, any>;
 
 	/**
 	 * The input to the task.
 	 */
 	input: I;
+
+	/**
+	 * Function to run other tasks within the context of this task.
+	 */
+	run: HostRunFn;
 }
 
 /**
@@ -26,8 +31,7 @@ export interface BaseCtx<I> {
  */
 export type TaskCtx<T extends TaskHost<any>> = BaseCtx<
 	T extends TaskHost<infer I> ? I : never
-> &
-	WorkflowCallable;
+>;
 
 /**
  * Context type of the run of a workflow task.
@@ -41,4 +45,4 @@ export type WorkflowCtx<T extends WorkflowHost<any>> = BaseCtx<
 	parent: <F extends AnyTaskFn<any, any>>(
 		method: F,
 	) => Promise<OutputOfTaskFn<F>>;
-} & WorkflowCallable;
+};

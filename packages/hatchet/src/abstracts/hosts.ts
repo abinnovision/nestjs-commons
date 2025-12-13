@@ -1,4 +1,4 @@
-import type { HatchetInputType } from "../types";
+import type { InputType } from "@hatchet-dev/typescript-sdk";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**
@@ -9,7 +9,7 @@ export interface InputSchemaProvider<T> {
 	 * Returns the schema for the input of the host.
 	 * If undefined, the input is not validated.
 	 */
-	inputSchema: () => StandardSchemaV1<HatchetInputType, T> | undefined;
+	inputSchema: () => StandardSchemaV1<InputType, T> | undefined;
 }
 
 /**
@@ -55,7 +55,7 @@ export abstract class TaskHost<I> implements InputSchemaProvider<I> {
  *
  * @param input The input schema.
  */
-export function workflowHost<I = HatchetInputType>(
+export function workflowHost<I>(
 	input:
 		| ReturnType<InputSchemaProvider<I>["inputSchema"]>
 		| undefined = undefined,
@@ -74,7 +74,7 @@ export function workflowHost<I = HatchetInputType>(
  *
  * @param input The input schema.
  */
-export function taskHost<I = HatchetInputType>(
+export function taskHost<I>(
 	input:
 		| ReturnType<InputSchemaProvider<I>["inputSchema"]>
 		| undefined = undefined,
