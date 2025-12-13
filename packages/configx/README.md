@@ -2,6 +2,20 @@
 
 Type-safe configuration for NestJS using [Standard Schema](https://standardschema.dev/).
 
+## Goals
+
+- Type-safe configuration from `process.env`
+- Schema-agnostic via Standard Schema (Zod, ArkType, etc.)
+- Minimal NestJS integration (just a provider, no module)
+- Fail-fast validation at startup
+
+## Non-goals
+
+- Multiple config sources (at least not yet)
+- Async schema validation
+- Runtime config reloading
+- Secret management / encryption
+
 ## Installation
 
 ```bash
