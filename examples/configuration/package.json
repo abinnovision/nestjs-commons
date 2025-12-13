@@ -49,6 +49,6 @@
 		"prettier": "^3.7.4",
 		"source-map-support": "^0.5.21",
 		"typescript": "^5.8.2",
-		"unplugin-swc": "^1.5.1"
+		"unplugin-swc": "^1.5.9"
 	}
 }
