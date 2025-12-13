@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v1.1.1...nestjs-configx-v2.0.0) (2025-12-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* simplify configx public api ([#50](https://github.com/abinnovision/nestjs-commons/issues/50))
+
+### Features
+
+* simplify configx public api ([#50](https://github.com/abinnovision/nestjs-commons/issues/50)) ([285e283](https://github.com/abinnovision/nestjs-commons/commit/285e2834ca03fde56375fc4596e4a5c01b171abc))
+
+
+### Bug Fixes
+
+* add documentation and testing for new public api ([#51](https://github.com/abinnovision/nestjs-commons/issues/51)) ([c22099d](https://github.com/abinnovision/nestjs-commons/commit/c22099d4fce7a20feac6d72476305c5e2ef8ec01))
+* support methods in configx implementation class ([#45](https://github.com/abinnovision/nestjs-commons/issues/45)) ([d8f8ead](https://github.com/abinnovision/nestjs-commons/commit/d8f8ead93bbdc648277940b79fc331842dd4e377))
+
 ## [1.1.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v1.1.0...nestjs-configx-v1.1.1) (2025-03-29)
 
 

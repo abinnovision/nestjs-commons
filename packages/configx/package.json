@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "@abinnovision/nestjs-configx",
-	"version": "1.1.1",
+	"version": "2.0.0",
 	"keywords": [
 		"nestjs",
 		"config",
