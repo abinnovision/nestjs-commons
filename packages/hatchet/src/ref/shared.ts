@@ -99,6 +99,54 @@ export type OutputOfTaskFn<T extends AnyTaskFn<any, any>> =
 	IsTaskRunnableSignature<T> extends true ? Awaited<ReturnType<T>> : never;
 
 /**
+ * Converts a union to an intersection. Used for detecting if a type is a union.
+ */
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+	k: infer I,
+) => void
+	? I
+	: never;
+
+/**
+ * Checks if a type is a union (more than one member).
+ */
+type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
+
+/**
+ * Error type for invalid TaskHost - shows as a readable string literal in error messages.
+ */
+export type InvalidTaskHost<Reason extends string> = `Error: ${Reason}`;
+
+/**
+ * Error type for invalid WorkflowHost - shows as a readable string literal in error messages.
+ */
+export type InvalidWorkflowHost<Reason extends string> = `Error: ${Reason}`;
+
+/**
+ * Validates that a TaskHost has exactly one task method.
+ * Returns the host type if valid, or an error type with a descriptive message.
+ */
+export type ValidTaskHost<C extends TaskHostCtor<any>> =
+	ContextMethodKeys<InstanceType<C>, BaseCtx<any>> extends infer K
+		? [K] extends [never]
+			? InvalidTaskHost<"TaskHost must have exactly one method with TaskCtx parameter">
+			: IsUnion<K> extends true
+				? InvalidTaskHost<"TaskHost has multiple task methods - only one is allowed">
+				: C
+		: never;
+
+/**
+ * Validates that a WorkflowHost has at least one workflow task method.
+ * Returns the host type if valid, or an error type with a descriptive message.
+ */
+export type ValidWorkflowHost<C extends WorkflowHostCtor<any>> =
+	ContextMethodKeys<InstanceType<C>, BaseCtx<any>> extends infer K
+		? [K] extends [never]
+			? InvalidWorkflowHost<"WorkflowHost must have at least one method with WorkflowCtx parameter">
+			: C
+		: never;
+
+/**
  * Extracts the single task method key from a TaskHost.
  * Since a TaskHost must have exactly one task method, this resolves to that method's key.
  */

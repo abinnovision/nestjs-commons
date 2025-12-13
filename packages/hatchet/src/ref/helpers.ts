@@ -15,6 +15,8 @@ import type {
 	TaskInput,
 	TaskMethodKey,
 	TaskOutput,
+	ValidTaskHost,
+	ValidWorkflowHost,
 	WorkflowHostCtor,
 	WorkflowInput,
 	WorkflowOutput,
@@ -48,37 +50,29 @@ function findTaskMethod(host: TaskHostCtor<any>): string {
 		return metadata !== undefined;
 	});
 
-	if (taskMethods.length === 0) {
-		throw new Error(
-			`TaskHost '${host.name}' must have exactly one method decorated with @Task()`,
-		);
-	}
-
-	if (taskMethods.length > 1) {
-		throw new Error(
-			`TaskHost '${host.name}' has multiple @Task() methods. Only one is allowed.`,
-		);
-	}
-
 	return taskMethods[0]!;
 }
 
 /**
  * Creates a reference to a task within a {@link TaskHost}.
  * The task method is automatically resolved since a TaskHost has exactly one task.
+ * Compile-time validation ensures the host has exactly one task method.
  */
 export function taskRef<C extends TaskHostCtor<any>>(
-	host: C,
+	host: ValidTaskHost<C>,
 ): TaskRef<C, TaskInput<C>, TaskOutput<C>> {
-	const method = findTaskMethod(host) as TaskMethodKey<C>;
-	return defineRef({ host, method });
+	return defineRef({
+		host,
+		method: findTaskMethod(host as C) as TaskMethodKey<C>,
+	});
 }
 
 /**
  * Creates a reference to a workflow as a {@link WorkflowHost}.
+ * Compile-time validation ensures the host has at least one workflow task method.
  */
 export function workflowRef<C extends WorkflowHostCtor<any>>(
-	host: C,
+	host: ValidWorkflowHost<C>,
 ): WorkflowRef<C, WorkflowInput<C>, WorkflowOutput<C>> {
 	return defineRef({ host });
 }
