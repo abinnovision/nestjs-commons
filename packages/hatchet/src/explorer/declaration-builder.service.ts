@@ -50,7 +50,13 @@ export class DeclarationBuilderService {
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
 			fn: async (_: unknown, ctx: Context<any>) => {
-				const taskCtx = createTaskCtx(ctx);
+				const validatedInput = await this.validateAndTransformInput(
+					host,
+					ctx.input,
+				);
+
+				const taskCtx = createTaskCtx(ctx, validatedInput);
+
 				return await proto[methodName].call(host, taskCtx);
 			},
 		});
@@ -105,7 +111,13 @@ export class DeclarationBuilderService {
 				name: method,
 				parents: parentsResolved,
 				fn: async (_: unknown, ctx: Context<any>) => {
-					const workflowCtx = createWorkflowCtx(ctx);
+					const validatedInput = await this.validateAndTransformInput(
+						host,
+						ctx.input,
+					);
+
+					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
+
 					return await proto[method].call(host, workflowCtx);
 				},
 			});
@@ -224,5 +236,30 @@ export class DeclarationBuilderService {
 		}
 
 		return graph;
+	}
+
+	/**
+	 * Validates and transforms input using the host's schema.
+	 * Returns the transformed input if schema exists, otherwise returns original input.
+	 */
+	private async validateAndTransformInput<I>(
+		host: AnyHost,
+		input: I,
+	): Promise<I> {
+		const schema = host.inputSchema();
+
+		if (!schema) {
+			return input;
+		}
+
+		const result = await schema["~standard"].validate(input);
+
+		if ("issues" in result && result.issues) {
+			throw new Error(
+				`Input validation failed: ${JSON.stringify(result.issues)}`,
+			);
+		}
+
+		return (result as { value: I }).value;
 	}
 }

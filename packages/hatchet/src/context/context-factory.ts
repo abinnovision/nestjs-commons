@@ -8,15 +8,19 @@ import type { Context as HContext } from "@hatchet-dev/typescript-sdk";
  * Creates a TaskCtx from SDK Context for standalone task execution.
  *
  * @param sdkCtx The SDK context.
+ * @param validatedInput Optional validated/transformed input to use instead of raw SDK input.
  */
-export function createTaskCtx<I>(sdkCtx: HContext<I, any>): TaskCtx<any> {
+export function createTaskCtx<I>(
+	sdkCtx: HContext<I, any>,
+	validatedInput?: I,
+): TaskCtx<any> {
 	const run = createHostRunForContext(sdkCtx);
 
 	// Cast needed because TASK_MARKER is a phantom type for compile-time detection only
 	// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 	return {
 		fromSDK: sdkCtx,
-		input: sdkCtx.input,
+		input: validatedInput ?? sdkCtx.input,
 		run,
 	} as TaskCtx<any>;
 }
@@ -25,9 +29,11 @@ export function createTaskCtx<I>(sdkCtx: HContext<I, any>): TaskCtx<any> {
  * Creates a WorkflowCtx from SDK Context for workflow task execution.
  *
  * @param sdkCtx The SDK context.
+ * @param validatedInput Optional validated/transformed input to use instead of raw SDK input.
  */
 export function createWorkflowCtx<I>(
 	sdkCtx: HContext<I, any>,
+	validatedInput?: I,
 ): WorkflowCtx<any> {
 	const run = createHostRunForContext(sdkCtx);
 
@@ -42,7 +48,7 @@ export function createWorkflowCtx<I>(
 	// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 	return {
 		fromSDK: sdkCtx,
-		input: sdkCtx.input,
+		input: validatedInput ?? sdkCtx.input,
 		run,
 		parent,
 	} as WorkflowCtx<any>;
