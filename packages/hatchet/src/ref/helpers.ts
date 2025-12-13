@@ -1,6 +1,6 @@
-import { METADATA_KEY_HOST_OPTS } from "../internal";
+import { METADATA_KEY_HOST_OPTS, METADATA_KEY_TASK_OPTS } from "../internal";
 
-import type { TaskCtx, WorkflowCtx } from "../context";
+import type { WorkflowCtx } from "../context";
 import type {
 	AnyCallableRef,
 	TaskRef,
@@ -12,6 +12,9 @@ import type {
 	AnyTaskOutput,
 	ContextMethodKeys,
 	TaskHostCtor,
+	TaskInput,
+	TaskMethodKey,
+	TaskOutput,
 	WorkflowHostCtor,
 	WorkflowInput,
 	WorkflowOutput,
@@ -32,12 +35,42 @@ const defineRef = (target: object): any => {
 };
 
 /**
- * Creates a reference to a task within a {@link TaskHost}.
+ * Finds the single task method in a TaskHost class by looking for @Task() metadata.
  */
-export function taskRef<
-	C extends TaskHostCtor<any>,
-	M extends ContextMethodKeys<InstanceType<C>, TaskCtx<any>>,
->(host: C, method: M): TaskRef<C, AnyTaskInput<C, M>, AnyTaskOutput<C, M>> {
+function findTaskMethod(host: TaskHostCtor<any>): string {
+	const proto = host.prototype;
+	const methods = Object.getOwnPropertyNames(proto).filter(
+		(name) => name !== "constructor" && typeof proto[name] === "function",
+	);
+
+	const taskMethods = methods.filter((method) => {
+		const metadata = Reflect.getMetadata(METADATA_KEY_TASK_OPTS, proto[method]);
+		return metadata !== undefined;
+	});
+
+	if (taskMethods.length === 0) {
+		throw new Error(
+			`TaskHost '${host.name}' must have exactly one method decorated with @Task()`,
+		);
+	}
+
+	if (taskMethods.length > 1) {
+		throw new Error(
+			`TaskHost '${host.name}' has multiple @Task() methods. Only one is allowed.`,
+		);
+	}
+
+	return taskMethods[0]!;
+}
+
+/**
+ * Creates a reference to a task within a {@link TaskHost}.
+ * The task method is automatically resolved since a TaskHost has exactly one task.
+ */
+export function taskRef<C extends TaskHostCtor<any>>(
+	host: C,
+): TaskRef<C, TaskInput<C>, TaskOutput<C>> {
+	const method = findTaskMethod(host) as TaskMethodKey<C>;
 	return defineRef({ host, method });
 }
 

@@ -22,7 +22,7 @@ import { DomainModule } from "./domain/domain.module";
 		}),
 		HatchetModule.registerWorker({
 			name: "common-worker",
-			workflows: [taskRef(CleanupTask, "task")],
+			workflows: [taskRef(CleanupTask)],
 		}),
 		DomainModule,
 		AdminModule,

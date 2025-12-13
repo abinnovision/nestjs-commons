@@ -9,7 +9,7 @@ export class AdminController {
 
 	@Get()
 	public async cleanup() {
-		return await this.client.run(taskRef(ProcessDataTask, "task"), {
+		return await this.client.run(taskRef(ProcessDataTask), {
 			data: "admin",
 		});
 	}

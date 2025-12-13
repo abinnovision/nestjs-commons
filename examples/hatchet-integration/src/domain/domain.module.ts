@@ -13,10 +13,7 @@ import { ProcessDataTask, ProcessDataWorkflow } from "./process-data.task";
 		// Register the worker for the domain.
 		HatchetModule.registerWorker({
 			name: "domain-worker",
-			workflows: [
-				workflowRef(ProcessDataWorkflow),
-				taskRef(ProcessDataTask, "task"),
-			],
+			workflows: [workflowRef(ProcessDataWorkflow), taskRef(ProcessDataTask)],
 		}),
 	],
 	controllers: [DomainController],

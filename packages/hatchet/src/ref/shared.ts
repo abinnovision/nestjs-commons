@@ -97,3 +97,28 @@ export type AnyTaskFn<C extends BaseCtx<any>, O> = (ctx: C) => Promise<O> | O;
 
 export type OutputOfTaskFn<T extends AnyTaskFn<any, any>> =
 	IsTaskRunnableSignature<T> extends true ? Awaited<ReturnType<T>> : never;
+
+/**
+ * Extracts the single task method key from a TaskHost.
+ * Since a TaskHost must have exactly one task method, this resolves to that method's key.
+ */
+export type TaskMethodKey<T extends TaskHostCtor<any>> = ContextMethodKeys<
+	InstanceType<T>,
+	BaseCtx<any>
+>;
+
+/**
+ * Extracts the input type from the single task method of a TaskHost.
+ */
+export type TaskInput<T extends TaskHostCtor<any>> = AnyTaskInput<
+	T,
+	TaskMethodKey<T>
+>;
+
+/**
+ * Extracts the output type from the single task method of a TaskHost.
+ */
+export type TaskOutput<T extends TaskHostCtor<any>> = AnyTaskOutput<
+	T,
+	TaskMethodKey<T>
+>;

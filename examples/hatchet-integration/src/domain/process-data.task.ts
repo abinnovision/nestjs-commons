@@ -43,7 +43,7 @@ export class ProcessDataWorkflow extends workflowHost(
 		const result = await ctx.parent(this.cleanUpData);
 
 		const runResult = await ctx.run(
-			taskRef(ProcessDataTask, "task"),
+			taskRef(ProcessDataTask),
 			{ data: result.output },
 			{ wait: false },
 		);
@@ -69,7 +69,7 @@ export class ProcessDataWorkflow extends workflowHost(
 
 // const _refWorkflow = workflowRef(ProcessDataWorkflow);
 // const _refWorkflowTask = workflowTaskRef(ProcessDataWorkflow, "cleanUpData");
-// const _refTask = taskRef(ProcessDataTask, "task");
+// const _refTask = taskRef(ProcessDataTask);
 //
 // const RefTaskOutput: (typeof _refTask)["__types"]["output"] = {} as any;
 // const RefTaskInput: (typeof _refTask)["__types"]["input"] = {} as any;
