@@ -1,4 +1,4 @@
-import { ProxyClient, taskRef } from "@abinnovision/nestjs-hatchet";
+import { taskRef } from "@abinnovision/nestjs-hatchet";
 import { Controller, Get } from "@nestjs/common";
 
 import { ProcessDataTask } from "../domain/process-data.task";

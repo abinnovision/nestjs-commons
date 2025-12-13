@@ -8,5 +8,3 @@ export {
 	HatchetModuleConfig,
 	HatchetModuleWorkerRegistrationConfig,
 } from "./hatchet.module-config";
-
-export { ProxyClient } from "./hatchet-client";

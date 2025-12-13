@@ -55,9 +55,9 @@
 		"zod": "^3.24.1"
 	},
 	"dependencies": {
-		"@hatchet-dev/typescript-sdk": "^1.9.3",
+		"@hatchet-dev/typescript-sdk": "^1.10.0",
 		"@standard-schema/spec": "^1.0.0",
-		"directed-graph-typed": "^2.0.4"
+		"directed-graph-typed": "^2.1.0"
 	},
 	"peerDependencies": {
 		"@nestjs/common": "^11.0.0",

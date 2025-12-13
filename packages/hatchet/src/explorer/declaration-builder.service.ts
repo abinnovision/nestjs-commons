@@ -13,6 +13,7 @@ import { TaskHost, WorkflowHost } from "../abstracts";
 import { WorkflowTaskOpts } from "../decorators";
 import { METADATA_KEY_WORKFLOW_TASK_OPTS } from "../internal";
 import { getHostAnnotatedMethods, getHostMetadata } from "./utils";
+import { AnyHost } from "../ref";
 
 @Injectable()
 export class DeclarationBuilderService {
@@ -22,7 +23,7 @@ export class DeclarationBuilderService {
 	) {}
 
 	public async createDeclaration(
-		host: InstanceWrapper<WorkflowHost<any> | TaskHost<any>>,
+		host: InstanceWrapper<AnyHost>,
 	): Promise<WorkflowDeclaration | TaskWorkflowDeclaration> {
 		if (host.instance instanceof WorkflowHost) {
 			return await this.createWorkflow(host as any);

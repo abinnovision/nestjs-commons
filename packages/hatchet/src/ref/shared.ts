@@ -15,16 +15,14 @@ export type AnyHostCtor = WorkflowHostCtor<any> | TaskHostCtor<any>;
 /**
  * Represents a workflow host constructor type.
  */
-export type WorkflowHostCtor<I extends HatchetInputType> = abstract new (
+export type WorkflowHostCtor<I> = abstract new (
 	...args: any[]
 ) => WorkflowHost<I>;
 
 /**
  * Represents a task host constructor type.
  */
-export type TaskHostCtor<I extends HatchetInputType> = abstract new (
-	...args: any[]
-) => TaskHost<I>;
+export type TaskHostCtor<I> = abstract new (...args: any[]) => TaskHost<I>;
 
 export type IsTaskRunnableSignature<
 	F extends (...args: any[]) => any,

@@ -16,10 +16,3 @@ export type HatchetInputType = InputType;
  * Describes the output type for a Hatchet task.
  */
 export type HatchetOutputType = OutputType;
-
-/**
- * Describes the output type for a Hatchet workflow.
- *
- * Keys are the names of the tasks, values are the output types of the tasks.
- */
-export type HatchetWorkflowOutput = Record<string, HatchetOutputType>;

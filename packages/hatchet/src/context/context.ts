@@ -1,30 +1,30 @@
 import type { TaskHost, WorkflowHost } from "../abstracts";
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
-import type { HatchetInputType, WorkflowCallable } from "../types";
+import type { WorkflowCallable } from "../types";
 import type { Context as HContext } from "@hatchet-dev/typescript-sdk";
 
 /**
  * Type for the context when a task is running. This is universal for standalone and workflow tasks.
  * This partially implements the `Context` type from the SDK.
  *
- * @type {HatchetInputType} T The input type of the task.
+ * @template I The input type of the task.
  */
-export interface BaseCtx<T extends HatchetInputType> {
+export interface BaseCtx<I> {
 	/**
 	 * Provides access to the underlying SDK context.
 	 */
-	fromSDK: HContext<T, any>;
+	fromSDK: HContext<I, any>;
 
 	/**
 	 * The input to the task.
 	 */
-	input: T;
+	input: I;
 }
 
 /**
  * Context type of the run of a standalone task.
  */
-export type CtxTask<T extends TaskHost<any>> = BaseCtx<
+export type TaskCtx<T extends TaskHost<any>> = BaseCtx<
 	T extends TaskHost<infer I> ? I : never
 > &
 	WorkflowCallable;
@@ -32,7 +32,7 @@ export type CtxTask<T extends TaskHost<any>> = BaseCtx<
 /**
  * Context type of the run of a workflow task.
  */
-export type CtxWorkflow<T extends WorkflowHost<any>> = BaseCtx<
+export type WorkflowCtx<T extends WorkflowHost<any>> = BaseCtx<
 	T extends WorkflowHost<infer I> ? I : never
 > & {
 	/**

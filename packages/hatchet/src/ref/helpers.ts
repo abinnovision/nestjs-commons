@@ -1,4 +1,4 @@
-import type { CtxTask, CtxWorkflow } from "../context";
+import type { TaskCtx, WorkflowCtx } from "../context";
 import type { TaskRef, WorkflowRef, WorkflowTaskRef } from "./refs";
 import type {
 	AnyTaskInput,
@@ -29,7 +29,7 @@ const defineRef = (target: object): any => {
  */
 export function taskRef<
 	C extends TaskHostCtor<any>,
-	M extends ContextMethodKeys<InstanceType<C>, CtxTask<any>>,
+	M extends ContextMethodKeys<InstanceType<C>, TaskCtx<any>>,
 >(host: C, method: M): TaskRef<C, AnyTaskInput<C, M>, AnyTaskOutput<C, M>> {
 	return defineRef({ host, method });
 }
@@ -48,7 +48,7 @@ export function workflowRef<C extends WorkflowHostCtor<any>>(
  */
 export function workflowTaskRef<
 	C extends WorkflowHostCtor<any>,
-	M extends ContextMethodKeys<InstanceType<C>, CtxWorkflow<any>>,
+	M extends ContextMethodKeys<InstanceType<C>, WorkflowCtx<any>>,
 >(
 	host: C,
 	method: M,

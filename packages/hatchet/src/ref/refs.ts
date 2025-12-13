@@ -3,16 +3,11 @@ import type {
 	TaskHostCtor,
 	WorkflowHostCtor,
 } from "./shared";
-import type { HatchetInputType, HatchetOutputType } from "../types";
 
 /**
  * Reference to a task within a {@link TaskHost}
  */
-export interface TaskRef<
-	C extends TaskHostCtor<any>,
-	I extends HatchetInputType,
-	O extends HatchetOutputType,
-> {
+export interface TaskRef<C extends TaskHostCtor<any>, I, O> {
 	readonly host: C;
 	readonly method: ContextMethodKeys<InstanceType<C>>;
 
@@ -25,11 +20,7 @@ export interface TaskRef<
 /**
  * Reference to a workflow as a {@link WorkflowHost}
  */
-export interface WorkflowRef<
-	C extends WorkflowHostCtor<any>,
-	I extends HatchetInputType,
-	O,
-> {
+export interface WorkflowRef<C extends WorkflowHostCtor<any>, I, O> {
 	readonly host: C;
 
 	readonly __types: {
@@ -41,10 +32,7 @@ export interface WorkflowRef<
 /**
  * Reference to a task within a {@link WorkflowHost}, without the knowledge of the {@link WorkflowHost} itself.
  */
-export interface WorkflowTaskRef<
-	I extends HatchetInputType,
-	O extends HatchetOutputType,
-> {
+export interface WorkflowTaskRef<I, O> {
 	readonly method: string;
 
 	readonly __types: {

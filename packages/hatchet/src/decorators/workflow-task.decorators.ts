@@ -1,6 +1,6 @@
 import { METADATA_KEY_WORKFLOW_TASK_OPTS } from "../internal";
 
-import type { CtxWorkflow } from "../context";
+import type { WorkflowCtx } from "../context";
 import type { ContextMethodKeys, WorkflowHostCtor } from "../ref";
 import type { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
 
@@ -8,7 +8,7 @@ export type WorkflowTaskOpts<C extends WorkflowHostCtor<any>> = Omit<
 	CreateWorkflowTaskOpts,
 	"fn" | "parents" | "name"
 > & {
-	parents?: ContextMethodKeys<InstanceType<C>, CtxWorkflow<any>>[];
+	parents?: ContextMethodKeys<InstanceType<C>, WorkflowCtx<any>>[];
 };
 
 /**
