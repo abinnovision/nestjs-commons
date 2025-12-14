@@ -1,0 +1,280 @@
+import {
+	Context,
+	TaskWorkflowDeclaration,
+	WorkflowDeclaration,
+} from "@hatchet-dev/typescript-sdk";
+import { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
+import { Injectable } from "@nestjs/common";
+import { DirectedGraph } from "directed-graph-typed";
+
+import { TaskHost, WorkflowHost } from "../abstracts";
+import { fromInstance } from "../accessor";
+import { createTaskCtx, createWorkflowCtx } from "../context";
+import { EVENT_MARKER } from "../events";
+import { AnyHost } from "../ref";
+
+@Injectable()
+export class DeclarationBuilderService {
+	/**
+	 * Creates a WorkflowDeclaration or TaskWorkflowDeclaration from the given host.
+	 *
+	 * @param host The host to create a declaration for.
+	 * @returns A WorkflowDeclaration or TaskWorkflowDeclaration.
+	 */
+	public createDeclaration(
+		host: AnyHost,
+	): WorkflowDeclaration | TaskWorkflowDeclaration {
+		if (host instanceof WorkflowHost) {
+			return this.createWorkflow(host);
+		} else {
+			return this.createTaskWorkflow(host);
+		}
+	}
+
+	private createTaskWorkflow(host: TaskHost<any>): TaskWorkflowDeclaration {
+		// First, validate the host.
+		this.validateTaskHost(host);
+
+		const accessor = fromInstance(host);
+
+		// Get the host options from the metadata.
+		const hostOpts = accessor.metadata;
+
+		// Get the single decorated method name.
+		const methodName = accessor.methods[0];
+		if (!methodName) {
+			throw new Error("Could not find method name for TaskHost");
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const proto = Object.getPrototypeOf(host);
+
+		// Construct an unbound declaration for it.
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		return new TaskWorkflowDeclaration({
+			...hostOpts,
+			fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
+				const validatedInput = await this.validateAndTransformInput(
+					host,
+					ctx.input,
+				);
+
+				const taskCtx = createTaskCtx(ctx, validatedInput);
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+				const fn = proto[methodName];
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+				return await fn.call(host, taskCtx);
+			},
+		});
+	}
+
+	private createWorkflow(host: WorkflowHost<any>): WorkflowDeclaration {
+		// First, validate the host.
+		this.validateWorkflowHost(host);
+
+		const accessor = fromInstance(host);
+		const graph = this.buildWorkflowHostGraph(host);
+
+		const hostOpts = accessor.metadata;
+
+		// Construct an unbound declaration for it.
+		const workflowDec = new WorkflowDeclaration({
+			...hostOpts,
+		});
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const proto = Object.getPrototypeOf(host);
+
+		// Mapping of task name to task declaration.
+		const taskDecls = new Map<string, CreateWorkflowTaskOpts>();
+
+		// Topologically sort the graph.
+		// This helps us to initialize the tasks in the correct order and ensure the parents are present.
+		const topoSorted = graph.topologicalSort("key") as string[];
+
+		for (const method of topoSorted) {
+			const metadata = accessor.getWorkflowTaskMeta(method);
+
+			const parentNames: string[] = metadata.parents ?? [];
+
+			const parentsResolved = parentNames.map((parent) => {
+				const parentDecl = taskDecls.get(parent);
+				if (!parentDecl) {
+					throw new Error(
+						`WorkflowHost '${host.constructor.name}' has a task '${method}' that depends on '${parent}', but '${parent}' is not a valid task`,
+					);
+				}
+
+				return parentDecl;
+			});
+
+			const newTaskDecl = workflowDec.task({
+				...metadata,
+				name: method,
+				parents: parentsResolved,
+				fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
+					const validatedInput = await this.validateAndTransformInput(
+						host,
+						ctx.input,
+					);
+
+					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
+
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+					const fn = proto[method];
+
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+					return await fn.call(host, workflowCtx);
+				},
+			});
+
+			taskDecls.set(method, newTaskDecl);
+		}
+
+		return workflowDec;
+	}
+
+	/**
+	 *  Validates the given WorkflowHost with basic sanity checks.
+	 *  This does not return, rather it throws an error if the host is invalid.
+	 *
+	 * @param input The host to validate.
+	 * @private
+	 */
+	private validateWorkflowHost(input: WorkflowHost<any>) {
+		const accessor = fromInstance(input);
+
+		// Validate that there is at least one decorated method.
+		if (accessor.methods.length === 0) {
+			throw new Error(
+				`WorkflowHost '${input.constructor.name}' must have at least one decorated method with @WorkflowTask()`,
+			);
+		}
+	}
+
+	/**
+	 *  Validates the given TaskHost with basic sanity checks.
+	 *  This does not return, rather it throws an error if the host is invalid.
+	 *
+	 * @param input The host to validate.
+	 * @private
+	 */
+	private validateTaskHost(input: TaskHost<any>) {
+		const accessor = fromInstance(input);
+
+		// Validate that there is exactly one decorated method.
+		if (accessor.methods.length !== 1) {
+			throw new Error(
+				`TaskHost '${input.constructor.name}' must have exactly one decorated method with @Task()`,
+			);
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const proto = Object.getPrototypeOf(input);
+
+		const targetMethod = accessor.methods[0];
+		if (!targetMethod) {
+			throw new Error("Could not find method name for TaskHost");
+		}
+
+		// Special metadata key to load the design:paramtypes.
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const params: any[] = Reflect.getMetadata(
+			"design:paramtypes",
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			proto,
+			targetMethod,
+		);
+
+		// Validate that there is exactly one parameter.
+		if (params.length !== 1) {
+			throw new Error(
+				`TaskHost '${input.constructor.name}' method '${targetMethod}' must have exactly one parameter of type 'TaskCtx<typeof this>'`,
+			);
+		}
+	}
+
+	/**
+	 * Builds a directed graph of the workflow host.
+	 * The nodes are the methods of the host, and the edges are the dependencies between the methods.
+	 *
+	 * Note: This validates for cyclic dependencies and throws an
+	 *
+	 * @param host The host to build the graph for.
+	 * @returns The directed graph.
+	 * @private
+	 */
+	private buildWorkflowHostGraph(
+		host: WorkflowHost<any>,
+	): DirectedGraph<string> {
+		const accessor = fromInstance(host);
+
+		// Get all the methods that are decorated with @WorkflowTask().
+		const decoratedMethods = accessor.methods;
+
+		const graph = new DirectedGraph<string>();
+
+		// First, add all the vertices.
+		for (const method of decoratedMethods) {
+			graph.addVertex(method);
+		}
+
+		// Then add all the edges between the vertices.
+		for (const method of decoratedMethods) {
+			const metadata = accessor.getWorkflowTaskMeta(method);
+
+			for (const parent of metadata.parents ?? []) {
+				graph.addEdge(parent, method);
+			}
+		}
+
+		// Validate that there are no circular dependencies.
+		// Per docs of topologicalSort(), it returns undefined if there is a cycle.
+		if (graph.topologicalSort() === undefined) {
+			throw new Error(
+				`WorkflowHost '${host.constructor.name}' has a circular dependency between its tasks`,
+			);
+		}
+
+		return graph;
+	}
+
+	/**
+	 * Validates and transforms input using the host's schema.
+	 * Skips validation if input is from an event trigger (contains EVENT_MARKER).
+	 * Event validation is handled by the event's isCtx() method instead.
+	 *
+	 * @returns The transformed input if schema exists, otherwise returns original input.
+	 */
+	private async validateAndTransformInput(
+		host: AnyHost,
+		input: unknown,
+	): Promise<unknown> {
+		// Skip validation for event-triggered inputs.
+		// Event validation is handled by the event type-guard.
+		if (typeof input === "object" && input !== null && EVENT_MARKER in input) {
+			return input;
+		}
+
+		const schema = host.inputSchema();
+
+		// If there is no schema, return the input as-is.
+		if (!schema) {
+			return input;
+		}
+
+		// Validate the input against the schema.
+		const result = await schema["~standard"].validate(input);
+
+		// If the result is successful, return the transformed value.
+		if ("value" in result) {
+			return result.value;
+		}
+
+		throw new Error(
+			`Input validation failed: ${JSON.stringify(result.issues)}`,
+		);
+	}
+}

@@ -1,0 +1,68 @@
+{
+	"$schema": "https://json.schemastore.org/package.json",
+	"name": "@abinnovision/nestjs-hatchet",
+	"version": "0.0.0",
+	"keywords": [
+		"nestjs",
+		"hatchet"
+	],
+	"repository": {
+		"url": "https://github.com/abinnovision/nestjs-commons"
+	},
+	"license": "Apache-2.0",
+	"author": {
+		"name": "AB INNOVISION GmbH",
+		"email": "info@abinnovision.com",
+		"url": "https://abinnovision.com/"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc --project tsconfig.build.json",
+		"format:check": "prettier --check '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
+		"format:fix": "prettier --write '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
+		"lint:check": "eslint '{{src,test}/**/*,*}.{js,jsx,ts,tsx}'",
+		"lint:fix": "eslint '{{src,test}/**/*,*}.{js,jsx,ts,tsx}' --fix",
+		"test-unit": "vitest --run --coverage --config vitest.config.mts",
+		"test-unit:watch": "vitest --config vitest.config.mts"
+	},
+	"lint-staged": {
+		"src/**/*.{ts,js}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{js,ts,json,json5,yaml,yml,md}": [
+			"prettier --write"
+		]
+	},
+	"prettier": "@abinnovision/prettier-config",
+	"dependencies": {
+		"@hatchet-dev/typescript-sdk": "^1.10.0",
+		"@standard-schema/spec": "^1.0.0",
+		"directed-graph-typed": "^2.1.0"
+	},
+	"devDependencies": {
+		"@abinnovision/eslint-config-base": "^3.0.2",
+		"@abinnovision/prettier-config": "^2.1.5",
+		"@swc/core": "^1.11.5",
+		"eslint": "^9.21.0",
+		"prettier": "^3.5.0",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.1",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.15",
+		"vitest-mock-extended": "^3.1.0",
+		"zod": "^3.24.1"
+	},
+	"peerDependencies": {
+		"@nestjs/common": "^11.0.0",
+		"@nestjs/core": "^11.0.0"
+	}
+}

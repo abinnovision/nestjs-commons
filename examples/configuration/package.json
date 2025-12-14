@@ -45,7 +45,6 @@
 		"@types/express": "^5.0.0",
 		"@types/node": "^22.10.10",
 		"eslint": "^9.39.1",
-		"globals": "^16.5.0",
 		"prettier": "^3.7.4",
 		"source-map-support": "^0.5.21",
 		"typescript": "^5.8.2",
