@@ -48,7 +48,6 @@
 		"@swc/core": "^1.11.5",
 		"arktype": "^2.1.9",
 		"eslint": "^9.39.1",
-		"globals": "^16.5.0",
 		"prettier": "^3.7.4",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
