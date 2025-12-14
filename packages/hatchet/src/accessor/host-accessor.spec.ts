@@ -1,48 +1,38 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
+import {
+	NoMethodsTask,
+	NoMethodsWorkflow,
+	TestTask,
+	TestWorkflow,
+} from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
 import { Host, Task, WorkflowTask } from "../decorators";
 import { fromCtor, fromInstance } from "./host-accessor";
 
 import type { TaskCtx, WorkflowCtx } from "../context";
 
-// TaskHost fixture
-@Host({ name: "test-task" })
-class TestTask extends taskHost(z.object({ data: z.string() })) {
+// TaskHost with specific retries option for getTaskMeta() test
+@Host({ name: "test-task-retries" })
+class TestTaskWithRetries extends taskHost(z.object({ data: z.string() })) {
 	@Task({ retries: 3 })
 	public execute(_ctx: TaskCtx<typeof this>) {
 		return { result: "done" };
 	}
 }
 
-// TaskHost with no decorated methods
-@Host({ name: "no-methods-task" })
-class NoMethodsTask extends taskHost() {
-	public notDecorated() {
-		return {};
-	}
-}
-
-// WorkflowHost fixture
-@Host({ name: "test-workflow", version: "1.0.0" })
-class TestWorkflow extends workflowHost(z.object({ id: z.string() })) {
-	@WorkflowTask<typeof TestWorkflow>({ parents: [] })
+// WorkflowHost with version for metadata test
+@Host({ name: "test-workflow-versioned", version: "1.0.0" })
+class TestWorkflowVersioned extends workflowHost(z.object({ id: z.string() })) {
+	@WorkflowTask<typeof TestWorkflowVersioned>({ parents: [] })
 	public step1(_ctx: WorkflowCtx<typeof this>) {
 		return { step: 1 };
 	}
 
-	@WorkflowTask<typeof TestWorkflow>({ parents: ["step1"] })
+	@WorkflowTask<typeof TestWorkflowVersioned>({ parents: ["step1"] })
 	public step2(_ctx: WorkflowCtx<typeof this>) {
 		return { step: 2 };
-	}
-}
-
-// WorkflowHost with no decorated methods
-@Host({ name: "no-methods-workflow" })
-class NoMethodsWorkflow extends workflowHost() {
-	public notDecorated() {
-		return {};
 	}
 }
 
@@ -87,16 +77,16 @@ describe("host-accessor.ts", () => {
 
 	describe("metadata", () => {
 		it("returns @Host metadata for TaskHost", () => {
-			const accessor = fromCtor(TestTask);
+			const accessor = fromCtor(TestTaskWithRetries);
 
-			expect(accessor.metadata).toEqual({ name: "test-task" });
+			expect(accessor.metadata).toEqual({ name: "test-task-retries" });
 		});
 
 		it("returns @Host metadata for WorkflowHost", () => {
-			const accessor = fromCtor(TestWorkflow);
+			const accessor = fromCtor(TestWorkflowVersioned);
 
 			expect(accessor.metadata).toEqual({
-				name: "test-workflow",
+				name: "test-workflow-versioned",
 				version: "1.0.0",
 			});
 		});
@@ -145,7 +135,7 @@ describe("host-accessor.ts", () => {
 
 	describe("getTaskMeta()", () => {
 		it("returns @Task metadata", () => {
-			const accessor = fromCtor(TestTask);
+			const accessor = fromCtor(TestTaskWithRetries);
 
 			expect(accessor.getTaskMeta("execute")).toEqual({ retries: 3 });
 		});

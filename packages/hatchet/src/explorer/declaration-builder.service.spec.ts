@@ -1,37 +1,24 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { z } from "zod";
 
+import {
+	NoMethodsTask,
+	NoMethodsWorkflow,
+	NoSchemaTask,
+	setParamTypes,
+	TestTask,
+	TestWorkflow,
+} from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
 import { Host, Task, WorkflowTask } from "../decorators";
 import { DeclarationBuilderService } from "./declaration-builder.service";
 
 import type { TaskCtx, WorkflowCtx } from "../context";
 
-// Valid TaskHost fixture
-@Host({ name: "valid-task" })
-class ValidTask extends taskHost(z.object({ data: z.string() })) {
-	@Task({})
-	public execute(ctx: TaskCtx<typeof this>) {
-		return { result: ctx.input.data };
-	}
-}
-// Manually set design:paramtypes for test (vitest may not emit decorator metadata)
-Reflect.defineMetadata(
-	"design:paramtypes",
-	[Object],
-	ValidTask.prototype,
-	"execute",
-);
+// Set design:paramtypes for shared fixtures (vitest may not emit decorator metadata)
+setParamTypes(TestTask.prototype, "execute", [Object]);
+setParamTypes(NoSchemaTask.prototype, "execute", [Object]);
 
-// TaskHost with no decorated methods
-@Host({ name: "no-task-methods" })
-class NoTaskMethods extends taskHost() {
-	public notATask() {
-		return {};
-	}
-}
-
-// TaskHost with multiple decorated methods (invalid)
+// TaskHost with multiple decorated methods (invalid) - test-specific fixture
 @Host({ name: "multiple-task-methods" })
 class MultipleTaskMethods extends taskHost() {
 	@Task({})
@@ -45,29 +32,7 @@ class MultipleTaskMethods extends taskHost() {
 	}
 }
 
-// Valid WorkflowHost fixture
-@Host({ name: "valid-workflow" })
-class ValidWorkflow extends workflowHost(z.object({ id: z.string() })) {
-	@WorkflowTask<typeof ValidWorkflow>({ parents: [] })
-	public step1(_ctx: WorkflowCtx<typeof this>) {
-		return { step: 1 };
-	}
-
-	@WorkflowTask<typeof ValidWorkflow>({ parents: ["step1"] })
-	public step2(_ctx: WorkflowCtx<typeof this>) {
-		return { step: 2 };
-	}
-}
-
-// WorkflowHost with no decorated methods
-@Host({ name: "no-workflow-tasks" })
-class NoWorkflowTasks extends workflowHost() {
-	public notATask() {
-		return {};
-	}
-}
-
-// WorkflowHost with circular dependency
+// WorkflowHost with circular dependency - test-specific fixture
 @Host({ name: "circular-workflow" })
 class CircularWorkflow extends workflowHost() {
 	@WorkflowTask<typeof CircularWorkflow>({ parents: ["step2"] })
@@ -81,22 +46,6 @@ class CircularWorkflow extends workflowHost() {
 	}
 }
 
-// TaskHost without schema (no validation)
-@Host({ name: "no-schema-task" })
-class NoSchemaTask extends taskHost() {
-	@Task({})
-	public execute(_ctx: TaskCtx<typeof this>) {
-		return { result: "no-schema" };
-	}
-}
-// Manually set design:paramtypes for test
-Reflect.defineMetadata(
-	"design:paramtypes",
-	[Object],
-	NoSchemaTask.prototype,
-	"execute",
-);
-
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
 
@@ -106,7 +55,7 @@ describe("declaration-builder.service.ts", () => {
 
 	describe("createDeclaration()", () => {
 		it("creates TaskWorkflowDeclaration for TaskHost", () => {
-			const host = new ValidTask();
+			const host = new TestTask();
 
 			const declaration = service.createDeclaration(host);
 
@@ -114,7 +63,7 @@ describe("declaration-builder.service.ts", () => {
 		});
 
 		it("creates WorkflowDeclaration for WorkflowHost", () => {
-			const host = new ValidWorkflow();
+			const host = new TestWorkflow();
 
 			const declaration = service.createDeclaration(host);
 
@@ -124,7 +73,7 @@ describe("declaration-builder.service.ts", () => {
 
 	describe("taskHost validation", () => {
 		it("throws when TaskHost has no decorated methods", () => {
-			const host = new NoTaskMethods();
+			const host = new NoMethodsTask();
 
 			expect(() => service.createDeclaration(host)).toThrow(
 				/must have exactly one decorated method/,
@@ -142,7 +91,7 @@ describe("declaration-builder.service.ts", () => {
 
 	describe("workflowHost validation", () => {
 		it("throws when WorkflowHost has no decorated methods", () => {
-			const host = new NoWorkflowTasks();
+			const host = new NoMethodsWorkflow();
 
 			expect(() => service.createDeclaration(host)).toThrow(
 				/must have at least one decorated method/,
@@ -160,7 +109,7 @@ describe("declaration-builder.service.ts", () => {
 
 	describe("validateAndTransformInput()", () => {
 		it("skips validation for event-triggered inputs", () => {
-			const host = new ValidTask();
+			const host = new TestTask();
 
 			// Access private method via declaration creation and verify no error thrown
 			// Event-triggered inputs (with EVENT_MARKER) skip schema validation
@@ -169,7 +118,7 @@ describe("declaration-builder.service.ts", () => {
 		});
 
 		it("validates input against schema when present", () => {
-			const host = new ValidTask();
+			const host = new TestTask();
 
 			// The declaration wraps the input validation
 			const declaration = service.createDeclaration(host);
@@ -186,7 +135,7 @@ describe("declaration-builder.service.ts", () => {
 
 	describe("workflow graph building", () => {
 		it("creates declaration with tasks in topological order", () => {
-			const host = new ValidWorkflow();
+			const host = new TestWorkflow();
 
 			const declaration = service.createDeclaration(host);
 
@@ -195,7 +144,7 @@ describe("declaration-builder.service.ts", () => {
 		});
 
 		it("resolves parent task references correctly", () => {
-			const host = new ValidWorkflow();
+			const host = new TestWorkflow();
 
 			const declaration = service.createDeclaration(host);
 

@@ -1,19 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { z } from "zod";
 
 import {
 	createHostRunForAdmin,
 	createHostRunForContext,
 } from "./adapter-factory";
+import { TestTask } from "../../__fixtures__/test-hosts";
 // eslint-disable-next-line vitest/no-mocks-import -- Factory functions, not module mocks
 import { createMockHatchetClient } from "../../__mocks__/hatchet-client.mock";
 // eslint-disable-next-line vitest/no-mocks-import -- Factory functions, not module mocks
 import { createMockSdkContext } from "../../__mocks__/sdk-context.mock";
-import { taskHost } from "../../abstracts";
-import { Host, Task } from "../../decorators";
 import { taskRef } from "../../ref";
 
-import type { TaskCtx } from "../../context";
 import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
 
 /**
@@ -21,15 +18,6 @@ import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-r
  */
 const createMockRunRef = <T>(output: T): WorkflowRunRef<T> =>
 	({ output: Promise.resolve(output) }) as unknown as WorkflowRunRef<T>;
-
-// Test fixture
-@Host({ name: "test-task" })
-class TestTask extends taskHost(z.object({ value: z.number() })) {
-	@Task({})
-	public execute(ctx: TaskCtx<typeof this>) {
-		return { result: ctx.input.value * 2 };
-	}
-}
 
 describe("createHostRunForContext()", () => {
 	let sdkCtx: ReturnType<typeof createMockSdkContext>;
@@ -43,36 +31,36 @@ describe("createHostRunForContext()", () => {
 	it("calls SDK runNoWaitChild with workflow name", async () => {
 		const ref = taskRef(TestTask);
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(
-			createMockRunRef({ result: 20 }),
+			createMockRunRef({ result: "test" }),
 		);
 
-		await runFn(ref, { value: 10 });
+		await runFn(ref, { data: "test" });
 
 		expect(sdkCtx.runNoWaitChild).toHaveBeenCalledWith(
 			"test-task",
-			{ value: 10 },
+			{ data: "test" },
 			undefined,
 		);
 	});
 
 	it("waits for output by default", async () => {
 		const ref = taskRef(TestTask);
-		const expectedOutput = { result: 20 };
+		const expectedOutput = { result: "test" };
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(
 			createMockRunRef(expectedOutput),
 		);
 
-		const result = await runFn(ref, { value: 10 });
+		const result = await runFn(ref, { data: "test" });
 
 		expect(result).toEqual(expectedOutput);
 	});
 
 	it("returns run ref when wait is false", async () => {
 		const ref = taskRef(TestTask);
-		const mockRunRef = createMockRunRef({ result: 20 });
+		const mockRunRef = createMockRunRef({ result: "test" });
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(mockRunRef);
 
-		const result = await runFn(ref, { value: 10 }, { wait: false });
+		const result = await runFn(ref, { data: "test" }, { wait: false });
 
 		expect(result).toBe(mockRunRef);
 	});
@@ -80,24 +68,24 @@ describe("createHostRunForContext()", () => {
 	it("handles array inputs", async () => {
 		const ref = taskRef(TestTask);
 		sdkCtx.runNoWaitChild
-			.mockResolvedValueOnce(createMockRunRef({ result: 20 }))
-			.mockResolvedValueOnce(createMockRunRef({ result: 40 }));
+			.mockResolvedValueOnce(createMockRunRef({ result: "a" }))
+			.mockResolvedValueOnce(createMockRunRef({ result: "b" }));
 
-		const result = await runFn(ref, [{ value: 10 }, { value: 20 }]);
+		const result = await runFn(ref, [{ data: "a" }, { data: "b" }]);
 
 		expect(sdkCtx.runNoWaitChild).toHaveBeenCalledTimes(2);
-		expect(result).toEqual([{ result: 20 }, { result: 40 }]);
+		expect(result).toEqual([{ result: "a" }, { result: "b" }]);
 	});
 
 	it("returns run refs for array inputs when wait is false", async () => {
 		const ref = taskRef(TestTask);
-		const mockRunRef1 = createMockRunRef({ result: 20 });
-		const mockRunRef2 = createMockRunRef({ result: 40 });
+		const mockRunRef1 = createMockRunRef({ result: "a" });
+		const mockRunRef2 = createMockRunRef({ result: "b" });
 		sdkCtx.runNoWaitChild
 			.mockResolvedValueOnce(mockRunRef1)
 			.mockResolvedValueOnce(mockRunRef2);
 
-		const result = await runFn(ref, [{ value: 10 }, { value: 20 }], {
+		const result = await runFn(ref, [{ data: "a" }, { data: "b" }], {
 			wait: false,
 		});
 
@@ -117,36 +105,36 @@ describe("createHostRunForAdmin()", () => {
 	it("calls SDK runNoWait with workflow name", async () => {
 		const ref = taskRef(TestTask);
 		mockClient.runNoWait.mockResolvedValueOnce(
-			createMockRunRef({ result: 20 }),
+			createMockRunRef({ result: "test" }),
 		);
 
-		await runFn(ref, { value: 10 });
+		await runFn(ref, { data: "test" });
 
 		expect(mockClient.runNoWait).toHaveBeenCalledWith(
 			"test-task",
-			{ value: 10 },
+			{ data: "test" },
 			{},
 		);
 	});
 
 	it("waits for output by default", async () => {
 		const ref = taskRef(TestTask);
-		const expectedOutput = { result: 20 };
+		const expectedOutput = { result: "test" };
 		mockClient.runNoWait.mockResolvedValueOnce(
 			createMockRunRef(expectedOutput),
 		);
 
-		const result = await runFn(ref, { value: 10 });
+		const result = await runFn(ref, { data: "test" });
 
 		expect(result).toEqual(expectedOutput);
 	});
 
 	it("returns run ref when wait is false", async () => {
 		const ref = taskRef(TestTask);
-		const mockRunRef = createMockRunRef({ result: 20 });
+		const mockRunRef = createMockRunRef({ result: "test" });
 		mockClient.runNoWait.mockResolvedValueOnce(mockRunRef);
 
-		const result = await runFn(ref, { value: 10 }, { wait: false });
+		const result = await runFn(ref, { data: "test" }, { wait: false });
 
 		expect(result).toBe(mockRunRef);
 	});
@@ -154,12 +142,12 @@ describe("createHostRunForAdmin()", () => {
 	it("handles array inputs", async () => {
 		const ref = taskRef(TestTask);
 		mockClient.runNoWait
-			.mockResolvedValueOnce(createMockRunRef({ result: 20 }))
-			.mockResolvedValueOnce(createMockRunRef({ result: 40 }));
+			.mockResolvedValueOnce(createMockRunRef({ result: "a" }))
+			.mockResolvedValueOnce(createMockRunRef({ result: "b" }));
 
-		const result = await runFn(ref, [{ value: 10 }, { value: 20 }]);
+		const result = await runFn(ref, [{ data: "a" }, { data: "b" }]);
 
 		expect(mockClient.runNoWait).toHaveBeenCalledTimes(2);
-		expect(result).toEqual([{ result: 20 }, { result: 40 }]);
+		expect(result).toEqual([{ result: "a" }, { result: "b" }]);
 	});
 });

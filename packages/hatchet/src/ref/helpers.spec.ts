@@ -1,33 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 
-import { taskHost, workflowHost } from "../abstracts";
-import { Host, Task, WorkflowTask } from "../decorators";
 import { getRefAccessor, taskRef, workflowRef } from "./helpers";
-
-import type { TaskCtx, WorkflowCtx } from "../context";
-
-// Test fixtures
-@Host({ name: "test-task" })
-class TestTask extends taskHost(z.object({ data: z.string() })) {
-	@Task({})
-	public execute(ctx: TaskCtx<typeof this>) {
-		return { result: ctx.input.data };
-	}
-}
-
-@Host({ name: "test-workflow" })
-class TestWorkflow extends workflowHost(z.object({ id: z.string() })) {
-	@WorkflowTask<typeof TestWorkflow>({ parents: [] })
-	public step1(_ctx: WorkflowCtx<typeof this>) {
-		return { step: 1 };
-	}
-
-	@WorkflowTask<typeof TestWorkflow>({ parents: ["step1"] })
-	public step2(_ctx: WorkflowCtx<typeof this>) {
-		return { step: 2 };
-	}
-}
+import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts";
 
 describe("ref/helpers.ts", () => {
 	describe("#taskRef()", () => {
