@@ -1,10 +1,10 @@
-import { hatchetEvent } from "@abinnovision/nestjs-hatchet";
+import { defineEvent } from "@abinnovision/nestjs-hatchet";
 import { z } from "zod";
 
 /**
  * Event emitted when a user is created.
  */
-export const UserCreatedEvent = hatchetEvent(
+export const UserCreatedEvent = defineEvent(
 	"user:created",
 	z.object({
 		userId: z.string(),
@@ -16,7 +16,7 @@ export const UserCreatedEvent = hatchetEvent(
 /**
  * Event emitted when an order is placed.
  */
-export const OrderPlacedEvent = hatchetEvent(
+export const OrderPlacedEvent = defineEvent(
 	"order:placed",
 	z.object({
 		orderId: z.string(),

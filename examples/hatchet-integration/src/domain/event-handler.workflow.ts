@@ -17,7 +17,7 @@ import { OrderPlacedEvent, UserCreatedEvent } from "./events";
 })
 export class EventHandlerWorkflow extends workflowHost() {
 	@WorkflowTask<typeof EventHandlerWorkflow>({ parents: [] })
-	public async handleEvent(ctx: WorkflowCtx<typeof this>) {
+	public handleEvent(ctx: WorkflowCtx<typeof this>) {
 		// Use type guards to determine which event triggered this workflow
 		if (UserCreatedEvent.isCtx(ctx)) {
 			// ctx.input is now typed as { userId, email, createdAt, __event_name }
@@ -33,13 +33,13 @@ export class EventHandlerWorkflow extends workflowHost() {
 		if (OrderPlacedEvent.isCtx(ctx)) {
 			// ctx.input is now typed as { orderId, userId, total, items, __event_name }
 			console.log(
-				`[EventHandler] Order placed: ${ctx.input.orderId} for $${ctx.input.total}`,
+				`[EventHandler] Order placed: ${ctx.input.orderId} for $${String(ctx.input.total)}`,
 			);
 
 			return {
 				eventType: "order:placed" as const,
 				orderId: ctx.input.orderId,
-				message: `Processed order ${ctx.input.orderId} with ${ctx.input.items.length} items`,
+				message: `Processed order ${ctx.input.orderId} with ${String(ctx.input.items.length)} items`,
 			};
 		}
 
@@ -53,6 +53,7 @@ export class EventHandlerWorkflow extends workflowHost() {
 
 	@WorkflowTask<typeof EventHandlerWorkflow>({ parents: ["handleEvent"] })
 	public async notifyUser(ctx: WorkflowCtx<typeof this>) {
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		const parent = await ctx.parent(this.handleEvent);
 
 		console.log(`[EventHandler] Sending notification: ${parent.message}`);

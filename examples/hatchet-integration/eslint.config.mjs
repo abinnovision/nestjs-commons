@@ -1,10 +1,7 @@
-import baseConfig from "@abinnovision/eslint-config-base";
-import typescriptConfig from "@abinnovision/eslint-config-typescript";
-import globals from "globals";
+import { base, configFiles, vitest } from "@abinnovision/eslint-config-base";
+import { defineConfig } from "eslint/config";
 
-/** @type {import("@types/eslint").Linter.FlatConfig[]} */
-export default [
-	...baseConfig,
-	...typescriptConfig,
-	{ files: ["**/*.js"], languageOptions: { globals: globals.node } },
-];
+export default defineConfig([
+	{ extends: [base, vitest] },
+	{ files: ["*.{c,m,}{t,j}s"], extends: [configFiles] },
+]);

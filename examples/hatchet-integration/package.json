@@ -41,7 +41,7 @@
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.0.2",
-		"@abinnovision/eslint-config-typescript": "^2.2.3",
+		"@abinnovision/prettier-config": "^2.1.5",
 		"@nestjs/cli": "^11.0.2",
 		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.5",

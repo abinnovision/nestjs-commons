@@ -14,10 +14,10 @@ import { z } from "zod";
 @Host({ name: "process-data" })
 export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 	@Task({})
-	public async task(ctx: TaskCtx<typeof this>) {
+	public task(ctx: TaskCtx<typeof this>) {
 		console.log("Access to task input", ctx.input.data);
 
-		const helperResult = await this.helper(ctx);
+		const helperResult = this.helper(ctx);
 
 		console.log("Access to helper result", helperResult.result);
 
@@ -26,7 +26,7 @@ export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 		};
 	}
 
-	private async helper(ctx: HelperCtx<typeof this>) {
+	private helper(ctx: HelperCtx<typeof this>) {
 		return {
 			result: ctx.input.data,
 		};
@@ -41,7 +41,7 @@ export class ProcessDataWorkflow extends workflowHost(
 	z.object({ data: z.string() }),
 ) {
 	@WorkflowTask<typeof ProcessDataWorkflow>({ parents: [] })
-	public async cleanUpData(ctx: WorkflowCtx<typeof this>) {
+	public cleanUpData(ctx: WorkflowCtx<typeof this>) {
 		console.log("Access to workflow input", ctx.input);
 
 		return {
@@ -53,6 +53,7 @@ export class ProcessDataWorkflow extends workflowHost(
 	public async processData(ctx: WorkflowCtx<typeof this>) {
 		console.log("Access to workflow input", ctx.input.data);
 
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		const result = await ctx.parent(this.cleanUpData);
 
 		const runResult = await ctx.run(
@@ -72,6 +73,7 @@ export class ProcessDataWorkflow extends workflowHost(
 		parents: ["processData"],
 	})
 	public async transformOutputData(ctx: WorkflowCtx<typeof this>) {
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		const parent = await ctx.parent(this.processData);
 
 		return {

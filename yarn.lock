@@ -30,19 +30,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@abinnovision/eslint-config-typescript@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "@abinnovision/eslint-config-typescript@npm:2.2.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40abinnovision%2Feslint-config-typescript%2F2.2.3%2Fa60d0f76784272e33038bfdef776fee146dd77d4"
-  dependencies:
-    "@typescript-eslint/eslint-plugin": "npm:^8.28.0"
-    "@typescript-eslint/parser": "npm:^8.28.0"
-    eslint-config-alloy: "npm:^5.1.2"
-  peerDependencies:
-    eslint: ^9.0.0
-  checksum: 10c0/a4f7b79ead63d50d67304801247c457b3751e096e831ac23276e6d6b92140e9bf4f44d25652940716080510c607bf2aebff0f491019e5b56ba181a0e0e40222c
-  languageName: node
-  linkType: hard
-
 "@abinnovision/nestjs-configx@workspace:^, @abinnovision/nestjs-configx@workspace:packages/configx":
   version: 0.0.0-use.local
   resolution: "@abinnovision/nestjs-configx@workspace:packages/configx"
@@ -1095,9 +1082,9 @@ __metadata:
   resolution: "@internal/example-hatchet-integration@workspace:examples/hatchet-integration"
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.0.2"
-    "@abinnovision/eslint-config-typescript": "npm:^2.2.3"
     "@abinnovision/nestjs-configx": "workspace:^"
     "@abinnovision/nestjs-hatchet": "workspace:^"
+    "@abinnovision/prettier-config": "npm:^2.1.5"
     "@nestjs/cli": "npm:^11.0.2"
     "@nestjs/common": "npm:^11.0.5"
     "@nestjs/core": "npm:^11.0.5"
@@ -2293,7 +2280,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:8.49.0, @typescript-eslint/eslint-plugin@npm:^8.28.0":
+"@typescript-eslint/eslint-plugin@npm:8.49.0":
   version: 8.49.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.49.0"
   dependencies:
@@ -2313,7 +2300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:8.49.0, @typescript-eslint/parser@npm:^8.28.0":
+"@typescript-eslint/parser@npm:8.49.0":
   version: 8.49.0
   resolution: "@typescript-eslint/parser@npm:8.49.0"
   dependencies:
@@ -4532,40 +4519,6 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 10c0/9497d4dd307d845bd7f75180d8188bb17ea8c151c1edbf6b6717c100e104d629dc2dfb687686181b0f4b7d732c7dfdc4d5e7a8ff72de1b0ca283a75bbb3a9cd9
-  languageName: node
-  linkType: hard
-
-"eslint-config-alloy@npm:^5.1.2":
-  version: 5.1.2
-  resolution: "eslint-config-alloy@npm:5.1.2"
-  peerDependencies:
-    "@babel/eslint-parser": 7.x
-    "@babel/preset-react": 7.x
-    "@typescript-eslint/eslint-plugin": ">=5.55.0"
-    "@typescript-eslint/parser": ">=5.0.0"
-    eslint: ">=8.24.0"
-    eslint-plugin-react: ">=7.31.8"
-    eslint-plugin-vue: ">=9.5.1"
-    typescript: 5.x
-    vue-eslint-parser: 9.x
-  peerDependenciesMeta:
-    "@babel/eslint-parser":
-      optional: true
-    "@babel/preset-react":
-      optional: true
-    "@typescript-eslint/eslint-plugin":
-      optional: true
-    "@typescript-eslint/parser":
-      optional: true
-    eslint-plugin-react:
-      optional: true
-    eslint-plugin-vue:
-      optional: true
-    typescript:
-      optional: true
-    vue-eslint-parser:
-      optional: true
-  checksum: 10c0/6462538609beb04d60ba2c10238d0ad2772c36f9ccff17e45b7bbd904f97cbf33e444b72fe8675ab75250464d6ac2459520e8750b3c08ca5648235449bc80eb4
   languageName: node
   linkType: hard
 
