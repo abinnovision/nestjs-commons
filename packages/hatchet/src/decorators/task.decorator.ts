@@ -1,4 +1,4 @@
-import { METADATA_KEY_TASK_OPTS } from "../internal";
+import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../internal";
 
 import type {
 	CreateBaseWorkflowOpts,
@@ -13,13 +13,11 @@ export type TaskOpts = Omit<
 /**
  * Decorator to mark a method as a Hatchet task.
  */
-export const Task = (_opts: TaskOpts): MethodDecorator => {
-	return (
-		_target: any,
-		_propertyKey: string | symbol,
-		descriptor: TypedPropertyDescriptor<any>,
-	) => {
-		Reflect.defineMetadata(METADATA_KEY_TASK_OPTS, _opts, descriptor.value);
+export const Task = (opts: TaskOpts): MethodDecorator => {
+	return (_target, _propertyKey, descriptor: TypedPropertyDescriptor<any>) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		Reflect.defineMetadata(METADATA_KEY, opts, descriptor.value);
+
 		return descriptor;
 	};
 };

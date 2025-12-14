@@ -1,4 +1,4 @@
-import { METADATA_KEY_HOST_OPTS, METADATA_KEY_TASK_OPTS } from "../internal";
+import { fromCtor } from "../accessor";
 
 import type { WorkflowCtx } from "../context";
 import type {
@@ -8,6 +8,7 @@ import type {
 	WorkflowTaskRef,
 } from "./refs";
 import type {
+	AnyHostCtor,
 	AnyTaskInput,
 	AnyTaskOutput,
 	ContextMethodKeys,
@@ -23,9 +24,10 @@ import type {
 } from "./shared";
 
 /**
- * Defines the "*Ref" types.
+ * Defines the "*Ref" types. This takes any input and adds the __types property.
  */
-const defineRef = (target: object): any => {
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+const defineRef = <R>(target: any): R => {
 	Object.defineProperty(target, "__types", {
 		enumerable: false,
 		get: () => {
@@ -33,25 +35,8 @@ const defineRef = (target: object): any => {
 		},
 	});
 
-	return Object.freeze(target);
+	return Object.freeze(target) as unknown as R;
 };
-
-/**
- * Finds the single task method in a TaskHost class by looking for @Task() metadata.
- */
-function findTaskMethod(host: TaskHostCtor<any>): string {
-	const proto = host.prototype;
-	const methods = Object.getOwnPropertyNames(proto).filter(
-		(name) => name !== "constructor" && typeof proto[name] === "function",
-	);
-
-	const taskMethods = methods.filter((method) => {
-		const metadata = Reflect.getMetadata(METADATA_KEY_TASK_OPTS, proto[method]);
-		return metadata !== undefined;
-	});
-
-	return taskMethods[0]!;
-}
 
 /**
  * Creates a reference to a task within a {@link TaskHost}.
@@ -61,9 +46,11 @@ function findTaskMethod(host: TaskHostCtor<any>): string {
 export function taskRef<C extends TaskHostCtor<any>>(
 	host: ValidTaskHost<C>,
 ): TaskRef<C, TaskInput<C>, TaskOutput<C>> {
-	return defineRef({
+	const accessor = fromCtor(host as C);
+
+	return defineRef<TaskRef<C, TaskInput<C>, TaskOutput<C>>>({
 		host,
-		method: findTaskMethod(host as C) as TaskMethodKey<C>,
+		method: accessor.methods[0] as TaskMethodKey<C>,
 	});
 }
 
@@ -74,7 +61,9 @@ export function taskRef<C extends TaskHostCtor<any>>(
 export function workflowRef<C extends WorkflowHostCtor<any>>(
 	host: ValidWorkflowHost<C>,
 ): WorkflowRef<C, WorkflowInput<C>, WorkflowOutput<C>> {
-	return defineRef({ host });
+	return defineRef<WorkflowRef<C, WorkflowInput<C>, WorkflowOutput<C>>>({
+		host,
+	});
 }
 
 /**
@@ -87,13 +76,15 @@ export function workflowTaskRef<
 	host: C,
 	method: M,
 ): WorkflowTaskRef<AnyTaskInput<C, M>, AnyTaskOutput<C, M>> {
-	return defineRef({ host, method });
+	return defineRef<WorkflowTaskRef<AnyTaskInput<C, M>, AnyTaskOutput<C, M>>>({
+		host,
+		method,
+	});
 }
 
 /**
- * Gets the workflow name from a callable reference.
+ * Gets the HostAccessor from a callable reference.
  */
-export function getRefWorkflowName(ref: AnyCallableRef): string {
-	const hostOpts = Reflect.getMetadata(METADATA_KEY_HOST_OPTS, ref.host);
-	return hostOpts.name;
+export function getRefAccessor(ref: AnyCallableRef) {
+	return fromCtor(ref.host as AnyHostCtor);
 }

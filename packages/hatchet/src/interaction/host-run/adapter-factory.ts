@@ -1,4 +1,4 @@
-import { getRefWorkflowName } from "../../ref";
+import { getRefAccessor } from "../../ref";
 
 import type { HostRunFn, HostRunOpts, HostRunReturn } from "./function-type";
 import type { AnyCallableRef, InputOfRef } from "../../ref";
@@ -19,23 +19,24 @@ export function createHostRunForContext(ctx: Context<any, any>): HostRunFn {
 		input: I,
 		options?: HostRunOpts<W>,
 	): Promise<HostRunReturn<I, R, W>> => {
-		const workflowName = getRefWorkflowName(ref);
+		const workflowName = getRefAccessor(ref).name;
 		const wait = options?.wait ?? true;
 
 		if (Array.isArray(input)) {
-			const results = await Promise.all<WorkflowRunRef<any>>(
-				input.map((i: InputOfRef<R>) =>
+			const results = await Promise.all(
+				(input as InputOfRef<R>[]).map((i: InputOfRef<R>) =>
 					ctx.runNoWaitChild(workflowName, i as any, options),
 				),
 			);
 
 			if (wait) {
 				// Wait for all results to complete before returning.
-				const awaited = await Promise.all(results.map((r) => r.output));
-				return awaited as HostRunReturn<I, R, W>;
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+				return (await Promise.all(results.map((r) => r.output))) as any;
 			}
 
-			return results as unknown as HostRunReturn<I, R, W>;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return results as any;
 		}
 
 		const runRef = await ctx.runNoWaitChild(
@@ -45,10 +46,12 @@ export function createHostRunForContext(ctx: Context<any, any>): HostRunFn {
 		);
 
 		if (wait) {
-			return runRef.output as HostRunReturn<I, R, W>;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return runRef.output as any;
 		}
 
-		return runRef as HostRunReturn<I, R, W>;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		return runRef as any;
 	};
 }
 
@@ -66,23 +69,24 @@ export function createHostRunForAdmin(client: HatchetClient): HostRunFn {
 		input: I,
 		options?: HostRunOpts<W>,
 	): Promise<HostRunReturn<I, R, W>> => {
-		const workflowName = getRefWorkflowName(ref);
+		const workflowName = getRefAccessor(ref).name;
 		const wait = options?.wait ?? true;
 
 		if (Array.isArray(input)) {
 			const results = await Promise.all<WorkflowRunRef<any>>(
-				input.map((i: InputOfRef<R>) =>
+				(input as InputOfRef<R>[]).map((i: InputOfRef<R>) =>
 					client.runNoWait(workflowName, i as any, options ?? {}),
 				),
 			);
 
 			if (wait) {
 				// Wait for all results to complete before returning.
-				const awaited = await Promise.all(results.map((r) => r.output));
-				return awaited as HostRunReturn<I, R, W>;
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+				return (await Promise.all(results.map((r) => r.output))) as any;
 			}
 
-			return results as unknown as HostRunReturn<I, R, W>;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return results as any;
 		}
 
 		const runRef = await client.runNoWait(
@@ -92,9 +96,11 @@ export function createHostRunForAdmin(client: HatchetClient): HostRunFn {
 		);
 
 		if (wait) {
-			return runRef.output as HostRunReturn<I, R, W>;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return runRef.output as any;
 		}
 
-		return runRef as HostRunReturn<I, R, W>;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		return runRef as any;
 	};
 }

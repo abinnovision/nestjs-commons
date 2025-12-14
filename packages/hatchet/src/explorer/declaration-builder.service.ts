@@ -5,52 +5,55 @@ import {
 } from "@hatchet-dev/typescript-sdk";
 import { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
 import { Injectable } from "@nestjs/common";
-import { MetadataScanner, Reflector } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
+import { fromInstance } from "../accessor";
 import { createTaskCtx, createWorkflowCtx } from "../context";
-import { WorkflowTaskOpts } from "../decorators";
 import { EVENT_MARKER } from "../events";
-import { METADATA_KEY_WORKFLOW_TASK_OPTS } from "../internal";
 import { AnyHost } from "../ref";
-import { getHostAnnotatedMethods, getHostMetadata } from "./utils";
 
 @Injectable()
 export class DeclarationBuilderService {
-	public constructor(
-		private readonly scanner: MetadataScanner,
-		private readonly reflector: Reflector,
-	) {}
-
-	public async createDeclaration(
+	/**
+	 * Creates a WorkflowDeclaration or TaskWorkflowDeclaration from the given host.
+	 *
+	 * @param host The host to create a declaration for.
+	 * @returns A WorkflowDeclaration or TaskWorkflowDeclaration.
+	 */
+	public createDeclaration(
 		host: AnyHost,
-	): Promise<WorkflowDeclaration | TaskWorkflowDeclaration> {
+	): WorkflowDeclaration | TaskWorkflowDeclaration {
 		if (host instanceof WorkflowHost) {
-			return await this.createWorkflow(host);
+			return this.createWorkflow(host);
 		} else {
-			return await this.createTaskWorkflow(host);
+			return this.createTaskWorkflow(host);
 		}
 	}
 
-	private async createTaskWorkflow(
-		host: TaskHost<any>,
-	): Promise<TaskWorkflowDeclaration> {
+	private createTaskWorkflow(host: TaskHost<any>): TaskWorkflowDeclaration {
 		// First, validate the host.
-		await this.validateTaskHost(host);
+		this.validateTaskHost(host);
 
-		// Get the host opts from the metadata.
-		const hostOpts = getHostMetadata(host, this.reflector);
+		const accessor = fromInstance(host);
+
+		// Get the host options from the metadata.
+		const hostOpts = accessor.metadata;
 
 		// Get the single decorated method name.
-		const decoratedMethods = getHostAnnotatedMethods(host, this.scanner);
-		const methodName = decoratedMethods[0]!;
+		const methodName = accessor.methods[0];
+		if (!methodName) {
+			throw new Error("Could not find method name for TaskHost");
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const proto = Object.getPrototypeOf(host);
 
 		// Construct an unbound declaration for it.
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
-			fn: async (_: unknown, ctx: Context<any>) => {
+			fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
 				const validatedInput = await this.validateAndTransformInput(
 					host,
 					ctx.input,
@@ -58,26 +61,30 @@ export class DeclarationBuilderService {
 
 				const taskCtx = createTaskCtx(ctx, validatedInput);
 
-				return await proto[methodName].call(host, taskCtx);
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+				const fn = proto[methodName];
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+				return await fn.call(host, taskCtx);
 			},
 		});
 	}
 
-	private async createWorkflow(
-		host: WorkflowHost<any>,
-	): Promise<WorkflowDeclaration> {
+	private createWorkflow(host: WorkflowHost<any>): WorkflowDeclaration {
 		// First, validate the host.
-		await this.validateWorkflowHost(host);
+		this.validateWorkflowHost(host);
 
-		const graph = await this.buildWorkflowHostGraph(host);
+		const accessor = fromInstance(host);
+		const graph = this.buildWorkflowHostGraph(host);
 
-		const hostOpts = getHostMetadata(host, this.reflector);
+		const hostOpts = accessor.metadata;
 
 		// Construct an unbound declaration for it.
 		const workflowDec = new WorkflowDeclaration({
 			...hostOpts,
 		});
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const proto = Object.getPrototypeOf(host);
 
 		// Mapping of task name to task declaration.
@@ -87,14 +94,10 @@ export class DeclarationBuilderService {
 		// This helps us to initialize the tasks in the correct order and ensure the parents are present.
 		const topoSorted = graph.topologicalSort("key") as string[];
 
-		for (let method of topoSorted!) {
-			const ref = proto[method];
-			const metadata = this.reflector.get(
-				METADATA_KEY_WORKFLOW_TASK_OPTS,
-				ref,
-			) as WorkflowTaskOpts<any>;
+		for (const method of topoSorted) {
+			const metadata = accessor.getWorkflowTaskMeta(method);
 
-			const parentNames = metadata.parents ?? [];
+			const parentNames: string[] = metadata.parents ?? [];
 
 			const parentsResolved = parentNames.map((parent) => {
 				const parentDecl = taskDecls.get(parent);
@@ -111,7 +114,7 @@ export class DeclarationBuilderService {
 				...metadata,
 				name: method,
 				parents: parentsResolved,
-				fn: async (_: unknown, ctx: Context<any>) => {
+				fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
 					const validatedInput = await this.validateAndTransformInput(
 						host,
 						ctx.input,
@@ -119,7 +122,11 @@ export class DeclarationBuilderService {
 
 					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
 
-					return await proto[method].call(host, workflowCtx);
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+					const fn = proto[method];
+
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+					return await fn.call(host, workflowCtx);
 				},
 			});
 
@@ -136,19 +143,11 @@ export class DeclarationBuilderService {
 	 * @param input The host to validate.
 	 * @private
 	 */
-	private async validateWorkflowHost(input: WorkflowHost<any>) {
-		const proto = Object.getPrototypeOf(input);
-		const allMethodNames = this.scanner.getAllMethodNames(proto);
-
-		// Find all the methods that are decorated with @WorkflowTask().
-		const decoratedMethods = allMethodNames.filter((method) => {
-			const ref = proto[method];
-			const metadata = this.reflector.get(METADATA_KEY_WORKFLOW_TASK_OPTS, ref);
-			return metadata !== undefined;
-		});
+	private validateWorkflowHost(input: WorkflowHost<any>) {
+		const accessor = fromInstance(input);
 
 		// Validate that there is at least one decorated method.
-		if (decoratedMethods.length === 0) {
+		if (accessor.methods.length === 0) {
 			throw new Error(
 				`WorkflowHost '${input.constructor.name}' must have at least one decorated method with @WorkflowTask()`,
 			);
@@ -162,22 +161,29 @@ export class DeclarationBuilderService {
 	 * @param input The host to validate.
 	 * @private
 	 */
-	private async validateTaskHost(input: TaskHost<any>) {
-		const proto = Object.getPrototypeOf(input);
-		const decoratedMethods = getHostAnnotatedMethods(input, this.scanner);
+	private validateTaskHost(input: TaskHost<any>) {
+		const accessor = fromInstance(input);
 
 		// Validate that there is exactly one decorated method.
-		if (decoratedMethods.length !== 1) {
+		if (accessor.methods.length !== 1) {
 			throw new Error(
 				`TaskHost '${input.constructor.name}' must have exactly one decorated method with @Task()`,
 			);
 		}
 
-		const targetMethod = decoratedMethods[0]!;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const proto = Object.getPrototypeOf(input);
+
+		const targetMethod = accessor.methods[0];
+		if (!targetMethod) {
+			throw new Error("Could not find method name for TaskHost");
+		}
 
 		// Special metadata key to load the design:paramtypes.
-		const params = Reflect.getMetadata(
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const params: any[] = Reflect.getMetadata(
 			"design:paramtypes",
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			proto,
 			targetMethod,
 		);
@@ -200,30 +206,26 @@ export class DeclarationBuilderService {
 	 * @returns The directed graph.
 	 * @private
 	 */
-	private async buildWorkflowHostGraph(
+	private buildWorkflowHostGraph(
 		host: WorkflowHost<any>,
-	): Promise<DirectedGraph<string>> {
-		const proto = Object.getPrototypeOf(host);
+	): DirectedGraph<string> {
+		const accessor = fromInstance(host);
 
 		// Get all the methods that are decorated with @WorkflowTask().
-		const decoratedMethods = getHostAnnotatedMethods(host, this.scanner);
+		const decoratedMethods = accessor.methods;
 
-		const graph = new DirectedGraph();
+		const graph = new DirectedGraph<string>();
 
 		// First, add all the vertices.
-		for (let method of decoratedMethods) {
+		for (const method of decoratedMethods) {
 			graph.addVertex(method);
 		}
 
 		// Then add all the edges between the vertices.
-		for (let method of decoratedMethods) {
-			const ref = proto[method];
-			const metadata = this.reflector.get(
-				METADATA_KEY_WORKFLOW_TASK_OPTS,
-				ref,
-			) as WorkflowTaskOpts<any>;
+		for (const method of decoratedMethods) {
+			const metadata = accessor.getWorkflowTaskMeta(method);
 
-			for (let parent of metadata.parents ?? []) {
+			for (const parent of metadata.parents ?? []) {
 				graph.addEdge(parent, method);
 			}
 		}
@@ -246,18 +248,13 @@ export class DeclarationBuilderService {
 	 *
 	 * @returns The transformed input if schema exists, otherwise returns original input.
 	 */
-	private async validateAndTransformInput<I>(
+	private async validateAndTransformInput(
 		host: AnyHost,
-		input: I,
-	): Promise<I> {
+		input: unknown,
+	): Promise<unknown> {
 		// Skip validation for event-triggered inputs.
 		// Event validation is handled by the event type-guard.
-		if (
-			typeof input === "object" &&
-			input !== null &&
-			input !== undefined &&
-			EVENT_MARKER in input
-		) {
+		if (typeof input === "object" && input !== null && EVENT_MARKER in input) {
 			return input;
 		}
 
@@ -271,7 +268,7 @@ export class DeclarationBuilderService {
 		// Validate the input against the schema.
 		const result = await schema["~standard"].validate(input);
 
-		// If the result is successfuly, return the transformed value.
+		// If the result is successful, return the transformed value.
 		if ("value" in result) {
 			return result.value;
 		}

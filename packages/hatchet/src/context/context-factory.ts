@@ -41,6 +41,8 @@ export function createWorkflowCtx<I>(
 		method: F,
 	): Promise<OutputOfTaskFn<F>> => {
 		const methodName = method.name;
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return await sdkCtx.parentOutput(methodName);
 	};
 

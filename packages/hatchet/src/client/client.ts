@@ -78,7 +78,9 @@ export class Client {
 		inputs: EventInput<E>[],
 		options?: EmitOptions,
 	): Promise<Event[]> {
-		if (inputs.length === 0) return [];
+		if (inputs.length === 0) {
+			return [];
+		}
 
 		const result = await this.client.events.bulkPush(
 			event.name,

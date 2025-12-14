@@ -10,7 +10,7 @@ export type HostOpts = Omit<CreateBaseWorkflowOpts, "on">;
  * Decorator to mark a class as a host (for either a workflow or a task).
  */
 export const Host = (_opts: HostOpts): ClassDecorator => {
-	return (target: any) => {
+	return (target) => {
 		// Make the workflow injectable.
 		Injectable()(target);
 

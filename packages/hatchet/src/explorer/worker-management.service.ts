@@ -37,14 +37,14 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 		const refCount = registrations.reduce((sum, r) => sum + r.refs.length, 0);
 
 		WorkerManagementService.LOGGER.debug(
-			`Found ${refCount} registered workflows/tasks`,
+			`Found ${String(refCount)} registered workflows/tasks`,
 		);
 
 		if (refCount === 0) {
 			return;
 		}
 
-		const declarations = await this.buildDeclarations(registrations);
+		const declarations = this.buildDeclarations(registrations);
 
 		const worker = await this.client.worker(this.config.workerName, {
 			...this.config.workerOpts,
@@ -55,27 +55,20 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 			`Initialized worker '${this.config.workerName}'`,
 		);
 
-		// noinspection ES6MissingAwait
-		worker.start();
+		void worker.start();
 	}
 
 	/**
 	 * Builds declarations from the discovered feature registrations.
 	 */
-	private async buildDeclarations(registrations: HatchetFeatureRegistration[]) {
+	private buildDeclarations(registrations: HatchetFeatureRegistration[]) {
 		const allHosts = registrations.flatMap((it) => it.refs);
 
-		const declarationPromises = allHosts.map((hostToken) => {
+		return allHosts.map((hostToken) => {
 			const host = this.moduleRef.get(hostToken, { strict: false });
-
-			if (!host) {
-				throw new Error("Could not find module for feature registration");
-			}
 
 			return this.declarationBuilder.createDeclaration(host);
 		});
-
-		return await Promise.all(declarationPromises);
 	}
 
 	/**

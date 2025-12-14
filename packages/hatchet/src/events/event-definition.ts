@@ -1,7 +1,7 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**
- * Marker embedded in event payload to identify event type.
+ * Marker embedded in event payload to identify an event type.
  * Used by isCtx() type guard to determine which event triggered the workflow.
  */
 export const EVENT_MARKER = "__event_name";

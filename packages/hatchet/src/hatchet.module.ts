@@ -3,6 +3,7 @@ import {
 	DynamicModule,
 	Global,
 	Module,
+	Provider,
 } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 
@@ -51,12 +52,13 @@ export class HatchetModule extends ConfigurableModuleClass {
 	 * Call this in feature modules to register their hosts.
 	 */
 	public static forFeature(...refs: AnyCallableRef[]): DynamicModule {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-return
 		const hostProviders: AnyHostCtor[] = refs.map((ref) => ref.host);
 
 		return {
 			module: HatchetFeatureModule,
 			providers: [
-				...(hostProviders as any[]),
+				...(hostProviders as Provider[]),
 				{
 					provide: HatchetFeatureRegistration,
 					useValue: new HatchetFeatureRegistration(hostProviders),

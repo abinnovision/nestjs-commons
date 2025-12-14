@@ -69,7 +69,7 @@ export type ContextMethodKeys<
  */
 export type AnyTaskInput<
 	T extends AnyHostCtor,
-	M extends ContextMethodKeys<InstanceType<T>, any>,
+	M extends ContextMethodKeys<InstanceType<T>>,
 > = InstanceType<T>[M] extends (...args: any) => any
 	? Parameters<InstanceType<T>[M]> extends [BaseCtx<infer I>, ...any[]]
 		? I
@@ -81,7 +81,7 @@ export type AnyTaskInput<
  */
 export type AnyTaskOutput<
 	T extends AnyHostCtor,
-	M extends ContextMethodKeys<InstanceType<T>, any>,
+	M extends ContextMethodKeys<InstanceType<T>>,
 > = InstanceType<T>[M] extends (...args: any) => any
 	? Awaited<ReturnType<InstanceType<T>[M]>>
 	: never;
