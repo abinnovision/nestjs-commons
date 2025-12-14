@@ -3,6 +3,10 @@
 	"changelog-path": "CHANGELOG.md",
 	"release-type": "node",
 	"packages": {
-		"packages/configx": {}
+		"packages/configx": {},
+		"packages/hatchet": {
+			"bump-minor-pre-major": false,
+			"bump-patch-for-minor-pre-major": false
+		}
 	}
 }
