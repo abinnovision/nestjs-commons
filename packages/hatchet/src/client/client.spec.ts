@@ -3,11 +3,11 @@ import { z } from "zod";
 
 // eslint-disable-next-line vitest/no-mocks-import
 import { createMockHatchetClient } from "../__mocks__/hatchet-client.mock";
-import { EVENT_MARKER, hatchetEvent } from "../events";
+import { defineEvent, EVENT_MARKER } from "../events";
 import { Client } from "./client";
 
 describe("client/client.ts", () => {
-	const TestEvent = hatchetEvent(
+	const TestEvent = defineEvent(
 		"test:event",
 		z.object({
 			id: z.string(),

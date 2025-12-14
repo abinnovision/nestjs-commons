@@ -13,7 +13,7 @@ export const EVENT_MARKER = "__event_name";
  * @template TName The literal string type of the event name.
  * @template TSchema The StandardSchema type for input validation.
  */
-export class HatchetEventDefinition<
+export class EventDefinition<
 	TName extends string,
 	TSchema extends StandardSchemaV1,
 > {
@@ -90,10 +90,7 @@ export class HatchetEventDefinition<
 /**
  * Any event definition, used for generic constraints.
  */
-export type AnyEventDefinition = HatchetEventDefinition<
-	string,
-	StandardSchemaV1
->;
+export type AnyEventDefinition = EventDefinition<string, StandardSchemaV1>;
 
 /**
  * Extracts the input type from an event definition.
@@ -110,23 +107,22 @@ export type EventOutput<E extends AnyEventDefinition> = E["__types"]["output"];
  *
  * @param name The event name (e.g., "user:created").
  * @param schema A StandardSchema-compatible schema (e.g., Zod schema).
- * @returns A new HatchetEventDefinition instance.
+ * @returns A new EventDefinition instance.
  *
  * @example
  * ```typescript
  * import { z } from "zod";
  *
- * const UserCreatedEvent = hatchetEvent("user:created", z.object({
+ * const UserCreatedEvent = defineEvent("user:created", z.object({
  *   userId: z.string(),
  *   email: z.string().email(),
  * }));
  * ```
  */
-export const hatchetEvent = <
+export const defineEvent = <
 	TName extends string,
 	TSchema extends StandardSchemaV1,
 >(
 	name: TName,
 	schema: TSchema,
-): HatchetEventDefinition<TName, TSchema> =>
-	new HatchetEventDefinition(name, schema);
+): EventDefinition<TName, TSchema> => new EventDefinition(name, schema);

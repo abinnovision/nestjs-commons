@@ -1,40 +1,36 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import {
-	EVENT_MARKER,
-	HatchetEventDefinition,
-	hatchetEvent,
-} from "./event-definition";
+import { defineEvent, EVENT_MARKER, EventDefinition } from "./event-definition";
 
 const testSchema = z.object({
 	userId: z.string(),
 	email: z.string().email(),
 });
 
-describe("hatchetEvent()", () => {
+describe("defineEvent()", () => {
 	it("creates definition with correct name", () => {
-		const event = hatchetEvent("user:created", testSchema);
+		const event = defineEvent("user:created", testSchema);
 
 		expect(event.name).toBe("user:created");
 	});
 
 	it("creates definition with correct schema", () => {
-		const event = hatchetEvent("user:created", testSchema);
+		const event = defineEvent("user:created", testSchema);
 
 		expect(event.schema).toBe(testSchema);
 	});
 
-	it("creates HatchetEventDefinition instance", () => {
-		const event = hatchetEvent("user:created", testSchema);
+	it("creates EventDefinition instance", () => {
+		const event = defineEvent("user:created", testSchema);
 
-		expect(event).toBeInstanceOf(HatchetEventDefinition);
+		expect(event).toBeInstanceOf(EventDefinition);
 	});
 });
 
 describe("#__types", () => {
 	it("throws when accessed at runtime", () => {
-		const event = hatchetEvent("user:created", testSchema);
+		const event = defineEvent("user:created", testSchema);
 
 		expect(() => event.__types).toThrow(
 			"__types is a phantom property for type inference only",
@@ -43,7 +39,7 @@ describe("#__types", () => {
 });
 
 describe("#isCtx()", () => {
-	const event = hatchetEvent("user:created", testSchema);
+	const event = defineEvent("user:created", testSchema);
 
 	it("returns true when context has matching event marker and valid payload", () => {
 		const ctx = {

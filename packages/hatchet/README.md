@@ -107,7 +107,7 @@ Type-safe event definitions with schema validation.
 
 ```typescript
 // Define event
-export const UserCreatedEvent = hatchetEvent(
+export const UserCreatedEvent = defineEvent(
   "user:created",
   z.object({ userId: z.string(), email: z.string().email() }),
 );
