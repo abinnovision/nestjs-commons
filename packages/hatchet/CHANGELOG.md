@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.2.1...nestjs-hatchet-v0.2.2) (2025-12-15)
+
+
+### Bug Fixes
+
+* resolve interceptor using ModuleRef ([#67](https://github.com/abinnovision/nestjs-commons/issues/67)) ([aedb022](https://github.com/abinnovision/nestjs-commons/commit/aedb0223d4b8aa99a967420bf211c176da04a293))
+
 ## [0.2.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.2.0...nestjs-hatchet-v0.2.1) (2025-12-15)
 
 
