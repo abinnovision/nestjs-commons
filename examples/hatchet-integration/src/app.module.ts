@@ -9,7 +9,7 @@ import { DomainModule } from "./domain/domain.module";
 import { LoggingInterceptor } from "./logging-interceptor";
 
 @Module({
-	providers: [AppConfigx, CleanupTask],
+	providers: [AppConfigx, CleanupTask, LoggingInterceptor],
 	imports: [
 		HatchetModule.forRootAsync({
 			inject: [AppConfigx],
@@ -21,7 +21,7 @@ import { LoggingInterceptor } from "./logging-interceptor";
 				},
 				worker: { name: "common-worker" },
 			}),
-			// Pass interceptor classes - module handles provider registration
+			// Interceptor classes
 			interceptors: [LoggingInterceptor],
 		}),
 		HatchetModule.forFeature(taskRef(CleanupTask)),

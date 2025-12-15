@@ -3,7 +3,6 @@ import {
 	DynamicModule,
 	Global,
 	Module,
-	Provider,
 	Type,
 } from "@nestjs/common";
 
@@ -14,8 +13,11 @@ import {
 	HatchetModuleConfig,
 	hatchetModuleConfigToken,
 } from "./hatchet.module-config";
-import { INTERCEPTORS, Interceptor } from "./interceptor";
-import { HatchetFeatureRegistration } from "./internal";
+import { Interceptor } from "./interceptor";
+import {
+	HatchetFeatureRegistration,
+	InterceptorRegistration,
+} from "./internal";
 import { hatchetClientFactory } from "./sdk";
 
 import type { AnyCallableRef, AnyHostCtor } from "./ref";
@@ -39,24 +41,23 @@ const { ConfigurableModuleClass } =
 		.setClassMethodName("forRoot")
 		.setExtras<HatchetModuleExtras>(
 			{ interceptors: undefined },
-			(definition, extras) => {
-				const interceptorProviders: Provider[] = extras.interceptors?.length
-					? [
-							...extras.interceptors,
-							{
-								provide: INTERCEPTORS,
-								useFactory: (...interceptors: Interceptor[]) => interceptors,
-								inject: extras.interceptors,
-							},
-						]
-					: [];
+			(definition, extras) => ({
+				...definition,
+				global: true,
+				providers: [
+					...(definition.providers ?? []),
 
-				return {
-					...definition,
-					global: true,
-					providers: [...(definition.providers ?? []), ...interceptorProviders],
-				};
-			},
+					// Store interceptor class references for later resolution via ModuleRef
+					...(extras.interceptors?.length
+						? [
+								{
+									provide: InterceptorRegistration,
+									useValue: new InterceptorRegistration(extras.interceptors),
+								},
+							]
+						: []),
+				],
+			}),
 		)
 		.build();
 
