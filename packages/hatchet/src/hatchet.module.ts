@@ -6,7 +6,6 @@ import {
 	Provider,
 	Type,
 } from "@nestjs/common";
-import { DiscoveryModule } from "@nestjs/core";
 
 import { Client } from "./client";
 import { EXECUTION_WRAPPER, ExecutionWrapper } from "./execution-wrapper";
@@ -68,7 +67,6 @@ class HatchetFeatureModule {}
 
 @Global()
 @Module({
-	imports: [DiscoveryModule],
 	providers: [
 		hatchetClientFactory,
 		Client,

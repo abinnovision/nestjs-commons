@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import { DiscoveryCompWorkflow, METADATA_KEY_HOST_OPTS } from "../internal";
+import { METADATA_KEY_HOST_OPTS } from "../internal";
 
 import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk";
 
@@ -16,7 +16,6 @@ export const Host = (_opts: HostOpts): ClassDecorator => {
 
 		// Add the workflow options.
 		Reflect.defineMetadata(METADATA_KEY_HOST_OPTS, _opts, target);
-		DiscoveryCompWorkflow()(target);
 
 		return target;
 	};

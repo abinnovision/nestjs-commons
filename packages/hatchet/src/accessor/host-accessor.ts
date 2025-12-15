@@ -10,7 +10,7 @@ import type { HostOpts, TaskOpts, WorkflowTaskOpts } from "../decorators";
 import type { AnyHost, AnyHostCtor } from "../ref";
 
 /**
- * Implementation of the unified host accessor.
+ * Accessor for host metadata and methods.
  */
 class HostAccessor {
 	public constructor(public readonly ctor: AnyHostCtor) {}
