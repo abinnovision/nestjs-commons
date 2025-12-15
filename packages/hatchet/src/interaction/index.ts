@@ -1,1 +1,1 @@
-export * from "./host-run";
+export type { HostRunFn, HostRunOpts, HostRunReturn } from "./host-run";

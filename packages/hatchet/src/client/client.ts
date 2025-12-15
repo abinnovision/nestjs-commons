@@ -7,8 +7,9 @@ import {
 	type AnyEventDefinition,
 	type EventInput,
 } from "../events";
-import { createHostRunForAdmin, HostRunFn } from "../interaction";
+import { createHostRunForAdmin } from "../interaction/host-run/adapter-factory";
 
+import type { HostRunFn } from "../interaction";
 import type { Event } from "@hatchet-dev/typescript-sdk/protoc/events";
 
 /**

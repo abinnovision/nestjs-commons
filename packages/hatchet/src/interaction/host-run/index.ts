@@ -1,2 +1,1 @@
-export * from "./function-type";
-export * from "./adapter-factory";
+export type { HostRunFn, HostRunOpts, HostRunReturn } from "./function-type";
