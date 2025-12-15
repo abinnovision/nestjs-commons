@@ -11,7 +11,7 @@ import {
 } from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
 import { Host, Task, WorkflowTask } from "../decorators";
-import { ExecutionWrapper } from "../execution-wrapper";
+import { Interceptor } from "../interceptor";
 import { DeclarationBuilderService } from "./declaration-builder.service";
 import { BaseCtx } from "../context/context";
 
@@ -49,7 +49,7 @@ class CircularWorkflow extends workflowHost() {
 	}
 }
 
-const noopExecutionWrapper: ExecutionWrapper = mock<ExecutionWrapper>();
+const noopInterceptor: Interceptor = mock<Interceptor>();
 
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
@@ -158,39 +158,48 @@ describe("declaration-builder.service.ts", () => {
 		});
 	});
 
-	describe("execution wrapper", () => {
-		it("calls wrapper.wrap() during task execution", async () => {
-			const serviceWithWrapper = new DeclarationBuilderService(
-				noopExecutionWrapper,
+	describe("interceptor", () => {
+		it("calls interceptor.intercept() during task execution", async () => {
+			const serviceWithInterceptor = new DeclarationBuilderService(
+				noopInterceptor,
 			);
 
-			const declaration = serviceWithWrapper.createDeclaration(new TestTask());
+			const declaration = serviceWithInterceptor.createDeclaration(
+				new TestTask(),
+			);
 
 			const fn = (declaration.definition as any).fn;
 
 			await fn(undefined, { input: { data: "test" } });
 
-			expect(noopExecutionWrapper.wrap).toHaveBeenCalledTimes(1);
-			expect(noopExecutionWrapper.wrap).toHaveBeenCalledWith(
+			expect(noopInterceptor.intercept).toHaveBeenCalledTimes(1);
+			expect(noopInterceptor.intercept).toHaveBeenCalledWith(
 				expect.objectContaining({ input: { data: "test" } }),
 				expect.any(Function),
 			);
 		});
 
-		it("passes correct BaseCtx to wrapper", async () => {
+		it("passes correct BaseCtx to interceptor", async () => {
 			const contextCaptor = captor<BaseCtx<any>>();
-			const mockWrapper = mock<ExecutionWrapper>();
+			const mockInterceptor = mock<Interceptor>();
 
-			const serviceWithWrapper = new DeclarationBuilderService(mockWrapper);
-			const declaration = serviceWithWrapper.createDeclaration(new TestTask());
+			const serviceWithInterceptor = new DeclarationBuilderService(
+				mockInterceptor,
+			);
+			const declaration = serviceWithInterceptor.createDeclaration(
+				new TestTask(),
+			);
 
 			const mockSdkContext = { input: { data: "test" } };
 			const fn = (declaration.definition as any).fn;
 
 			await fn(undefined, mockSdkContext);
 
-			expect(mockWrapper.wrap).toHaveBeenCalledTimes(1);
-			expect(mockWrapper.wrap).toHaveBeenCalledWith(contextCaptor, any());
+			expect(mockInterceptor.intercept).toHaveBeenCalledTimes(1);
+			expect(mockInterceptor.intercept).toHaveBeenCalledWith(
+				contextCaptor,
+				any(),
+			);
 
 			expect(contextCaptor.value).toBeDefined();
 			expect(contextCaptor.value).toMatchObject({
@@ -198,22 +207,26 @@ describe("declaration-builder.service.ts", () => {
 			});
 		});
 
-		it("propagates errors from wrapper", async () => {
-			const mockWrapper: ExecutionWrapper = {
-				wrap: () => {
-					throw new Error("Wrapper error");
+		it("propagates errors from interceptor", async () => {
+			const mockInterceptor: Interceptor = {
+				intercept: () => {
+					throw new Error("Interceptor error");
 				},
 			};
 
-			const serviceWithWrapper = new DeclarationBuilderService(mockWrapper);
-			const declaration = serviceWithWrapper.createDeclaration(new TestTask());
+			const serviceWithInterceptor = new DeclarationBuilderService(
+				mockInterceptor,
+			);
+			const declaration = serviceWithInterceptor.createDeclaration(
+				new TestTask(),
+			);
 
 			const mockSdkContext = { input: { data: "test" } };
 
 			const fn = (declaration.definition as any).fn;
 
 			await expect(fn(undefined, mockSdkContext)).rejects.toThrow(
-				"Wrapper error",
+				"Interceptor error",
 			);
 		});
 	});

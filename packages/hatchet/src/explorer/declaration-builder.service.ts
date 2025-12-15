@@ -11,15 +11,15 @@ import { TaskHost, WorkflowHost } from "../abstracts";
 import { fromInstance } from "../accessor";
 import { BaseCtx, createTaskCtx, createWorkflowCtx } from "../context";
 import { EVENT_MARKER } from "../events";
-import { EXECUTION_WRAPPER, ExecutionWrapper } from "../execution-wrapper";
+import { INTERCEPTOR, Interceptor } from "../interceptor";
 import { AnyHost } from "../ref";
 
 @Injectable()
 export class DeclarationBuilderService {
 	public constructor(
 		@Optional()
-		@Inject(EXECUTION_WRAPPER)
-		private readonly executionWrapper?: ExecutionWrapper,
+		@Inject(INTERCEPTOR)
+		private readonly interceptor?: Interceptor,
 	) {}
 	/**
 	 * Creates a WorkflowDeclaration or TaskWorkflowDeclaration from the given host.
@@ -67,7 +67,7 @@ export class DeclarationBuilderService {
 
 				const taskCtx = createTaskCtx(ctx, validatedInput);
 
-				return await this.executeWithWrapper(taskCtx, async () => {
+				return await this.executeWithInterceptor(taskCtx, async () => {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
 					const fn = proto[methodName];
 
@@ -131,7 +131,7 @@ export class DeclarationBuilderService {
 					// Create the workflow context from the SDK context and validated input.
 					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
 
-					return await this.executeWithWrapper(workflowCtx, async () => {
+					return await this.executeWithInterceptor(workflowCtx, async () => {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
 						const fn = proto[method];
 
@@ -289,18 +289,18 @@ export class DeclarationBuilderService {
 		);
 	}
 	/**
-	 * Executes a function, optionally wrapped by the execution wrapper.
+	 * Executes a function, optionally intercepted by the interceptor.
 	 *
-	 * @param ctx The SDK context.
+	 * @param ctx The context.
 	 * @param fn The function to execute.
 	 * @returns The result of the function.
 	 */
-	private async executeWithWrapper<T>(
+	private async executeWithInterceptor<T>(
 		ctx: BaseCtx<any>,
 		fn: () => Promise<T>,
 	): Promise<T> {
-		if (this.executionWrapper) {
-			return await this.executionWrapper.wrap(ctx, fn);
+		if (this.interceptor) {
+			return await this.interceptor.intercept(ctx, fn);
 		}
 
 		return await fn();

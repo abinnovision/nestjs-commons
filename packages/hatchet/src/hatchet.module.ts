@@ -6,16 +6,15 @@ import {
 	Provider,
 	Type,
 } from "@nestjs/common";
-import { DiscoveryModule } from "@nestjs/core";
 
 import { Client } from "./client";
-import { EXECUTION_WRAPPER, ExecutionWrapper } from "./execution-wrapper";
 import { DeclarationBuilderService } from "./explorer/declaration-builder.service";
 import { WorkerManagementService } from "./explorer/worker-management.service";
 import {
 	HatchetModuleConfig,
 	hatchetModuleConfigToken,
 } from "./hatchet.module-config";
+import { INTERCEPTOR, Interceptor } from "./interceptor";
 import { HatchetFeatureRegistration } from "./internal";
 import { hatchetClientFactory } from "./sdk";
 
@@ -26,9 +25,9 @@ import type { AnyCallableRef, AnyHostCtor } from "./ref";
  */
 interface HatchetModuleExtras {
 	/**
-	 * Optional execution wrapper class to wrap all task/workflow executions.
+	 * Optional interceptor class to intercept all task/workflow executions.
 	 */
-	executionWrapper?: Type<ExecutionWrapper> | undefined;
+	interceptor?: Type<Interceptor> | undefined;
 }
 
 const { ConfigurableModuleClass } =
@@ -38,14 +37,14 @@ const { ConfigurableModuleClass } =
 	})
 		.setClassMethodName("forRoot")
 		.setExtras<HatchetModuleExtras>(
-			{ executionWrapper: undefined },
+			{ interceptor: undefined },
 			(definition, extras) => {
-				const wrapperProviders: Provider[] = extras.executionWrapper
+				const interceptorProviders: Provider[] = extras.interceptor
 					? [
-							extras.executionWrapper,
+							extras.interceptor,
 							{
-								provide: EXECUTION_WRAPPER,
-								useExisting: extras.executionWrapper,
+								provide: INTERCEPTOR,
+								useExisting: extras.interceptor,
 							},
 						]
 					: [];
@@ -53,7 +52,7 @@ const { ConfigurableModuleClass } =
 				return {
 					...definition,
 					global: true,
-					providers: [...(definition.providers ?? []), ...wrapperProviders],
+					providers: [...(definition.providers ?? []), ...interceptorProviders],
 				};
 			},
 		)
@@ -68,7 +67,6 @@ class HatchetFeatureModule {}
 
 @Global()
 @Module({
-	imports: [DiscoveryModule],
 	providers: [
 		hatchetClientFactory,
 		Client,

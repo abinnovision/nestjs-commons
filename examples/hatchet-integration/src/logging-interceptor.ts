@@ -1,15 +1,18 @@
-import { BaseCtx, ExecutionWrapper } from "@abinnovision/nestjs-hatchet";
+import { BaseCtx, Interceptor } from "@abinnovision/nestjs-hatchet";
 import { Injectable, Logger } from "@nestjs/common";
 
 /**
- * Example ExecutionWrapper that logs task execution with timing.
- * Demonstrates how to wrap all task/workflow executions with cross-cutting concerns.
+ * Example Interceptor that logs task execution with timing.
+ * Demonstrates how to intercept all task/workflow executions with cross-cutting concerns.
  */
 @Injectable()
-export class LoggingExecutionWrapper extends ExecutionWrapper {
+export class LoggingInterceptor extends Interceptor {
 	private readonly logger = new Logger("HatchetTask");
 
-	public async wrap<T>(ctx: BaseCtx<any>, next: () => Promise<T>): Promise<T> {
+	public async intercept<T>(
+		ctx: BaseCtx<any>,
+		next: () => Promise<T>,
+	): Promise<T> {
 		const taskName = ctx.fromSDK.taskName();
 		const workflowRunId = ctx.fromSDK.workflowRunId();
 		const startTime = Date.now();

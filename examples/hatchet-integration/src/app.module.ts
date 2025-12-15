@@ -6,7 +6,7 @@ import { AdminModule } from "./admin/admin.module";
 import { AppConfigx } from "./app.configx";
 import { CleanupTask } from "./cleanup.task";
 import { DomainModule } from "./domain/domain.module";
-import { LoggingExecutionWrapper } from "./logging-execution-wrapper";
+import { LoggingInterceptor } from "./logging-interceptor";
 
 @Module({
 	providers: [AppConfigx],
@@ -21,8 +21,8 @@ import { LoggingExecutionWrapper } from "./logging-execution-wrapper";
 				},
 				worker: { name: "common-worker" },
 			}),
-			// Pass the wrapper class - module handles provider registration
-			executionWrapper: LoggingExecutionWrapper,
+			// Pass the interceptor class - module handles provider registration
+			interceptor: LoggingInterceptor,
 		}),
 		HatchetModule.forFeature(taskRef(CleanupTask)),
 		DomainModule,
