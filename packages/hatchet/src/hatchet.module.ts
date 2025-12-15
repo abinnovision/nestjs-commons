@@ -14,7 +14,7 @@ import {
 	HatchetModuleConfig,
 	hatchetModuleConfigToken,
 } from "./hatchet.module-config";
-import { INTERCEPTOR, Interceptor } from "./interceptor";
+import { INTERCEPTORS, Interceptor } from "./interceptor";
 import { HatchetFeatureRegistration } from "./internal";
 import { hatchetClientFactory } from "./sdk";
 
@@ -25,9 +25,10 @@ import type { AnyCallableRef, AnyHostCtor } from "./ref";
  */
 interface HatchetModuleExtras {
 	/**
-	 * Optional interceptor class to intercept all task/workflow executions.
+	 * Optional interceptor classes to intercept all task/workflow executions.
+	 * Interceptors execute in array order (first = outermost).
 	 */
-	interceptor?: Type<Interceptor> | undefined;
+	interceptors?: Type<Interceptor>[] | undefined;
 }
 
 const { ConfigurableModuleClass } =
@@ -37,14 +38,15 @@ const { ConfigurableModuleClass } =
 	})
 		.setClassMethodName("forRoot")
 		.setExtras<HatchetModuleExtras>(
-			{ interceptor: undefined },
+			{ interceptors: undefined },
 			(definition, extras) => {
-				const interceptorProviders: Provider[] = extras.interceptor
+				const interceptorProviders: Provider[] = extras.interceptors?.length
 					? [
-							extras.interceptor,
+							...extras.interceptors,
 							{
-								provide: INTERCEPTOR,
-								useExisting: extras.interceptor,
+								provide: INTERCEPTORS,
+								useFactory: (...interceptors: Interceptor[]) => interceptors,
+								inject: extras.interceptors,
 							},
 						]
 					: [];

@@ -49,7 +49,7 @@ class CircularWorkflow extends workflowHost() {
 	}
 }
 
-const noopInterceptor: Interceptor = mock<Interceptor>();
+const noopInterceptor = mock<Interceptor>();
 
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
@@ -158,13 +158,13 @@ describe("declaration-builder.service.ts", () => {
 		});
 	});
 
-	describe("interceptor", () => {
+	describe("interceptors", () => {
 		it("calls interceptor.intercept() during task execution", async () => {
-			const serviceWithInterceptor = new DeclarationBuilderService(
+			const serviceWithInterceptors = new DeclarationBuilderService([
 				noopInterceptor,
-			);
+			]);
 
-			const declaration = serviceWithInterceptor.createDeclaration(
+			const declaration = serviceWithInterceptors.createDeclaration(
 				new TestTask(),
 			);
 
@@ -183,10 +183,10 @@ describe("declaration-builder.service.ts", () => {
 			const contextCaptor = captor<BaseCtx<any>>();
 			const mockInterceptor = mock<Interceptor>();
 
-			const serviceWithInterceptor = new DeclarationBuilderService(
+			const serviceWithInterceptors = new DeclarationBuilderService([
 				mockInterceptor,
-			);
-			const declaration = serviceWithInterceptor.createDeclaration(
+			]);
+			const declaration = serviceWithInterceptors.createDeclaration(
 				new TestTask(),
 			);
 
@@ -214,10 +214,10 @@ describe("declaration-builder.service.ts", () => {
 				},
 			};
 
-			const serviceWithInterceptor = new DeclarationBuilderService(
+			const serviceWithInterceptors = new DeclarationBuilderService([
 				mockInterceptor,
-			);
-			const declaration = serviceWithInterceptor.createDeclaration(
+			]);
+			const declaration = serviceWithInterceptors.createDeclaration(
 				new TestTask(),
 			);
 
@@ -228,6 +228,46 @@ describe("declaration-builder.service.ts", () => {
 			await expect(fn(undefined, mockSdkContext)).rejects.toThrow(
 				"Interceptor error",
 			);
+		});
+
+		it("chains multiple interceptors in array order (first = outermost)", async () => {
+			const executionOrder: string[] = [];
+
+			const interceptor1: Interceptor = {
+				intercept: async (_ctx, next) => {
+					executionOrder.push("interceptor1-start");
+					const result = await next();
+					executionOrder.push("interceptor1-end");
+					return result;
+				},
+			};
+
+			const interceptor2: Interceptor = {
+				intercept: async (_ctx, next) => {
+					executionOrder.push("interceptor2-start");
+					const result = await next();
+					executionOrder.push("interceptor2-end");
+					return result;
+				},
+			};
+
+			const serviceWithInterceptors = new DeclarationBuilderService([
+				interceptor1,
+				interceptor2,
+			]);
+			const declaration = serviceWithInterceptors.createDeclaration(
+				new TestTask(),
+			);
+
+			const fn = (declaration.definition as any).fn;
+			await fn(undefined, { input: { data: "test" } });
+
+			expect(executionOrder).toEqual([
+				"interceptor1-start",
+				"interceptor2-start",
+				"interceptor2-end",
+				"interceptor1-end",
+			]);
 		});
 	});
 });

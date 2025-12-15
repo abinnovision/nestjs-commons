@@ -1,10 +1,10 @@
 import type { BaseCtx } from "../context";
 
 /**
- * Token for optional interceptor injection.
- * Register a provider with this token to intercept task/workflow execution.
+ * Token for optional interceptors injection.
+ * Register providers with this token to intercept task/workflow execution.
  */
-export const INTERCEPTOR = Symbol("hatchet:interceptor");
+export const INTERCEPTORS = Symbol("hatchet:interceptors");
 
 /**
  * Abstract class for intercepting task/workflow execution.
