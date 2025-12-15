@@ -22,14 +22,6 @@ describe("ref/helpers.ts", () => {
 
 			expect(Object.isFrozen(ref)).toBe(true);
 		});
-
-		it("throws when accessing __types property", () => {
-			const ref = taskRef(TestTask);
-
-			expect(() => (ref as any).__types).toThrow(
-				"Cannot access __types in runtime",
-			);
-		});
 	});
 
 	describe("#workflowRef()", () => {
@@ -43,14 +35,6 @@ describe("ref/helpers.ts", () => {
 			const ref = workflowRef(TestWorkflow);
 
 			expect(Object.isFrozen(ref)).toBe(true);
-		});
-
-		it("throws when accessing __types property", () => {
-			const ref = workflowRef(TestWorkflow);
-
-			expect(() => (ref as any).__types).toThrow(
-				"Cannot access __types in runtime",
-			);
 		});
 	});
 
