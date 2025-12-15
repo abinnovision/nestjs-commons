@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { any, captor, mock } from "vitest-mock-extended";
 
 import {
 	NoMethodsTask,
@@ -10,7 +11,9 @@ import {
 } from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
 import { Host, Task, WorkflowTask } from "../decorators";
+import { ExecutionWrapper } from "../execution-wrapper";
 import { DeclarationBuilderService } from "./declaration-builder.service";
+import { BaseCtx } from "../context/context";
 
 import type { TaskCtx, WorkflowCtx } from "../context";
 
@@ -45,6 +48,8 @@ class CircularWorkflow extends workflowHost() {
 		return { step: 2 };
 	}
 }
+
+const noopExecutionWrapper: ExecutionWrapper = mock<ExecutionWrapper>();
 
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
@@ -150,6 +155,66 @@ describe("declaration-builder.service.ts", () => {
 
 			// If parent resolution failed, an error would be thrown
 			expect(declaration).toBeDefined();
+		});
+	});
+
+	describe("execution wrapper", () => {
+		it("calls wrapper.wrap() during task execution", async () => {
+			const serviceWithWrapper = new DeclarationBuilderService(
+				noopExecutionWrapper,
+			);
+
+			const declaration = serviceWithWrapper.createDeclaration(new TestTask());
+
+			const fn = (declaration.definition as any).fn;
+
+			await fn(undefined, { input: { data: "test" } });
+
+			expect(noopExecutionWrapper.wrap).toHaveBeenCalledTimes(1);
+			expect(noopExecutionWrapper.wrap).toHaveBeenCalledWith(
+				expect.objectContaining({ input: { data: "test" } }),
+				expect.any(Function),
+			);
+		});
+
+		it("passes correct BaseCtx to wrapper", async () => {
+			const contextCaptor = captor<BaseCtx<any>>();
+			const mockWrapper = mock<ExecutionWrapper>();
+
+			const serviceWithWrapper = new DeclarationBuilderService(mockWrapper);
+			const declaration = serviceWithWrapper.createDeclaration(new TestTask());
+
+			const mockSdkContext = { input: { data: "test" } };
+			const fn = (declaration.definition as any).fn;
+
+			await fn(undefined, mockSdkContext);
+
+			expect(mockWrapper.wrap).toHaveBeenCalledTimes(1);
+			expect(mockWrapper.wrap).toHaveBeenCalledWith(contextCaptor, any());
+
+			expect(contextCaptor.value).toBeDefined();
+			expect(contextCaptor.value).toMatchObject({
+				input: { data: "test" },
+			});
+		});
+
+		it("propagates errors from wrapper", async () => {
+			const mockWrapper: ExecutionWrapper = {
+				wrap: () => {
+					throw new Error("Wrapper error");
+				},
+			};
+
+			const serviceWithWrapper = new DeclarationBuilderService(mockWrapper);
+			const declaration = serviceWithWrapper.createDeclaration(new TestTask());
+
+			const mockSdkContext = { input: { data: "test" } };
+
+			const fn = (declaration.definition as any).fn;
+
+			await expect(fn(undefined, mockSdkContext)).rejects.toThrow(
+				"Wrapper error",
+			);
 		});
 	});
 });
