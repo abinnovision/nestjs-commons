@@ -9,10 +9,12 @@ import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
 import { fromInstance } from "../accessor";
-import { BaseCtx, createTaskCtx, createWorkflowCtx } from "../context";
+import { createTaskCtx, createWorkflowCtx } from "../context/context-factory";
 import { EVENT_MARKER } from "../events";
 import { INTERCEPTORS, Interceptor } from "../interceptor";
 import { AnyHost } from "../ref";
+
+import type { BaseCtx } from "../context";
 
 @Injectable()
 export class DeclarationBuilderService {

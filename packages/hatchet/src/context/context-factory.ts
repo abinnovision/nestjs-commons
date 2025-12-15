@@ -1,4 +1,4 @@
-import { createHostRunForContext } from "../interaction";
+import { createHostRunForContext } from "../interaction/host-run/adapter-factory";
 
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
 import type { TaskCtx, WorkflowCtx } from "./context";
