@@ -10,7 +10,8 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/abinnovision/nestjs-commons"
+		"url": "https://github.com/abinnovision/nestjs-commons.git",
+		"directory": "packages/configx"
 	},
 	"license": "Apache-2.0",
 	"author": {
