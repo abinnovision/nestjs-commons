@@ -84,18 +84,16 @@ export class HatchetModule extends ConfigurableModuleClass {
 	 */
 	public static forFeature(...refs: AnyCallableRef[]): DynamicModule {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-return
-		const hostProviders: AnyHostCtor[] = refs.map((ref) => ref.host);
+		const hostRefs: AnyHostCtor[] = refs.map((ref) => ref.host);
 
 		return {
 			module: HatchetFeatureModule,
 			providers: [
-				...(hostProviders as Provider[]),
 				{
 					provide: HatchetFeatureRegistration,
-					useValue: new HatchetFeatureRegistration(hostProviders),
+					useValue: new HatchetFeatureRegistration(hostRefs),
 				},
 			],
-			exports: hostProviders,
 		};
 	}
 }

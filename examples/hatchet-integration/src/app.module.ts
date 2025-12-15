@@ -9,7 +9,7 @@ import { DomainModule } from "./domain/domain.module";
 import { LoggingInterceptor } from "./logging-interceptor";
 
 @Module({
-	providers: [AppConfigx],
+	providers: [AppConfigx, CleanupTask],
 	imports: [
 		HatchetModule.forRootAsync({
 			inject: [AppConfigx],

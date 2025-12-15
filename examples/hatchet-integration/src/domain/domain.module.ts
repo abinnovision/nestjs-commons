@@ -19,6 +19,8 @@ import { ProcessDataTask, ProcessDataWorkflow } from "./process-data.task";
 			workflowRef(EventHandlerWorkflow),
 		),
 	],
+	// Hosts must be provided in the module so their dependencies resolve correctly.
+	providers: [ProcessDataWorkflow, ProcessDataTask, EventHandlerWorkflow],
 	controllers: [DomainController],
 })
 export class DomainModule {}
