@@ -2,6 +2,14 @@ import type { CreateWorkerOpts } from "@hatchet-dev/typescript-sdk";
 import type { ClientConfig } from "@hatchet-dev/typescript-sdk/clients/hatchet-client";
 
 /**
+ * Configuration for the Hatchet worker.
+ */
+type HatchetModuleWorkerConfig = { name: string } & Omit<
+	CreateWorkerOpts,
+	"workflows"
+>;
+
+/**
  * Configuration for the HatchetModule.
  */
 export interface HatchetModuleConfig {
@@ -12,14 +20,10 @@ export interface HatchetModuleConfig {
 	config: Partial<Omit<ClientConfig, "logger" | "log_level">>;
 
 	/**
-	 * Name of the global worker.
+	 * Configuration for the Hatchet worker.
+	 * If undefined, the worker will not be started.
 	 */
-	workerName: string;
-
-	/**
-	 * Optional configuration for the worker.
-	 */
-	workerOpts?: Omit<CreateWorkerOpts, "workflows">;
+	worker: HatchetModuleWorkerConfig | undefined;
 }
 
 export const hatchetModuleConfigToken = Symbol("hatchet:module:config");

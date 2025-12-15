@@ -32,29 +32,37 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 	}
 
 	private async initWorker() {
+		const workerConfiguration = this.config.worker;
+		if (!workerConfiguration) {
+			// If there is no worker configuration, then the worker is disabled.
+			return;
+		}
+
 		const registrations = this.discoverFeatureRegistrations();
 
 		const refCount = registrations.reduce((sum, r) => sum + r.refs.length, 0);
 
 		WorkerManagementService.LOGGER.debug(
-			`Found ${String(refCount)} registered workflows/tasks`,
+			`Found ${String(refCount)} workflows/tasks`,
 		);
 
 		if (refCount === 0) {
 			return;
 		}
 
+		const { name, ...otherWorkerOptions } = workerConfiguration;
 		const declarations = this.buildDeclarations(registrations);
 
-		const worker = await this.client.worker(this.config.workerName, {
-			...this.config.workerOpts,
+		// Initialize and start the worker
+		const worker = await this.client.worker(name, {
+			...otherWorkerOptions,
 			workflows: declarations,
 		});
 
-		WorkerManagementService.LOGGER.debug(
-			`Initialized worker '${this.config.workerName}'`,
-		);
+		WorkerManagementService.LOGGER.debug(`Initialized worker '${name}'`);
 
+		// Start the worker. This is intentionally not awaited as the Promise resolves
+		// only when it's stopped.
 		void worker.start();
 	}
 
