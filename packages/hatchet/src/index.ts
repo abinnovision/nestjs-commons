@@ -4,6 +4,7 @@ export * from "./client";
 export * from "./context";
 export * from "./decorators";
 export * from "./events";
+export * from "./execution-wrapper";
 export * from "./interaction";
 export * from "./ref";
 

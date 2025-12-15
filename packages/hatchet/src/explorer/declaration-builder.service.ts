@@ -4,17 +4,23 @@ import {
 	WorkflowDeclaration,
 } from "@hatchet-dev/typescript-sdk";
 import { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, Optional } from "@nestjs/common";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
 import { fromInstance } from "../accessor";
-import { createTaskCtx, createWorkflowCtx } from "../context";
+import { BaseCtx, createTaskCtx, createWorkflowCtx } from "../context";
 import { EVENT_MARKER } from "../events";
+import { EXECUTION_WRAPPER, ExecutionWrapper } from "../execution-wrapper";
 import { AnyHost } from "../ref";
 
 @Injectable()
 export class DeclarationBuilderService {
+	public constructor(
+		@Optional()
+		@Inject(EXECUTION_WRAPPER)
+		private readonly executionWrapper?: ExecutionWrapper,
+	) {}
 	/**
 	 * Creates a WorkflowDeclaration or TaskWorkflowDeclaration from the given host.
 	 *
@@ -61,11 +67,13 @@ export class DeclarationBuilderService {
 
 				const taskCtx = createTaskCtx(ctx, validatedInput);
 
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-				const fn = proto[methodName];
+				return await this.executeWithWrapper(taskCtx, async () => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+					const fn = proto[methodName];
 
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-				return await fn.call(host, taskCtx);
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+					return await fn.call(host, taskCtx);
+				});
 			},
 		});
 	}
@@ -120,13 +128,16 @@ export class DeclarationBuilderService {
 						ctx.input,
 					);
 
+					// Create the workflow context from the SDK context and validated input.
 					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
 
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-					const fn = proto[method];
+					return await this.executeWithWrapper(workflowCtx, async () => {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+						const fn = proto[method];
 
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-					return await fn.call(host, workflowCtx);
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+						return await fn.call(host, workflowCtx);
+					});
 				},
 			});
 
@@ -276,5 +287,22 @@ export class DeclarationBuilderService {
 		throw new Error(
 			`Input validation failed: ${JSON.stringify(result.issues)}`,
 		);
+	}
+	/**
+	 * Executes a function, optionally wrapped by the execution wrapper.
+	 *
+	 * @param ctx The SDK context.
+	 * @param fn The function to execute.
+	 * @returns The result of the function.
+	 */
+	private async executeWithWrapper<T>(
+		ctx: BaseCtx<any>,
+		fn: () => Promise<T>,
+	): Promise<T> {
+		if (this.executionWrapper) {
+			return await this.executionWrapper.wrap(ctx, fn);
+		}
+
+		return await fn();
 	}
 }
