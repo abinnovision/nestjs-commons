@@ -19,7 +19,7 @@ import { LoggingExecutionWrapper } from "./logging-execution-wrapper";
 					token: config.HATCHET_CLIENT_TOKEN,
 					tls_config: { tls_strategy: "none" },
 				},
-				workerName: "common-worker",
+				worker: { name: "common-worker" },
 			}),
 			// Pass the wrapper class - module handles provider registration
 			executionWrapper: LoggingExecutionWrapper,
