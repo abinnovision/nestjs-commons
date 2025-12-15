@@ -9,6 +9,7 @@
 		"standard-schema"
 	],
 	"repository": {
+		"type": "git",
 		"url": "https://github.com/abinnovision/nestjs-commons"
 	},
 	"license": "Apache-2.0",
