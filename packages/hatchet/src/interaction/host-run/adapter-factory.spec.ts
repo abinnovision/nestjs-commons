@@ -1,17 +1,23 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { mockDeep } from "vitest-mock-extended";
 
 import {
 	createHostRunForAdmin,
 	createHostRunForContext,
 } from "./adapter-factory";
 import { TestTask } from "../../__fixtures__/test-hosts";
-// eslint-disable-next-line vitest/no-mocks-import -- Factory functions, not module mocks
-import { createMockHatchetClient } from "../../__mocks__/hatchet-client.mock";
-// eslint-disable-next-line vitest/no-mocks-import -- Factory functions, not module mocks
-import { createMockSdkContext } from "../../__mocks__/sdk-context.mock";
 import { taskRef } from "../../ref";
 
+import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
+
+const createMockHatchetClient = () => mockDeep<HatchetClient>();
+
+const createMockSdkContext = <I>(input?: I) => {
+	const mock = mockDeep<Context<I, any>>();
+	Object.defineProperty(mock, "input", { value: input, writable: true });
+	return mock;
+};
 
 /**
  * Creates a minimal mock WorkflowRunRef for testing.

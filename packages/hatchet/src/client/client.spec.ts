@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { mockDeep, type DeepMockProxy } from "vitest-mock-extended";
 import { z } from "zod";
 
-// eslint-disable-next-line vitest/no-mocks-import
-import { createMockHatchetClient } from "../__mocks__/hatchet-client.mock";
 import { defineEvent, EVENT_MARKER } from "../events";
 import { Client } from "./client";
+
+import type { HatchetClient } from "@hatchet-dev/typescript-sdk";
 
 describe("client/client.ts", () => {
 	const TestEvent = defineEvent(
@@ -15,11 +16,11 @@ describe("client/client.ts", () => {
 		}),
 	);
 
-	let mockHatchetClient: ReturnType<typeof createMockHatchetClient>;
+	let mockHatchetClient: DeepMockProxy<HatchetClient>;
 	let client: Client;
 
 	beforeEach(() => {
-		mockHatchetClient = createMockHatchetClient();
+		mockHatchetClient = mockDeep<HatchetClient>();
 		// Set up default return values for methods that return nested objects
 		mockHatchetClient.events.bulkPush.mockResolvedValue({ events: [] });
 		client = new Client(mockHatchetClient);

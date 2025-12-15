@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
+import { mockDeep } from "vitest-mock-extended";
 
 import { createTaskCtx, createWorkflowCtx } from "./context-factory";
-// eslint-disable-next-line vitest/no-mocks-import
-import { createMockSdkContext } from "../__mocks__/sdk-context.mock";
+
+import type { Context } from "@hatchet-dev/typescript-sdk";
+
+const createMockSdkContext = <I>(input?: I) => {
+	const mock = mockDeep<Context<I, any>>();
+	Object.defineProperty(mock, "input", { value: input, writable: true });
+	return mock;
+};
 
 describe("createTaskCtx()", () => {
 	it("returns context with input from SDK context", () => {
