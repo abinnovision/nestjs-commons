@@ -1,3 +1,4 @@
+import { ModuleRef } from "@nestjs/core";
 import { beforeEach, describe, expect, it } from "vitest";
 import { any, captor, mock } from "vitest-mock-extended";
 
@@ -10,10 +11,11 @@ import {
 	TestWorkflow,
 } from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
+import { BaseCtx } from "../context/context";
 import { Host, Task, WorkflowTask } from "../decorators";
 import { Interceptor } from "../interceptor";
+import { InterceptorRegistration } from "../internal";
 import { DeclarationBuilderService } from "./declaration-builder.service";
-import { BaseCtx } from "../context/context";
 
 import type { TaskCtx, WorkflowCtx } from "../context";
 
@@ -51,11 +53,34 @@ class CircularWorkflow extends workflowHost() {
 
 const noopInterceptor = mock<Interceptor>();
 
+// Helper to create a mock ModuleRef that returns interceptors
+function createMockModuleRef(interceptorMap: Map<any, Interceptor>): ModuleRef {
+	return {
+		get: (token: any) => interceptorMap.get(token),
+	} as unknown as ModuleRef;
+}
+
+// Helper to create service with interceptors
+function createServiceWithInterceptors(
+	interceptors: Interceptor[],
+): DeclarationBuilderService {
+	// Use Symbol as unique tokens for each interceptor
+	const tokens = interceptors.map(() => Symbol("InterceptorToken") as any);
+	const interceptorMap = new Map<any, Interceptor>();
+	tokens.forEach((token, i) => interceptorMap.set(token, interceptors[i]!));
+
+	const mockModuleRef = createMockModuleRef(interceptorMap);
+	const registration = new InterceptorRegistration(tokens);
+
+	return new DeclarationBuilderService(mockModuleRef, registration);
+}
+
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
 
 	beforeEach(() => {
-		service = new DeclarationBuilderService();
+		const mockModuleRef = createMockModuleRef(new Map());
+		service = new DeclarationBuilderService(mockModuleRef);
 	});
 
 	describe("createDeclaration()", () => {
@@ -160,7 +185,7 @@ describe("declaration-builder.service.ts", () => {
 
 	describe("interceptors", () => {
 		it("calls interceptor.intercept() during task execution", async () => {
-			const serviceWithInterceptors = new DeclarationBuilderService([
+			const serviceWithInterceptors = createServiceWithInterceptors([
 				noopInterceptor,
 			]);
 
@@ -183,7 +208,7 @@ describe("declaration-builder.service.ts", () => {
 			const contextCaptor = captor<BaseCtx<any>>();
 			const mockInterceptor = mock<Interceptor>();
 
-			const serviceWithInterceptors = new DeclarationBuilderService([
+			const serviceWithInterceptors = createServiceWithInterceptors([
 				mockInterceptor,
 			]);
 			const declaration = serviceWithInterceptors.createDeclaration(
@@ -214,7 +239,7 @@ describe("declaration-builder.service.ts", () => {
 				},
 			};
 
-			const serviceWithInterceptors = new DeclarationBuilderService([
+			const serviceWithInterceptors = createServiceWithInterceptors([
 				mockInterceptor,
 			]);
 			const declaration = serviceWithInterceptors.createDeclaration(
@@ -251,7 +276,7 @@ describe("declaration-builder.service.ts", () => {
 				},
 			};
 
-			const serviceWithInterceptors = new DeclarationBuilderService([
+			const serviceWithInterceptors = createServiceWithInterceptors([
 				interceptor1,
 				interceptor2,
 			]);

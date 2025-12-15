@@ -5,24 +5,37 @@ import {
 } from "@hatchet-dev/typescript-sdk";
 import { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
 import { Inject, Injectable, Optional } from "@nestjs/common";
+import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
 import { fromInstance } from "../accessor";
 import { createTaskCtx, createWorkflowCtx } from "../context/context-factory";
 import { EVENT_MARKER } from "../events";
-import { INTERCEPTORS, Interceptor } from "../interceptor";
+import { Interceptor } from "../interceptor";
+import { InterceptorRegistration } from "../internal";
 import { AnyHost } from "../ref";
 
 import type { BaseCtx } from "../context";
 
 @Injectable()
 export class DeclarationBuilderService {
+	private readonly interceptors: Interceptor[];
+
 	public constructor(
+		private readonly moduleRef: ModuleRef,
 		@Optional()
-		@Inject(INTERCEPTORS)
-		private readonly interceptors?: Interceptor[],
-	) {}
+		@Inject(InterceptorRegistration)
+		private readonly interceptorRegistration?: InterceptorRegistration,
+	) {
+		// Try to resolve the refs to the instances.
+		const resolvedRefs = this.interceptorRegistration?.refs.map((token) =>
+			this.moduleRef.get(token, { strict: false }),
+		);
+
+		this.interceptors = resolvedRefs ?? [];
+	}
+
 	/**
 	 * Creates a WorkflowDeclaration or TaskWorkflowDeclaration from the given host.
 	 *
@@ -302,7 +315,7 @@ export class DeclarationBuilderService {
 		ctx: BaseCtx<any>,
 		fn: () => Promise<T>,
 	): Promise<T> {
-		if (!this.interceptors?.length) {
+		if (!this.interceptors.length) {
 			return await fn();
 		}
 
