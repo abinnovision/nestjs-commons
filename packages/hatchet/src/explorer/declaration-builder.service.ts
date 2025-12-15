@@ -11,15 +11,15 @@ import { TaskHost, WorkflowHost } from "../abstracts";
 import { fromInstance } from "../accessor";
 import { BaseCtx, createTaskCtx, createWorkflowCtx } from "../context";
 import { EVENT_MARKER } from "../events";
-import { INTERCEPTOR, Interceptor } from "../interceptor";
+import { INTERCEPTORS, Interceptor } from "../interceptor";
 import { AnyHost } from "../ref";
 
 @Injectable()
 export class DeclarationBuilderService {
 	public constructor(
 		@Optional()
-		@Inject(INTERCEPTOR)
-		private readonly interceptor?: Interceptor,
+		@Inject(INTERCEPTORS)
+		private readonly interceptors?: Interceptor[],
 	) {}
 	/**
 	 * Creates a WorkflowDeclaration or TaskWorkflowDeclaration from the given host.
@@ -67,7 +67,7 @@ export class DeclarationBuilderService {
 
 				const taskCtx = createTaskCtx(ctx, validatedInput);
 
-				return await this.executeWithInterceptor(taskCtx, async () => {
+				return await this.executeWithInterceptors(taskCtx, async () => {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
 					const fn = proto[methodName];
 
@@ -131,7 +131,7 @@ export class DeclarationBuilderService {
 					// Create the workflow context from the SDK context and validated input.
 					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
 
-					return await this.executeWithInterceptor(workflowCtx, async () => {
+					return await this.executeWithInterceptors(workflowCtx, async () => {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
 						const fn = proto[method];
 
@@ -289,20 +289,29 @@ export class DeclarationBuilderService {
 		);
 	}
 	/**
-	 * Executes a function, optionally intercepted by the interceptor.
+	 * Executes a function, optionally intercepted by the interceptors.
+	 * Interceptors are chained in array order (first = outermost).
 	 *
 	 * @param ctx The context.
 	 * @param fn The function to execute.
 	 * @returns The result of the function.
 	 */
-	private async executeWithInterceptor<T>(
+	private async executeWithInterceptors<T>(
 		ctx: BaseCtx<any>,
 		fn: () => Promise<T>,
 	): Promise<T> {
-		if (this.interceptor) {
-			return await this.interceptor.intercept(ctx, fn);
+		if (!this.interceptors?.length) {
+			return await fn();
 		}
 
-		return await fn();
+		// Chain from last to first (first interceptor is outermost)
+		let next = fn;
+		for (let i = this.interceptors.length - 1; i >= 0; i--) {
+			const interceptor = this.interceptors[i]!;
+			const currentNext = next;
+			next = () => interceptor.intercept(ctx, currentNext);
+		}
+
+		return await next();
 	}
 }

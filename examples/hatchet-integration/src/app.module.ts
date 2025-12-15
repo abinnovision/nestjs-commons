@@ -21,8 +21,8 @@ import { LoggingInterceptor } from "./logging-interceptor";
 				},
 				worker: { name: "common-worker" },
 			}),
-			// Pass the interceptor class - module handles provider registration
-			interceptor: LoggingInterceptor,
+			// Pass interceptor classes - module handles provider registration
+			interceptors: [LoggingInterceptor],
 		}),
 		HatchetModule.forFeature(taskRef(CleanupTask)),
 		DomainModule,
