@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.2.0...nestjs-hatchet-v0.2.1) (2025-12-15)
+
+
+### Bug Fixes
+
+* remove dual registration of host providers ([#64](https://github.com/abinnovision/nestjs-commons/issues/64)) ([2c262f2](https://github.com/abinnovision/nestjs-commons/commit/2c262f2877a7676854324ac841ae5f58f9dbd97f))
+
 ## [0.2.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.1.0...nestjs-hatchet-v0.2.0) (2025-12-15)
 
 
