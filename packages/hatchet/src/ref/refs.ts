@@ -30,18 +30,6 @@ export interface WorkflowRef<C extends WorkflowHostCtor<any>, I, O> {
 }
 
 /**
- * Reference to a task within a {@link WorkflowHost}, without the knowledge of the {@link WorkflowHost} itself.
- */
-export interface WorkflowTaskRef<I, O> {
-	readonly method: string;
-
-	readonly __types: {
-		input: I;
-		output: O;
-	};
-}
-
-/**
  * Represents any callable reference.
  * Note that externally only TaskRef and WorkflowRef are supported.
  */

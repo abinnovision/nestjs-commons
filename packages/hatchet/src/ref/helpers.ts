@@ -1,17 +1,8 @@
 import { fromCtor } from "../accessor";
 
-import type { WorkflowCtx } from "../context";
-import type {
-	AnyCallableRef,
-	TaskRef,
-	WorkflowRef,
-	WorkflowTaskRef,
-} from "./refs";
+import type { AnyCallableRef, TaskRef, WorkflowRef } from "./refs";
 import type {
 	AnyHostCtor,
-	AnyTaskInput,
-	AnyTaskOutput,
-	ContextMethodKeys,
 	TaskHostCtor,
 	TaskInput,
 	TaskMethodKey,
@@ -63,22 +54,6 @@ export function workflowRef<C extends WorkflowHostCtor<any>>(
 ): WorkflowRef<C, WorkflowInput<C>, WorkflowOutput<C>> {
 	return defineRef<WorkflowRef<C, WorkflowInput<C>, WorkflowOutput<C>>>({
 		host,
-	});
-}
-
-/**
- * Creates a reference to a task within a {@link WorkflowHost}.
- */
-export function workflowTaskRef<
-	C extends WorkflowHostCtor<any>,
-	M extends ContextMethodKeys<InstanceType<C>, WorkflowCtx<any>>,
->(
-	host: C,
-	method: M,
-): WorkflowTaskRef<AnyTaskInput<C, M>, AnyTaskOutput<C, M>> {
-	return defineRef<WorkflowTaskRef<AnyTaskInput<C, M>, AnyTaskOutput<C, M>>>({
-		host,
-		method,
 	});
 }
 
