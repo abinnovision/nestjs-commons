@@ -19,10 +19,17 @@
 		"email": "info@abinnovision.com",
 		"url": "https://abinnovision.com/"
 	},
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
 	"files": [
-		"dist"
+		"dist",
+		"LICENSE",
+		"README.md"
 	],
 	"scripts": {
 		"build": "tsc --project tsconfig.build.json",
