@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.0...nestjs-configx-v2.0.1) (2025-12-16)
+
+
+### Bug Fixes
+
+* align exports in package.json ([#70](https://github.com/abinnovision/nestjs-commons/issues/70)) ([58956c5](https://github.com/abinnovision/nestjs-commons/commit/58956c5ea55394b65c6af405f4c6ac45555dc94a))
+
 ## [2.0.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v1.1.1...nestjs-configx-v2.0.0) (2025-12-13)
 
 

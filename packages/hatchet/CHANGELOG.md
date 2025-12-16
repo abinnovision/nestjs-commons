@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.2.2...nestjs-hatchet-v0.2.3) (2025-12-16)
+
+
+### Bug Fixes
+
+* align exports in package.json ([#70](https://github.com/abinnovision/nestjs-commons/issues/70)) ([58956c5](https://github.com/abinnovision/nestjs-commons/commit/58956c5ea55394b65c6af405f4c6ac45555dc94a))
+
 ## [0.2.2](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.2.1...nestjs-hatchet-v0.2.2) (2025-12-15)
 
 
