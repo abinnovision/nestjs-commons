@@ -65,7 +65,6 @@
 		"vitest": "^4.0.15",
 		"zod": "^3.24.1"
 	},
-	"packageManager": "yarn@4.5.1",
 	"publishConfig": {
 		"ghpr": true,
 		"npm": true,
