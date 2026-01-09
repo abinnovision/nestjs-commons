@@ -16,7 +16,7 @@ import { Interceptor } from "../interceptor";
 import { InterceptorRegistration } from "../internal";
 import { AnyHost } from "../ref";
 
-import type { BaseCtx, TriggerSource, HostTriggerConfig } from "../context";
+import type { BaseCtx, HostTriggerConfig, TriggerSource } from "../context";
 
 @Injectable()
 export class DeclarationBuilderService {
@@ -58,8 +58,8 @@ export class DeclarationBuilderService {
 
 		const accessor = fromInstance(host);
 
-		// Get the host options from the metadata.
-		const hostOpts = accessor.metadata;
+		// Get the SDK-compatible host options.
+		const hostOpts = accessor.sdkOpts;
 
 		// Get the single decorated method name.
 		const methodName = accessor.methods[0];
@@ -101,12 +101,8 @@ export class DeclarationBuilderService {
 		const accessor = fromInstance(host);
 		const graph = this.buildWorkflowHostGraph(host);
 
-		const hostOpts = accessor.metadata;
-
 		// Construct an unbound declaration for it.
-		const workflowDec = new WorkflowDeclaration({
-			...hostOpts,
-		});
+		const workflowDec = new WorkflowDeclaration(accessor.sdkOpts);
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const proto = Object.getPrototypeOf(host);
@@ -147,19 +143,13 @@ export class DeclarationBuilderService {
 						...partial,
 					});
 
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					const result = await this.executeWithInterceptors(
-						workflowCtx,
-						async () => {
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-							const fn = proto[method];
+					return await this.executeWithInterceptors(workflowCtx, async () => {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+						const fn = proto[method];
 
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-							return await fn.call(host, workflowCtx);
-						},
-					);
-
-					return result;
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+						return await fn.call(host, workflowCtx);
+					});
 				},
 			});
 
@@ -294,12 +284,11 @@ export class DeclarationBuilderService {
 
 		// Build the host trigger config for introspection.
 		const accessor = fromInstance(host);
-		const metadata = accessor.metadata;
 
-		// Construct the host trigger config.
+		// Construct the host trigger config (uses translated SDK opts for onEvents).
 		const hostConfig: HostTriggerConfig = {
-			onEvents: metadata.onEvents ?? [],
-			onCrons: metadata.onCrons ?? [],
+			onEvents: accessor.sdkOpts.onEvents ?? [],
+			onCrons: accessor.metadata.onCrons ?? [],
 		};
 
 		// Only run validation for "run" triggers.

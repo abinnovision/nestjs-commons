@@ -35,7 +35,6 @@ export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 
 @Host({
 	name: "process-data-workflow",
-	onEvents: [""],
 })
 export class ProcessDataWorkflow extends workflowHost(
 	z.object({ data: z.string() }),
