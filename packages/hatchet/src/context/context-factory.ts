@@ -1,20 +1,23 @@
 import {
-	TASK_MARKER,
 	type BaseCtx,
+	type HostTriggerConfig,
+	TASK_MARKER,
 	type TaskCtx,
+	type TriggerSource,
 	type WorkflowCtx,
 } from "./context";
 import { createHostRunForContext } from "../interaction/host-run/adapter-factory";
 
+import type { AnyEventDefinition, EventOutput } from "../events";
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
 
 /**
  * Arguments for context factory functions.
  * Derived from BaseCtx using Pick to ensure type alignment.
- * `input` is optional and defaults to fromSDK.input.
  */
 type CreateCtxArgs<I> = Pick<BaseCtx<I>, "fromSDK" | "triggerSource"> & {
 	input: I;
+	hostConfig: HostTriggerConfig;
 };
 
 /**
@@ -33,14 +36,47 @@ const createContextHelpers = <I>(
 });
 
 /**
+ * Creates the trigger guard methods bound to the context's trigger source.
+ */
+const createTriggerGuards = (
+	triggerSource: TriggerSource,
+	input: unknown,
+): Pick<BaseCtx<unknown>, "isRun" | "isEvent" | "isCron"> => ({
+	isRun: (): this is BaseCtx<unknown> & { triggerSource: "run" } =>
+		triggerSource === "run",
+	isCron: (): this is BaseCtx<unknown> & {
+		triggerSource: "cron";
+		input: never;
+	} => triggerSource === "cron",
+	isEvent: <E extends AnyEventDefinition>(
+		eventDef?: AnyEventDefinition,
+	): this is BaseCtx<unknown> & {
+		triggerSource: "event";
+		input: E extends AnyEventDefinition ? EventOutput<E> : unknown;
+	} => {
+		if (triggerSource !== "event") {
+			return false;
+		}
+
+		// If no event definition is provided, then we validate against any event.
+		if (!eventDef) {
+			return true;
+		}
+
+		return eventDef.isCtx({ input });
+	},
+});
+
+/**
  * Maps the args to the 1:1 context properties.
  */
 const mapContextProperties = <I>(
 	args: CreateCtxArgs<I>,
-): Pick<BaseCtx<I>, "fromSDK" | "input" | "triggerSource"> => ({
+): Pick<BaseCtx<I>, "fromSDK" | "input" | "triggerSource" | "hostConfig"> => ({
 	fromSDK: args.fromSDK,
 	input: args.input,
 	triggerSource: args.triggerSource,
+	hostConfig: args.hostConfig,
 });
 
 /**
@@ -48,13 +84,12 @@ const mapContextProperties = <I>(
  *
  * @param args The arguments for creating the task context.
  */
-export const createTaskCtx = <I>(args: CreateCtxArgs<I>): TaskCtx<any> => {
-	return {
-		[TASK_MARKER]: true,
-		...mapContextProperties(args),
-		...createContextHelpers(args.fromSDK),
-	};
-};
+export const createTaskCtx = <I>(args: CreateCtxArgs<I>): TaskCtx<any> => ({
+	[TASK_MARKER]: true,
+	...mapContextProperties(args),
+	...createContextHelpers(args.fromSDK),
+	...createTriggerGuards(args.triggerSource, args.input),
+});
 
 /**
  * Creates a WorkflowCtx from SDK Context for workflow task execution.
@@ -77,6 +112,7 @@ export const createWorkflowCtx = <I>(
 		[TASK_MARKER]: true,
 		...mapContextProperties(args),
 		...createContextHelpers(args.fromSDK),
+		...createTriggerGuards(args.triggerSource, args.input),
 		parent,
 	};
 };

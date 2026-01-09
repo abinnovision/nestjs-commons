@@ -18,8 +18,18 @@ import { OrderPlacedEvent, UserCreatedEvent } from "./events";
 export class EventHandlerWorkflow extends workflowHost() {
 	@WorkflowTask<typeof EventHandlerWorkflow>({ parents: [] })
 	public handleEvent(ctx: WorkflowCtx<typeof this>) {
+		if (ctx.isRun()) {
+			console.log(
+				"[EventHandler] Workflow triggered by direct run, not an event.",
+			);
+			return {
+				eventType: "run" as const,
+				message: "Workflow executed via direct run.",
+			};
+		}
+
 		// Use type guards to determine which event triggered this workflow
-		if (UserCreatedEvent.isCtx(ctx)) {
+		if (ctx.isEvent(UserCreatedEvent)) {
 			// ctx.input is now typed as { userId, email, createdAt, __event_name }
 			console.log(`[EventHandler] New user created: ${ctx.input.email}`);
 
@@ -30,7 +40,7 @@ export class EventHandlerWorkflow extends workflowHost() {
 			};
 		}
 
-		if (OrderPlacedEvent.isCtx(ctx)) {
+		if (ctx.isEvent(OrderPlacedEvent)) {
 			// ctx.input is now typed as { orderId, userId, total, items, __event_name }
 			console.log(
 				`[EventHandler] Order placed: ${ctx.input.orderId} for $${String(ctx.input.total)}`,

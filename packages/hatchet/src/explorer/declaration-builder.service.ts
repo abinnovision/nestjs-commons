@@ -16,7 +16,7 @@ import { Interceptor } from "../interceptor";
 import { InterceptorRegistration } from "../internal";
 import { AnyHost } from "../ref";
 
-import type { BaseCtx, TriggerSource } from "../context";
+import type { BaseCtx, TriggerSource, HostTriggerConfig } from "../context";
 
 @Injectable()
 export class DeclarationBuilderService {
@@ -80,13 +80,16 @@ export class DeclarationBuilderService {
 				// Create the task context from the SDK context and the partial.
 				const taskCtx = createTaskCtx({ fromSDK: ctx, ...partial });
 
-				return await this.executeWithInterceptors(taskCtx, async () => {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const result = await this.executeWithInterceptors(taskCtx, async () => {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
 					const fn = proto[methodName];
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
 					return await fn.call(host, taskCtx);
 				});
+
+				return result;
 			},
 		});
 	}
@@ -144,13 +147,19 @@ export class DeclarationBuilderService {
 						...partial,
 					});
 
-					return await this.executeWithInterceptors(workflowCtx, async () => {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-						const fn = proto[method];
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					const result = await this.executeWithInterceptors(
+						workflowCtx,
+						async () => {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+							const fn = proto[method];
 
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-						return await fn.call(host, workflowCtx);
-					});
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+							return await fn.call(host, workflowCtx);
+						},
+					);
+
+					return result;
 				},
 			});
 
@@ -269,12 +278,12 @@ export class DeclarationBuilderService {
 	 * Pre-processes the context by inferring the trigger source and
 	 * validating the input (if applicable).
 	 *
-	 * @returns The pre-processed context properties.
+	 * @returns The pre-processed context properties including hostConfig.
 	 */
 	private async preProcessContext(
 		host: AnyHost,
 		context: Context<any>,
-	): Promise<Pick<BaseCtx<unknown>, "input" | "triggerSource">> {
+	): Promise<Pick<BaseCtx<unknown>, "input" | "triggerSource" | "hostConfig">> {
 		// Infer the trigger source.
 		const triggerSource = this.inferTriggerSource(context);
 
@@ -282,6 +291,16 @@ export class DeclarationBuilderService {
 		// We default to an empty object if input is undefined.
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const input = context.input ?? {};
+
+		// Build the host trigger config for introspection.
+		const accessor = fromInstance(host);
+		const metadata = accessor.metadata;
+
+		// Construct the host trigger config.
+		const hostConfig: HostTriggerConfig = {
+			onEvents: metadata.onEvents ?? [],
+			onCrons: metadata.onCrons ?? [],
+		};
 
 		// Only run validation for "run" triggers.
 		// All other triggers skip validation here.
@@ -291,7 +310,7 @@ export class DeclarationBuilderService {
 
 			// If there is no schema, return the input as is (after normalizing).
 			if (!schema) {
-				return { input, triggerSource };
+				return { input, triggerSource, hostConfig };
 			}
 
 			// Validate the input against the schema.
@@ -299,10 +318,7 @@ export class DeclarationBuilderService {
 
 			// If the result is successful, return the transformed value.
 			if ("value" in result) {
-				return {
-					input: result.value,
-					triggerSource,
-				};
+				return { input: result.value, triggerSource, hostConfig };
 			}
 
 			throw new Error(
@@ -310,7 +326,7 @@ export class DeclarationBuilderService {
 			);
 		} else {
 			// For non-"run" triggers, skip validation and return the input as is.
-			return { input, triggerSource };
+			return { input, triggerSource, hostConfig };
 		}
 	}
 	/**
