@@ -16,7 +16,7 @@ import { Interceptor } from "../interceptor";
 import { InterceptorRegistration } from "../internal";
 import { AnyHost } from "../ref";
 
-import type { BaseCtx } from "../context";
+import type { BaseCtx, TriggerSource } from "../context";
 
 @Injectable()
 export class DeclarationBuilderService {
@@ -75,12 +75,10 @@ export class DeclarationBuilderService {
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
 			fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-				const validatedInput = await this.validateAndTransformInput(
-					host,
-					ctx.input,
-				);
+				const partial = await this.preProcessContext(host, ctx);
 
-				const taskCtx = createTaskCtx(ctx, validatedInput);
+				// Create the task context from the SDK context and the partial.
+				const taskCtx = createTaskCtx({ fromSDK: ctx, ...partial });
 
 				return await this.executeWithInterceptors(taskCtx, async () => {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
@@ -138,13 +136,13 @@ export class DeclarationBuilderService {
 				name: method,
 				parents: parentsResolved,
 				fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-					const validatedInput = await this.validateAndTransformInput(
-						host,
-						ctx.input,
-					);
+					const partial = await this.preProcessContext(host, ctx);
 
-					// Create the workflow context from the SDK context and validated input.
-					const workflowCtx = createWorkflowCtx(ctx, validatedInput);
+					// Create the workflow context from the SDK context and the partial
+					const workflowCtx = createWorkflowCtx({
+						fromSDK: ctx,
+						...partial,
+					});
 
 					return await this.executeWithInterceptors(workflowCtx, async () => {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
@@ -268,40 +266,52 @@ export class DeclarationBuilderService {
 	}
 
 	/**
-	 * Validates and transforms input using the host's schema.
-	 * Skips validation if input is from an event trigger (contains EVENT_MARKER).
-	 * Event validation is handled by the event's isCtx() method instead.
+	 * Pre-processes the context by inferring the trigger source and
+	 * validating the input (if applicable).
 	 *
-	 * @returns The transformed input if schema exists, otherwise returns original input.
+	 * @returns The pre-processed context properties.
 	 */
-	private async validateAndTransformInput(
+	private async preProcessContext(
 		host: AnyHost,
-		input: unknown,
-	): Promise<unknown> {
-		// Skip validation for event-triggered inputs.
-		// Event validation is handled by the event type-guard.
-		if (typeof input === "object" && input !== null && EVENT_MARKER in input) {
-			return input;
+		context: Context<any>,
+	): Promise<Pick<BaseCtx<unknown>, "input" | "triggerSource">> {
+		// Infer the trigger source.
+		const triggerSource = this.inferTriggerSource(context);
+
+		// Extract the input from the context.
+		// We default to an empty object if input is undefined.
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const input = context.input ?? {};
+
+		// Only run validation for "run" triggers.
+		// All other triggers skip validation here.
+		if (triggerSource === "run") {
+			// Resolve the schema from the host.
+			const schema = host.inputSchema();
+
+			// If there is no schema, return the input as is (after normalizing).
+			if (!schema) {
+				return { input, triggerSource };
+			}
+
+			// Validate the input against the schema.
+			const result = await schema["~standard"].validate(input);
+
+			// If the result is successful, return the transformed value.
+			if ("value" in result) {
+				return {
+					input: result.value,
+					triggerSource,
+				};
+			}
+
+			throw new Error(
+				`Input validation failed: ${JSON.stringify(result.issues)}`,
+			);
+		} else {
+			// For non-"run" triggers, skip validation and return the input as is.
+			return { input, triggerSource };
 		}
-
-		const schema = host.inputSchema();
-
-		// If there is no schema, return the input as-is.
-		if (!schema) {
-			return input;
-		}
-
-		// Validate the input against the schema.
-		const result = await schema["~standard"].validate(input);
-
-		// If the result is successful, return the transformed value.
-		if ("value" in result) {
-			return result.value;
-		}
-
-		throw new Error(
-			`Input validation failed: ${JSON.stringify(result.issues)}`,
-		);
 	}
 	/**
 	 * Executes a function, optionally intercepted by the interceptors.
@@ -328,5 +338,38 @@ export class DeclarationBuilderService {
 		}
 
 		return await next();
+	}
+
+	/**
+	 * Infers the trigger source from the given context.
+	 *
+	 * @param ctx The context.
+	 * @returns The inferred trigger source.
+	 * @private
+	 */
+	private inferTriggerSource(ctx: Context<any>): TriggerSource {
+		// If the input contains the EVENT_MARKER, it's an event trigger.
+		// This is specific to event triggers from this library.
+		if (typeof ctx.input === "object" && EVENT_MARKER in ctx.input) {
+			return "event";
+		}
+
+		// Additional metadata can also indicate cron or event triggers.
+		const metadata = ctx.additionalMetadata();
+
+		// Check for cron metadata key.
+		if ("hatchet__cron_name" in metadata) {
+			return "cron";
+		}
+
+		// Check for event metadata key.
+		if ("hatchet__event_key" in metadata) {
+			return "event";
+		}
+
+		// Default to "run" for direct runs.
+		// We cannot reliably detect other sources at this time.
+		// The "other" source is reserved for future use.
+		return "run";
 	}
 }

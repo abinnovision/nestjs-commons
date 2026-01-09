@@ -1,1 +1,7 @@
-export type { BaseCtx, TaskCtx, WorkflowCtx, HelperCtx } from "./context";
+export type {
+	BaseCtx,
+	TaskCtx,
+	WorkflowCtx,
+	HelperCtx,
+	TriggerSource,
+} from "./context";

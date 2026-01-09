@@ -11,7 +11,7 @@ import {
 	TestWorkflow,
 } from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
-import { BaseCtx } from "../context/context";
+import { BaseCtx } from "../context";
 import { Host, Task, WorkflowTask } from "../decorators";
 import { Interceptor } from "../interceptor";
 import { InterceptorRegistration } from "../internal";
@@ -19,7 +19,7 @@ import { DeclarationBuilderService } from "./declaration-builder.service";
 
 import type { TaskCtx, WorkflowCtx } from "../context";
 
-// Set design:paramtypes for shared fixtures (vitest may not emit decorator metadata)
+// Set design:paramtypes for shared fixtures
 setParamTypes(TestTask.prototype, "execute", [Object]);
 setParamTypes(NoSchemaTask.prototype, "execute", [Object]);
 
@@ -61,9 +61,9 @@ function createMockModuleRef(interceptorMap: Map<any, Interceptor>): ModuleRef {
 }
 
 // Helper to create service with interceptors
-function createServiceWithInterceptors(
+const createServiceWithInterceptors = (
 	interceptors: Interceptor[],
-): DeclarationBuilderService {
+): DeclarationBuilderService => {
 	// Use Symbol as unique tokens for each interceptor
 	const tokens = interceptors.map(() => Symbol("InterceptorToken") as any);
 	const interceptorMap = new Map<any, Interceptor>();
@@ -73,7 +73,16 @@ function createServiceWithInterceptors(
 	const registration = new InterceptorRegistration(tokens);
 
 	return new DeclarationBuilderService(mockModuleRef, registration);
-}
+};
+
+// Helper to create mock SDK context with additionalMetadata support
+const createMockSdkContext = (
+	input: unknown = { data: "test" },
+	additionalMetadata: Record<string, unknown> = {},
+): { input: unknown; additionalMetadata: () => Record<string, unknown> } => ({
+	input,
+	additionalMetadata: () => additionalMetadata,
+});
 
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
@@ -195,7 +204,7 @@ describe("declaration-builder.service.ts", () => {
 
 			const fn = (declaration.definition as any).fn;
 
-			await fn(undefined, { input: { data: "test" } });
+			await fn(undefined, createMockSdkContext());
 
 			expect(noopInterceptor.intercept).toHaveBeenCalledTimes(1);
 			expect(noopInterceptor.intercept).toHaveBeenCalledWith(
@@ -215,7 +224,7 @@ describe("declaration-builder.service.ts", () => {
 				new TestTask(),
 			);
 
-			const mockSdkContext = { input: { data: "test" } };
+			const mockSdkContext = createMockSdkContext();
 			const fn = (declaration.definition as any).fn;
 
 			await fn(undefined, mockSdkContext);
@@ -246,7 +255,7 @@ describe("declaration-builder.service.ts", () => {
 				new TestTask(),
 			);
 
-			const mockSdkContext = { input: { data: "test" } };
+			const mockSdkContext = createMockSdkContext();
 
 			const fn = (declaration.definition as any).fn;
 
@@ -285,7 +294,7 @@ describe("declaration-builder.service.ts", () => {
 			);
 
 			const fn = (declaration.definition as any).fn;
-			await fn(undefined, { input: { data: "test" } });
+			await fn(undefined, createMockSdkContext());
 
 			expect(executionOrder).toEqual([
 				"interceptor1-start",

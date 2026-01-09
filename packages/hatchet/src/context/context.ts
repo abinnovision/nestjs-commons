@@ -3,8 +3,20 @@ import type { HostRunFn } from "../interaction";
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
 import type { Context } from "@hatchet-dev/typescript-sdk";
 
-declare const TASK_MARKER: unique symbol;
+export const TASK_MARKER = Symbol("TASK_MARKER");
 export type TaskMarker = typeof TASK_MARKER;
+
+/**
+ * Type representing the source that triggered the task execution.
+ *
+ * - "run": Triggered with default payload via direct run.
+ * - "event": Triggered by an event.
+ * - "cron": Triggered by a cron schedule.
+ *
+ * Note that the detection of trigger source is best-effort and may not be accurate in all cases.
+ * Hatchet does not currently provide first-class support for distinguishing all trigger sources.
+ */
+export type TriggerSource = "run" | "event" | "cron";
 
 /**
  * Type for the context when a task is running. This is universal for standalone and workflow tasks.
@@ -13,6 +25,11 @@ export type TaskMarker = typeof TASK_MARKER;
  * @template I The input type of the task.
  */
 export interface BaseCtx<I> {
+	/**
+	 * The source that triggered the task execution.
+	 */
+	triggerSource: TriggerSource;
+
 	/**
 	 * Provides access to the underlying SDK context.
 	 */
