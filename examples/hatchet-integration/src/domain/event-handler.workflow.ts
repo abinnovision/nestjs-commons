@@ -13,7 +13,7 @@ import { OrderPlacedEvent, UserCreatedEvent } from "./events";
  */
 @Host({
 	name: "event-handler",
-	onEvents: ["user:created", "order:placed"],
+	onEvents: [UserCreatedEvent, OrderPlacedEvent],
 })
 export class EventHandlerWorkflow extends workflowHost() {
 	@WorkflowTask<typeof EventHandlerWorkflow>({ parents: [] })

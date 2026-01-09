@@ -5,7 +5,9 @@ import {
 	METADATA_KEY_TASK_OPTS,
 	METADATA_KEY_WORKFLOW_TASK_OPTS,
 } from "../internal";
+import { translateHostOpts } from "./opts-translator";
 
+import type { SdkHostOpts } from "./opts-translator";
 import type { HostOpts, TaskOpts, WorkflowTaskOpts } from "../decorators";
 import type { AnyHost, AnyHostCtor } from "../ref";
 
@@ -15,8 +17,18 @@ import type { AnyHost, AnyHostCtor } from "../ref";
 class HostAccessor {
 	public constructor(public readonly ctor: AnyHostCtor) {}
 
+	/**
+	 * Returns raw enhanced metadata from @Host() decorator.
+	 */
 	public get metadata(): HostOpts {
 		return Reflect.getMetadata(METADATA_KEY_HOST_OPTS, this.ctor);
+	}
+
+	/**
+	 * Returns SDK-compatible options for workflow declarations.
+	 */
+	public get sdkOpts(): SdkHostOpts {
+		return translateHostOpts(this.metadata);
 	}
 
 	public get name(): string {
