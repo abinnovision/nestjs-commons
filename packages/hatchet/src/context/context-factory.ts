@@ -1,66 +1,82 @@
 import {
 	TASK_MARKER,
+	type BaseCtx,
 	type TaskCtx,
-	type TriggerSource,
 	type WorkflowCtx,
 } from "./context";
 import { createHostRunForContext } from "../interaction/host-run/adapter-factory";
 
 import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
-import type { Context as HContext } from "@hatchet-dev/typescript-sdk";
+
+/**
+ * Arguments for context factory functions.
+ * Derived from BaseCtx using Pick to ensure type alignment.
+ * `input` is optional and defaults to fromSDK.input.
+ */
+type CreateCtxArgs<I> = Pick<BaseCtx<I>, "fromSDK" | "triggerSource"> & {
+	input: I;
+};
+
+/**
+ * Helper methods derived from the SDK context.
+ */
+type ContextHelpers = Pick<BaseCtx<unknown>, "run">;
+
+/**
+ * Creates the helper methods derived from the SDK context.
+ * These are methods that wrap SDK functionality.
+ */
+const createContextHelpers = <I>(
+	fromSDK: BaseCtx<I>["fromSDK"],
+): ContextHelpers => ({
+	run: createHostRunForContext(fromSDK),
+});
+
+/**
+ * Maps the args to the 1:1 context properties.
+ */
+const mapContextProperties = <I>(
+	args: CreateCtxArgs<I>,
+): Pick<BaseCtx<I>, "fromSDK" | "input" | "triggerSource"> => ({
+	fromSDK: args.fromSDK,
+	input: args.input,
+	triggerSource: args.triggerSource,
+});
 
 /**
  * Creates a TaskCtx from SDK Context for standalone task execution.
  *
- * @param sdkCtx The SDK context.
- * @param triggerSource The source that triggered the task execution.
- * @param validatedInput Optional validated/transformed input to use instead of raw SDK input.
+ * @param args The arguments for creating the task context.
  */
-export const createTaskCtx = <I>(
-	sdkCtx: HContext<I, any>,
-	triggerSource: TriggerSource,
-	validatedInput?: I,
-): TaskCtx<any> => {
-	const run = createHostRunForContext(sdkCtx);
-
+export const createTaskCtx = <I>(args: CreateCtxArgs<I>): TaskCtx<any> => {
 	return {
 		[TASK_MARKER]: true,
-		fromSDK: sdkCtx,
-		input: validatedInput ?? sdkCtx.input,
-		triggerSource,
-		run,
+		...mapContextProperties(args),
+		...createContextHelpers(args.fromSDK),
 	};
 };
 
 /**
  * Creates a WorkflowCtx from SDK Context for workflow task execution.
  *
- * @param sdkCtx The SDK context.
- * @param triggerSource The source that triggered the workflow execution.
- * @param validatedInput Optional validated/transformed input to use instead of raw SDK input.
+ * @param args The arguments for creating the workflow context.
  */
 export const createWorkflowCtx = <I>(
-	sdkCtx: HContext<I, any>,
-	triggerSource: TriggerSource,
-	validatedInput?: I,
+	args: CreateCtxArgs<I>,
 ): WorkflowCtx<any> => {
-	const run = createHostRunForContext(sdkCtx);
-
 	const parent = async <F extends AnyTaskFn<any, any>>(
 		method: F,
 	): Promise<OutputOfTaskFn<F>> => {
 		const methodName = method.name;
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-		return await sdkCtx.parentOutput(methodName);
+		return await args.fromSDK.parentOutput(methodName);
 	};
 
 	return {
 		[TASK_MARKER]: true,
-		fromSDK: sdkCtx,
-		input: validatedInput ?? sdkCtx.input,
-		triggerSource,
-		run,
+		...mapContextProperties(args),
+		...createContextHelpers(args.fromSDK),
 		parent,
 	};
 };

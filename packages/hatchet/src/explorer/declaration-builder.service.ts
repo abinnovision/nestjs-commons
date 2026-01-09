@@ -75,14 +75,10 @@ export class DeclarationBuilderService {
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
 			fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-				const partial = await this.inferInputRelated(host, ctx);
+				const partial = await this.preProcessContext(host, ctx);
 
 				// Create the task context from the SDK context and the partial.
-				const taskCtx = createTaskCtx(
-					ctx,
-					partial.triggerSource,
-					partial.input,
-				);
+				const taskCtx = createTaskCtx({ fromSDK: ctx, ...partial });
 
 				return await this.executeWithInterceptors(taskCtx, async () => {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
@@ -140,14 +136,13 @@ export class DeclarationBuilderService {
 				name: method,
 				parents: parentsResolved,
 				fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-					const partial = await this.inferInputRelated(host, ctx);
+					const partial = await this.preProcessContext(host, ctx);
 
 					// Create the workflow context from the SDK context and the partial
-					const workflowCtx = createWorkflowCtx(
-						ctx,
-						partial.triggerSource,
-						partial.input,
-					);
+					const workflowCtx = createWorkflowCtx({
+						fromSDK: ctx,
+						...partial,
+					});
 
 					return await this.executeWithInterceptors(workflowCtx, async () => {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
@@ -271,11 +266,12 @@ export class DeclarationBuilderService {
 	}
 
 	/**
-	 * Infers the input related information from the context.
+	 * Pre-processes the context by inferring the trigger source and
+	 * validating the input (if applicable).
 	 *
-	 * @returns The transformed input if schema exists, otherwise returns original input.
+	 * @returns The pre-processed context properties.
 	 */
-	private async inferInputRelated(
+	private async preProcessContext(
 		host: AnyHost,
 		context: Context<any>,
 	): Promise<Pick<BaseCtx<unknown>, "input" | "triggerSource">> {
