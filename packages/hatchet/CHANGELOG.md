@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.3.0...nestjs-hatchet-v0.3.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* detect event only by metadata ([#85](https://github.com/abinnovision/nestjs-commons/issues/85)) ([402e9d7](https://github.com/abinnovision/nestjs-commons/commit/402e9d7bb410dba261d1a78984857c39824d91be))
+
 ## [0.3.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.2.4...nestjs-hatchet-v0.3.0) (2026-01-10)
 
 
