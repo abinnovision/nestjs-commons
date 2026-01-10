@@ -40,7 +40,6 @@ __metadata:
     "@swc/core": "npm:^1.11.5"
     arktype: "npm:^2.1.9"
     eslint: "npm:^9.39.1"
-    globals: "npm:^16.5.0"
     prettier: "npm:^3.7.4"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"
