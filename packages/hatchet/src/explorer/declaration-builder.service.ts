@@ -9,7 +9,6 @@ import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
-import { EVENT_MARKER } from "../events/event-definition";
 import { createTaskCtx, createWorkflowCtx } from "../execution/context";
 import { Interceptor } from "../interceptor";
 import { InterceptorRegistration } from "../internal/registrations";
@@ -353,12 +352,6 @@ export class DeclarationBuilderService {
 	 * @private
 	 */
 	private inferTriggerSource(ctx: Context<any>): TriggerSource {
-		// If the input contains the EVENT_MARKER, it's an event trigger.
-		// This is specific to event triggers from this library.
-		if (typeof ctx.input === "object" && EVENT_MARKER in ctx.input) {
-			return "event";
-		}
-
 		// Additional metadata can also indicate cron or event triggers.
 		const metadata = ctx.additionalMetadata();
 
