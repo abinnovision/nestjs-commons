@@ -438,17 +438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/types@npm:^20.2.0":
-  version: 20.2.0
-  resolution: "@commitlint/types@npm:20.2.0"
-  dependencies:
-    "@types/conventional-commits-parser": "npm:^5.0.0"
-    chalk: "npm:^5.3.0"
-  checksum: 10c0/95f51b805b6d5b120eff1ec57c502563525dfc4d10302a188b229bd446e4f1c3f1882f899d014701cc33bead3853e3d4865635f7e12dd4c7605db20b407bf4d1
-  languageName: node
-  linkType: hard
-
-"@commitlint/types@npm:^20.3.1":
+"@commitlint/types@npm:^20.2.0, @commitlint/types@npm:^20.3.1":
   version: 20.3.1
   resolution: "@commitlint/types@npm:20.3.1"
   dependencies:
