@@ -9,14 +9,14 @@ import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts";
-import { fromInstance } from "../accessor";
-import { createTaskCtx, createWorkflowCtx } from "../context/context-factory";
-import { EVENT_MARKER } from "../events";
+import { EVENT_MARKER } from "../events/event-definition";
+import { createTaskCtx, createWorkflowCtx } from "../execution/context";
 import { Interceptor } from "../interceptor";
-import { InterceptorRegistration } from "../internal";
-import { AnyHost } from "../ref";
+import { InterceptorRegistration } from "../internal/registrations";
+import { fromInstance } from "../metadata/accessor";
+import { AnyHost } from "../references/shared";
 
-import type { BaseCtx, HostTriggerConfig, TriggerSource } from "../context";
+import type { BaseCtx, HostTriggerConfig, TriggerSource } from "../execution";
 
 @Injectable()
 export class DeclarationBuilderService {

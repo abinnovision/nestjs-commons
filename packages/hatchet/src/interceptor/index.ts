@@ -1,1 +1,1 @@
-export * from "./interceptor";
+export { Interceptor } from "./interceptor";

@@ -2,8 +2,9 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { mockDeep, type DeepMockProxy } from "vitest-mock-extended";
 import { z } from "zod";
 
-import { defineEvent, EVENT_MARKER } from "../events";
+import { defineEvent } from "../events";
 import { Client } from "./client";
+import { EVENT_MARKER } from "../events/event-definition";
 
 import type { HatchetClient } from "@hatchet-dev/typescript-sdk";
 

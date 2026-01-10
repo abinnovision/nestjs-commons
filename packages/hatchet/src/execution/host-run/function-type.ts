@@ -1,4 +1,4 @@
-import type { AnyCallableRef, InputOfRef, OutputOfRef } from "../../ref";
+import type { AnyCallableRef, InputOfRef, OutputOfRef } from "../../references";
 import type { RunOpts } from "@hatchet-dev/typescript-sdk";
 import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
 

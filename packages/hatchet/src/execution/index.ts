@@ -1,3 +1,4 @@
+// Context types
 export type {
 	BaseCtx,
 	TaskCtx,
@@ -6,3 +7,6 @@ export type {
 	TriggerSource,
 	HostTriggerConfig,
 } from "./context";
+
+// Host run types
+export type { HostRunFn, HostRunOpts, HostRunReturn } from "./host-run";

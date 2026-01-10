@@ -2,14 +2,11 @@ import { HatchetClient } from "@hatchet-dev/typescript-sdk";
 import { PushEventOptions } from "@hatchet-dev/typescript-sdk/clients/event/event-client";
 import { Injectable } from "@nestjs/common";
 
-import {
-	EVENT_MARKER,
-	type AnyEventDefinition,
-	type EventInput,
-} from "../events";
-import { createHostRunForAdmin } from "../interaction/host-run/adapter-factory";
+import { EVENT_MARKER } from "../events/event-definition";
+import { createHostRunForAdmin } from "../execution/host-run";
 
-import type { HostRunFn } from "../interaction";
+import type { AnyEventDefinition, EventInput } from "../events";
+import type { HostRunFn } from "../execution";
 import type { Event } from "@hatchet-dev/typescript-sdk/protoc/events";
 
 /**

@@ -16,12 +16,6 @@ describe("ref/helpers.ts", () => {
 
 			expect(ref.method).toBe("execute");
 		});
-
-		it("freezes the reference object", () => {
-			const ref = taskRef(TestTask);
-
-			expect(Object.isFrozen(ref)).toBe(true);
-		});
 	});
 
 	describe("#workflowRef()", () => {
@@ -29,12 +23,6 @@ describe("ref/helpers.ts", () => {
 			const ref = workflowRef(TestWorkflow);
 
 			expect(ref.host).toBe(TestWorkflow);
-		});
-
-		it("freezes the reference object", () => {
-			const ref = workflowRef(TestWorkflow);
-
-			expect(Object.isFrozen(ref)).toBe(true);
 		});
 	});
 

@@ -1,4 +1,4 @@
-import type { BaseCtx } from "../context";
+import type { BaseCtx } from "../execution";
 
 /**
  * Token for optional interceptors injection.

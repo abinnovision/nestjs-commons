@@ -5,11 +5,11 @@ import {
 	type TaskCtx,
 	type TriggerSource,
 	type WorkflowCtx,
-} from "./context";
-import { createHostRunForContext } from "../interaction/host-run/adapter-factory";
+} from "./types";
+import { createHostRunForContext } from "../host-run/adapter-factory";
 
-import type { AnyEventDefinition, EventOutput } from "../events";
-import type { AnyTaskFn, OutputOfTaskFn } from "../ref";
+import type { AnyEventDefinition, EventOutput } from "../../events";
+import type { AnyTaskFn, OutputOfTaskFn } from "../../references/shared";
 
 /**
  * Arguments for context factory functions.

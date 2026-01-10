@@ -8,10 +8,10 @@ import {
 	TestWorkflow,
 } from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
-import { Host, Task, WorkflowTask } from "../decorators";
-import { fromCtor, fromInstance } from "./host-accessor";
+import { fromCtor, fromInstance } from "./accessor";
+import { Host, Task, WorkflowTask } from "./decorators";
 
-import type { TaskCtx, WorkflowCtx } from "../context";
+import type { TaskCtx, WorkflowCtx } from "../execution";
 
 // TaskHost with specific retries option for getTaskMeta() test
 @Host({ name: "test-task-retries" })
@@ -36,7 +36,7 @@ class TestWorkflowVersioned extends workflowHost(z.object({ id: z.string() })) {
 	}
 }
 
-describe("host-accessor.ts", () => {
+describe("accessor.ts", () => {
 	describe("fromCtor()", () => {
 		it("creates accessor from TaskHost constructor", () => {
 			const accessor = fromCtor(TestTask);

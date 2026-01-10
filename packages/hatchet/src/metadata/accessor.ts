@@ -4,12 +4,12 @@ import {
 	METADATA_KEY_HOST_OPTS,
 	METADATA_KEY_TASK_OPTS,
 	METADATA_KEY_WORKFLOW_TASK_OPTS,
-} from "../internal";
-import { translateHostOpts } from "./opts-translator";
+} from "./keys";
+import { translateHostOpts } from "./translator";
 
-import type { SdkHostOpts } from "./opts-translator";
-import type { HostOpts, TaskOpts, WorkflowTaskOpts } from "../decorators";
-import type { AnyHost, AnyHostCtor } from "../ref";
+import type { HostOpts, TaskOpts, WorkflowTaskOpts } from "./decorators";
+import type { SdkHostOpts } from "./translator";
+import type { AnyHost, AnyHostCtor } from "../references/shared";
 
 /**
  * Accessor for host metadata and methods.

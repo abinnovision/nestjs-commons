@@ -1,10 +1,6 @@
 import type { Interceptor } from "../interceptor";
-import type { AnyHostCtor } from "../ref";
+import type { AnyHostCtor } from "../references/shared";
 import type { Type } from "@nestjs/common";
-
-export const METADATA_KEY_HOST_OPTS = "hatchet:host:opts";
-export const METADATA_KEY_TASK_OPTS = "hatchet:task:opts";
-export const METADATA_KEY_WORKFLOW_TASK_OPTS = "hatchet:workflow:task:opts";
 
 /**
  * Token class for feature registration discovery.

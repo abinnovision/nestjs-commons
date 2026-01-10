@@ -1,4 +1,4 @@
-import { fromCtor } from "../accessor";
+import { fromCtor } from "../metadata/accessor";
 
 import type { AnyCallableRef, TaskRef, WorkflowRef } from "./refs";
 import type {
@@ -20,10 +20,10 @@ export function taskRef<C extends TaskHostCtor<any>>(
 ): TaskRef<C> {
 	const accessor = fromCtor(host as C);
 
-	return Object.freeze({
+	return {
 		host,
 		method: accessor.methods[0] as TaskMethodKey<C>,
-	}) as TaskRef<C>;
+	} satisfies TaskRef<C>;
 }
 
 /**
@@ -33,7 +33,7 @@ export function taskRef<C extends TaskHostCtor<any>>(
 export function workflowRef<C extends WorkflowHostCtor<any>>(
 	host: ValidWorkflowHost<C>,
 ): WorkflowRef<C> {
-	return Object.freeze({ host }) as WorkflowRef<C>;
+	return { host } satisfies WorkflowRef<C>;
 }
 
 /**

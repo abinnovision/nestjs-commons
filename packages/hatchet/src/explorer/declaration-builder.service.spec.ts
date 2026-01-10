@@ -11,13 +11,13 @@ import {
 	TestWorkflow,
 } from "../__fixtures__/test-hosts";
 import { taskHost, workflowHost } from "../abstracts";
-import { BaseCtx } from "../context";
-import { Host, Task, WorkflowTask } from "../decorators";
+import { BaseCtx } from "../execution";
 import { Interceptor } from "../interceptor";
-import { InterceptorRegistration } from "../internal";
+import { InterceptorRegistration } from "../internal/registrations";
+import { Host, Task, WorkflowTask } from "../metadata";
 import { DeclarationBuilderService } from "./declaration-builder.service";
 
-import type { TaskCtx, WorkflowCtx } from "../context";
+import type { TaskCtx, WorkflowCtx } from "../execution";
 
 // Set design:paramtypes for shared fixtures
 setParamTypes(TestTask.prototype, "execute", [Object]);
