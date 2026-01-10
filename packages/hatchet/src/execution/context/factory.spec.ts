@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { mockDeep } from "vitest-mock-extended";
 
-import { createTaskCtx, createWorkflowCtx } from "./context-factory";
+import { createTaskCtx, createWorkflowCtx } from "./factory";
 
-import type { HostTriggerConfig } from "./context";
-import type { AnyEventDefinition } from "../events";
+import type { HostTriggerConfig } from "./types";
+import type { AnyEventDefinition } from "../../events";
 import type { Context } from "@hatchet-dev/typescript-sdk";
 
 const createMockSdkContext = <I>(input?: I) => {
@@ -18,7 +18,7 @@ const defaultHostConfig: HostTriggerConfig = {
 	onCrons: [],
 };
 
-describe("context-factory.ts", () => {
+describe("factory.ts", () => {
 	describe("createTaskCtx()", () => {
 		it("returns context with input from SDK context", () => {
 			const input = { data: "test" };

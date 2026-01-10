@@ -42,10 +42,9 @@ const loggerFactory = (loggingContext: string) => {
 export const hatchetClientFactory: FactoryProvider = {
 	provide: HatchetClient,
 	inject: [hatchetModuleConfigToken],
-	useFactory: (opts: HatchetModuleConfig) => {
-		return new HatchetClient({
+	useFactory: (opts: HatchetModuleConfig) =>
+		new HatchetClient({
 			...opts.config,
 			logger: loggerFactory,
-		});
-	},
+		}),
 };

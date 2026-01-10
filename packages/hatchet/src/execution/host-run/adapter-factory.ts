@@ -1,7 +1,7 @@
-import { getRefAccessor } from "../../ref";
+import { getRefAccessor } from "../../references/helpers";
 
 import type { HostRunFn, HostRunOpts, HostRunReturn } from "./function-type";
-import type { AnyCallableRef, InputOfRef } from "../../ref";
+import type { AnyCallableRef, InputOfRef } from "../../references";
 import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
 

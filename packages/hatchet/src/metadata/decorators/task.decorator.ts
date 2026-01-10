@@ -1,4 +1,4 @@
-import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../internal";
+import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../keys";
 
 import type {
 	CreateBaseWorkflowOpts,

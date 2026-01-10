@@ -1,7 +1,5 @@
 import type { TaskHost, WorkflowHost } from "../abstracts";
-import type { BaseCtx, TaskMarker } from "../context/context";
-
-// --- Internal Utilities ---
+import type { BaseCtx, TaskMarker } from "../execution/context/types";
 
 /**
  * Converts a union to an intersection. Used for detecting if a type is a union.
@@ -17,8 +15,6 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  */
 type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
 
-// --- Base Types ---
-
 /**
  * Represents any host instance type.
  */
@@ -32,6 +28,7 @@ export type AnyHostCtor = WorkflowHostCtor<any> | TaskHostCtor<any>;
 /**
  * Represents a workflow host constructor type.
  *
+ * @internal Used in public signatures but not intended for direct external use.
  * @template I - The input type that the workflow accepts.
  */
 export type WorkflowHostCtor<I> = abstract new (
@@ -41,6 +38,7 @@ export type WorkflowHostCtor<I> = abstract new (
 /**
  * Represents a task host constructor type.
  *
+ * @internal Used in public signatures but not intended for direct external use.
  * @template I - The input type that the task accepts.
  */
 export type TaskHostCtor<I> = abstract new (...args: any[]) => TaskHost<I>;
@@ -81,6 +79,7 @@ export type IsTaskRunnableSignature<
  * For a TaskHost, this should return exactly one key.
  * For a WorkflowHost, this returns all workflow task method keys.
  *
+ * @internal Used by WorkflowTaskOpts but not intended for direct external use.
  * @template T - The host instance type.
  * @template C - Optional context type constraint.
  */
@@ -94,8 +93,6 @@ export type ContextMethodKeys<
 			: never
 		: never;
 }[keyof T];
-
-// --- Type Extraction ---
 
 /**
  * Extracts the output (return) type of a specific task method.
@@ -197,11 +194,10 @@ export type WorkflowTasksOutputMap<C extends WorkflowHost<any>> = {
 export type WorkflowOutput<T extends WorkflowHostCtor<any>> =
 	WorkflowTasksOutputMap<InstanceType<T>>;
 
-// --- Validation Types ---
-
 /**
  * Error type for invalid TaskHost - shows as a readable string literal in error messages.
  *
+ * @internal Type-level error message, not intended for direct external use.
  * @template Reason - The error message to display.
  */
 export type InvalidTaskHost<Reason extends string> = `Error: ${Reason}`;
@@ -209,6 +205,7 @@ export type InvalidTaskHost<Reason extends string> = `Error: ${Reason}`;
 /**
  * Error type for invalid WorkflowHost - shows as a readable string literal in error messages.
  *
+ * @internal Type-level error message, not intended for direct external use.
  * @template Reason - The error message to display.
  */
 export type InvalidWorkflowHost<Reason extends string> = `Error: ${Reason}`;
@@ -219,6 +216,7 @@ export type InvalidWorkflowHost<Reason extends string> = `Error: ${Reason}`;
  *
  * Used by {@link taskRef} to provide compile-time validation.
  *
+ * @internal Used in taskRef() signature but not intended for direct external use.
  * @template C - The task host constructor type to validate.
  */
 export type ValidTaskHost<C extends TaskHostCtor<any>> =
@@ -236,6 +234,7 @@ export type ValidTaskHost<C extends TaskHostCtor<any>> =
  *
  * Used by {@link workflowRef} to provide compile-time validation.
  *
+ * @internal Used in workflowRef() signature but not intended for direct external use.
  * @template C - The workflow host constructor type to validate.
  */
 export type ValidWorkflowHost<C extends WorkflowHostCtor<any>> =

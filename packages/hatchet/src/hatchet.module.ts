@@ -17,10 +17,11 @@ import { Interceptor } from "./interceptor";
 import {
 	HatchetFeatureRegistration,
 	InterceptorRegistration,
-} from "./internal";
+} from "./internal/registrations";
 import { hatchetClientFactory } from "./sdk";
 
-import type { AnyCallableRef, AnyHostCtor } from "./ref";
+import type { AnyCallableRef } from "./references";
+import type { AnyHostCtor } from "./references/shared";
 
 /**
  * Extra options for the module (processed at module definition time).

@@ -1,11 +1,10 @@
 export * from "./hatchet.module";
 export * from "./abstracts";
 export * from "./client";
-export * from "./context";
-export * from "./decorators";
+export * from "./execution";
+export * from "./metadata";
 export * from "./events";
 export * from "./interceptor";
-export * from "./interaction";
-export * from "./ref";
+export * from "./references";
 
 export { HatchetModuleConfig } from "./hatchet.module-config";

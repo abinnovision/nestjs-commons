@@ -11,8 +11,8 @@ import {
 	HatchetModuleConfig,
 	hatchetModuleConfigToken,
 } from "../hatchet.module-config";
-import { HatchetFeatureRegistration } from "../internal";
 import { DeclarationBuilderService } from "./declaration-builder.service";
+import { HatchetFeatureRegistration } from "../internal/registrations";
 
 @Injectable()
 export class WorkerManagementService implements OnApplicationBootstrap {

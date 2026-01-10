@@ -6,7 +6,7 @@ import {
 	createHostRunForContext,
 } from "./adapter-factory";
 import { TestTask } from "../../__fixtures__/test-hosts";
-import { taskRef } from "../../ref";
+import { taskRef } from "../../references";
 
 import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";

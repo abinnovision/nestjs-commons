@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 import { taskHost, workflowHost } from "../abstracts";
-import { Host, Task, WorkflowTask } from "../decorators";
+import { Host, Task, WorkflowTask } from "../metadata";
 
-import type { TaskCtx, WorkflowCtx } from "../context";
+import type { TaskCtx, WorkflowCtx } from "../execution";
 
 // ============ TaskHost Fixtures ============
 

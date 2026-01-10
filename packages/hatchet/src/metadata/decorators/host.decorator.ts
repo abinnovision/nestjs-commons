@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 
-import { METADATA_KEY_HOST_OPTS } from "../internal";
+import { METADATA_KEY_HOST_OPTS } from "../keys";
 
-import type { AnyEventDefinition } from "../events";
+import type { AnyEventDefinition } from "../../events";
 import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk";
 
 /**
