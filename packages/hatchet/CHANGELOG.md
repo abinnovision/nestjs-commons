@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.3.1...nestjs-hatchet-v0.3.2) (2026-01-28)
+
+
+### Bug Fixes
+
+* pass task options through to TaskWorkflowDeclaration ([#89](https://github.com/abinnovision/nestjs-commons/issues/89)) ([e45d19b](https://github.com/abinnovision/nestjs-commons/commit/e45d19bb7812755f3108c99900d897eeab7e24d5))
+
 ## [0.3.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.3.0...nestjs-hatchet-v0.3.1) (2026-01-10)
 
 
