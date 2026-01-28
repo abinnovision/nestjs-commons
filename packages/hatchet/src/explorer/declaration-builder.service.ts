@@ -66,6 +66,8 @@ export class DeclarationBuilderService {
 			throw new Error("Could not find method name for TaskHost");
 		}
 
+		const taskOpts = accessor.getTaskMeta(methodName);
+
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const proto = Object.getPrototypeOf(host);
 
@@ -73,6 +75,7 @@ export class DeclarationBuilderService {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
+			...taskOpts,
 			fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
 				const partial = await this.preProcessContext(host, ctx);
 
