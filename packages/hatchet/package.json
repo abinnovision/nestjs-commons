@@ -56,13 +56,13 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.0.2",
 		"@abinnovision/prettier-config": "^2.1.5",
-		"@swc/core": "^1.11.5",
-		"eslint": "^9.21.0",
-		"prettier": "^3.5.0",
+		"@swc/core": "^1.15.18",
+		"eslint": "^9.39.4",
+		"prettier": "^3.8.1",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
 		"typescript": "^5.9.3",
-		"vitest": "^4.0.15",
+		"vitest": "^4.1.0",
 		"vitest-mock-extended": "^3.1.0",
 		"zod": "^3.24.1"
 	},

@@ -36,15 +36,15 @@
 		"@abinnovision/commitlint-config": "^2.2.3",
 		"@abinnovision/eslint-config-base": "^3.0.2",
 		"@abinnovision/prettier-config": "^2.1.5",
-		"@commitlint/cli": "^20.3.1",
-		"@vitest/coverage-v8": "^4.0.15",
-		"eslint": "^9.39.1",
+		"@commitlint/cli": "^20.5.0",
+		"@vitest/coverage-v8": "^4.1.0",
+		"eslint": "^9.39.4",
 		"husky": "^9.1.7",
-		"lint-staged": "^16.2.7",
-		"prettier": "^3.7.4",
-		"sort-package-json": "^3.6.0",
-		"turbo": "^2.4.0",
-		"vitest": "^4.0.15"
+		"lint-staged": "^16.4.0",
+		"prettier": "^3.8.1",
+		"sort-package-json": "^3.6.1",
+		"turbo": "^2.8.20",
+		"vitest": "^4.1.0"
 	},
 	"packageManager": "yarn@4.13.0"
 }
