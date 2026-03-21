@@ -9,17 +9,15 @@ on:
       - main
 
 jobs:
-  node-monorepo-stack:
+  polyglot-monorepo-stack:
     name: CI/CD
-    uses: abinnovision/actions/.github/workflows/workflow.yaml@node-monorepo-stack-v1
+    uses: abinnovision/actions/.github/workflows/workflow.yaml@polyglot-monorepo-stack-v1
     with:
-      # Publishing configuration
       enable-package-publishing: true
       enable-packages-registry-npm: true
       enable-packages-registry-ghpr: true
-
       run-build-before-check: true
-
       test-types: unit
+      prerelease-channel: beta
     secrets:
       GH_APP_IDENTIFICATION_RELEASER: ${{ secrets.GH_APP_IDENTIFICATION_RELEASER }}
