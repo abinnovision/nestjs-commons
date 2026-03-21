@@ -5,5 +5,6 @@ export default defineProject({
 		name: "@abinnovision/nestjs-hatchet#unit",
 		include: ["src/**/*.spec.ts", "src/**/*.spec.mts"],
 		environment: "node",
+		typecheck: { enabled: true, include: ["src/**/*.spec.ts"] },
 	},
 });
