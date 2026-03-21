@@ -8,8 +8,8 @@ export const UserCreatedEvent = defineEvent(
 	"user:created",
 	z.object({
 		userId: z.string(),
-		email: z.string().email(),
-		createdAt: z.string().datetime(),
+		email: z.email(),
+		createdAt: z.iso.datetime(),
 	}),
 );
 

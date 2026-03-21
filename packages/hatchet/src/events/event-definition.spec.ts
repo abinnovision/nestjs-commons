@@ -9,7 +9,7 @@ import {
 
 const testSchema = z.object({
 	userId: z.string(),
-	email: z.string().email(),
+	email: z.email(),
 });
 
 describe("defineEvent()", () => {
