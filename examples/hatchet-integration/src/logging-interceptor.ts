@@ -26,6 +26,7 @@ export class LoggingInterceptor extends Interceptor {
 			this.logger.log(
 				`[${workflowRunId}] Completed task: ${taskName} (${String(duration)}ms)`,
 			);
+
 			return result;
 		} catch (error) {
 			const duration = Date.now() - startTime;

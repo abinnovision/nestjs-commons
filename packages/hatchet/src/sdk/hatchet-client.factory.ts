@@ -16,7 +16,7 @@ const loggerFactory = (loggingContext: string) => {
 	// Create a child logger for each context.
 	const logger = new Logger(`HatchetClient/${loggingContext}`);
 
-	/// Create a logger that matches the Hatchet logger interface.
+	// / Create a logger that matches the Hatchet logger interface.
 	return {
 		debug: (message: string, extra?: LogExtra) => {
 			logger.debug(message, extra);

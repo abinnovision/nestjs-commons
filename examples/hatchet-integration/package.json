@@ -19,7 +19,7 @@
 	},
 	"lint-staged": {
 		"{src,test}/**/*.{t,j}s{x,}": [
-			"eslint --fix --config eslint.config.mjs"
+			"eslint --fix"
 		],
 		"{{src,test}/**/*,*}.{{t,j}s{x,},json{5,},y{a,}ml,md}": [
 			"prettier --write"

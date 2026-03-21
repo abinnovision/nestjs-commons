@@ -31,8 +31,10 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 	public async onApplicationBootstrap() {
 		await this.initWorker();
 
-		// Only do orphan detection when enabled.
-		// Defaults to 'true'.
+		/*
+		 * Only do orphan detection when enabled.
+		 * Defaults to 'true'.
+		 */
 		if (this.config.enableOrphanDetection ?? true) {
 			// Fire-and-forget: detect orphan workflows without blocking startup.
 			void this.detectOrphanWorkflows();
@@ -69,8 +71,10 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 
 		WorkerManagementService.LOGGER.debug(`Initialized worker '${name}'`);
 
-		// Start the worker. This is intentionally not awaited as the Promise resolves
-		// only when it's stopped.
+		/*
+		 * Start the worker. This is intentionally not awaited as the Promise resolves
+		 * only when it's stopped.
+		 */
 		void worker.start();
 	}
 
@@ -152,7 +156,9 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 	 */
 	private async fetchAllServerWorkflows(): Promise<string[]> {
 		const pageSize = 50;
-		const maxPages = 10; // Safety limit: max 500 workflows
+
+		// Safety limit: max 500 workflows
+		const maxPages = 10;
 		const allWorkflows: string[] = [];
 		let offset = 0;
 

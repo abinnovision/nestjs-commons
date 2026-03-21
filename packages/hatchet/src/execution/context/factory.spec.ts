@@ -10,6 +10,7 @@ import type { Context } from "@hatchet-dev/typescript-sdk";
 const createMockSdkContext = <I>(input?: I) => {
 	const mock = mockDeep<Context<I, any>>();
 	Object.defineProperty(mock, "input", { value: input, writable: true });
+
 	return mock;
 };
 
@@ -185,6 +186,7 @@ describe("factory.ts", () => {
 
 				// Create a named function to simulate a task method
 				function step1() {}
+
 				const result = await ctx.parent(step1 as any);
 
 				expect(fromSDK.parentOutput).toHaveBeenCalledWith("step1");
