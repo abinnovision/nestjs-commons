@@ -69,13 +69,13 @@
 		"prettier": "^3.8.1",
 		"publint": "^0.3.18",
 		"reflect-metadata": "^0.2.2",
-		"rxjs": "^7.8.1",
-		"tsdown": "^0.21.3",
+		"rxjs": "^7.8.2",
+		"tsdown": "^0.21.4",
 		"typescript": "^5.9.3",
 		"unplugin-swc": "^1.5.9",
 		"vitest": "^4.1.0",
 		"vitest-mock-extended": "^3.1.0",
-		"zod": "^3.24.1"
+		"zod": "^4.3.6"
 	},
 	"peerDependencies": {
 		"@nestjs/common": "^11.0.0",

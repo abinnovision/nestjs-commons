@@ -80,7 +80,7 @@ export class DeclarationBuilderService {
 		const proto = Object.getPrototypeOf(host);
 
 		// Construct an unbound declaration for it.
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
 			...taskOpts,
