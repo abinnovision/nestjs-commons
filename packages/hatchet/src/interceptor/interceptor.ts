@@ -1,4 +1,4 @@
-import type { BaseCtx } from "../execution";
+import type { BaseCtx } from "../execution/index.js";
 
 /**
  * Token for optional interceptors injection.

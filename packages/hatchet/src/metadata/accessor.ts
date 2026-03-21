@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment */
-import { TaskHost, WorkflowHost } from "../abstracts";
 import {
 	METADATA_KEY_HOST_OPTS,
 	METADATA_KEY_TASK_OPTS,
 	METADATA_KEY_WORKFLOW_TASK_OPTS,
-} from "./keys";
-import { translateHostOpts } from "./translator";
+} from "./keys.js";
+import { translateHostOpts } from "./translator.js";
+import { TaskHost, WorkflowHost } from "../abstracts/index.js";
 
-import type { HostOpts, TaskOpts, WorkflowTaskOpts } from "./decorators";
-import type { SdkHostOpts } from "./translator";
-import type { AnyHost, AnyHostCtor } from "../references/shared";
+import type {
+	HostOpts,
+	TaskOpts,
+	WorkflowTaskOpts,
+} from "./decorators/index.js";
+import type { SdkHostOpts } from "./translator.js";
+import type { AnyHost, AnyHostCtor } from "../references/shared.js";
 
 /**
  * Accessor for host metadata and methods.

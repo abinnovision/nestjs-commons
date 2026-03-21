@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { defineEvent, EVENT_MARKER, EventDefinition } from "./event-definition";
+import {
+	defineEvent,
+	EVENT_MARKER,
+	EventDefinition,
+} from "./event-definition.js";
 
 const testSchema = z.object({
 	userId: z.string(),

@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { taskHost, workflowHost } from "../abstracts";
-import { Host, Task, WorkflowTask } from "../metadata";
+import { taskHost, workflowHost } from "../abstracts/index.js";
+import { Host, Task, WorkflowTask } from "../metadata/index.js";
 
-import type { TaskCtx, WorkflowCtx } from "../execution";
+import type { TaskCtx, WorkflowCtx } from "../execution/index.js";
 
 // ============ TaskHost Fixtures ============
 

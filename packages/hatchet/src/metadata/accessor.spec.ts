@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
+import { fromCtor, fromInstance } from "./accessor.js";
 import {
 	NoMethodsTask,
 	NoMethodsWorkflow,
 	TestTask,
 	TestWorkflow,
-} from "../__fixtures__/test-hosts";
-import { taskHost, workflowHost } from "../abstracts";
-import { fromCtor, fromInstance } from "./accessor";
-import { Host, Task, WorkflowTask } from "./decorators";
+} from "../__fixtures__/test-hosts.js";
+import { taskHost, workflowHost } from "../abstracts/index.js";
+import { Host, Task, WorkflowTask } from "./decorators/index.js";
 
-import type { TaskCtx, WorkflowCtx } from "../execution";
+import type { TaskCtx, WorkflowCtx } from "../execution/index.js";
 
 // TaskHost with specific retries option for getTaskMeta() test
 @Host({ name: "test-task-retries" })

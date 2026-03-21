@@ -4,12 +4,11 @@ import { mockDeep } from "vitest-mock-extended";
 import {
 	createHostRunForAdmin,
 	createHostRunForContext,
-} from "./adapter-factory";
-import { TestTask } from "../../__fixtures__/test-hosts";
-import { taskRef } from "../../references";
+} from "./adapter-factory.js";
+import { TestTask } from "../../__fixtures__/test-hosts.js";
+import { taskRef } from "../../references/index.js";
 
 import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
-import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
 
 const createMockHatchetClient = () => mockDeep<HatchetClient>();
 
@@ -23,8 +22,10 @@ const createMockSdkContext = <I>(input?: I) => {
 /**
  * Creates a minimal mock WorkflowRunRef for testing.
  */
-const createMockRunRef = <T>(output: T): WorkflowRunRef<T> =>
-	({ output: Promise.resolve(output) }) as unknown as WorkflowRunRef<T>;
+
+const createMockRunRef = (output: unknown): any => ({
+	output: Promise.resolve(output),
+});
 
 describe("createHostRunForContext()", () => {
 	let sdkCtx: ReturnType<typeof createMockSdkContext>;

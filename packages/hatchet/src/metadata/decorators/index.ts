@@ -1,8 +1,8 @@
-export { Host } from "./host.decorator";
-export type { HostOpts } from "./host.decorator";
+export { Host } from "./host.decorator.js";
+export type { HostOpts } from "./host.decorator.js";
 
-export { Task } from "./task.decorator";
-export type { TaskOpts } from "./task.decorator";
+export { Task } from "./task.decorator.js";
+export type { TaskOpts } from "./task.decorator.js";
 
-export { WorkflowTask } from "./workflow-task.decorator";
-export type { WorkflowTaskOpts } from "./workflow-task.decorator";
+export { WorkflowTask } from "./workflow-task.decorator.js";
+export type { WorkflowTaskOpts } from "./workflow-task.decorator.js";

@@ -1,5 +1,5 @@
-import type { TaskHost, WorkflowHost } from "../abstracts";
-import type { BaseCtx, TaskMarker } from "../execution/context/types";
+import type { TaskHost, WorkflowHost } from "../abstracts/index.js";
+import type { BaseCtx, TaskMarker } from "../execution/context/types.js";
 
 /**
  * Converts a union to an intersection. Used for detecting if a type is a union.

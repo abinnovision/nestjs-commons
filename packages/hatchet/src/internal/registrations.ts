@@ -1,5 +1,5 @@
-import type { Interceptor } from "../interceptor";
-import type { AnyHostCtor } from "../references/shared";
+import type { Interceptor } from "../interceptor/index.js";
+import type { AnyHostCtor } from "../references/shared.js";
 import type { Type } from "@nestjs/common";
 
 /**

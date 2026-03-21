@@ -1,6 +1,6 @@
-import { resolveConfig } from "./resolver";
+import { resolveConfig } from "./resolver.js";
 
-import type { ConfigxSchema, ConfigxType } from "./types";
+import type { ConfigxSchema, ConfigxType } from "./types.js";
 
 /**
  * Creates a new Configx class based on the provided schema.

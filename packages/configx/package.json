@@ -10,7 +10,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/abinnovision/nestjs-commons.git",
+		"url": "git+https://github.com/abinnovision/nestjs-commons.git",
 		"directory": "packages/configx"
 	},
 	"license": "Apache-2.0",
@@ -19,20 +19,28 @@
 		"email": "info@abinnovision.com",
 		"url": "https://abinnovision.com/"
 	},
+	"type": "module",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.ts",
-			"require": "./dist/index.js",
-			"default": "./dist/index.js"
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
 		}
 	},
+	"main": "./dist/index.cjs",
+	"types": "./dist/index.d.cts",
 	"files": [
 		"dist",
 		"LICENSE",
 		"README.md"
 	],
 	"scripts": {
-		"build": "tsc --project tsconfig.build.json",
+		"build": "tsdown",
 		"format:check": "prettier --check 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
 		"format:fix": "prettier --write 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
 		"lint:check": "eslint 'src/**/*.ts'",
@@ -54,13 +62,17 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.0",
 		"@abinnovision/prettier-config": "^2.1.5",
+		"@arethetypeswrong/core": "^0.18.2",
 		"@swc/core": "^1.15.18",
 		"arktype": "^2.1.9",
 		"eslint": "^9.39.4",
 		"prettier": "^3.8.1",
+		"publint": "^0.3.18",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
+		"tsdown": "^0.21.3",
 		"typescript": "^5.9.3",
+		"unplugin-swc": "^1.5.9",
 		"vitest": "^4.1.0",
 		"zod": "^3.24.1"
 	},

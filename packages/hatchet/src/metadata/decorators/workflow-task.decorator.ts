@@ -1,11 +1,11 @@
-import { METADATA_KEY_WORKFLOW_TASK_OPTS as METADATA_KEY } from "../keys";
+import { METADATA_KEY_WORKFLOW_TASK_OPTS as METADATA_KEY } from "../keys.js";
 
-import type { WorkflowCtx } from "../../execution";
+import type { WorkflowCtx } from "../../execution/index.js";
 import type {
 	ContextMethodKeys,
 	WorkflowHostCtor,
-} from "../../references/shared";
-import type { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
+} from "../../references/shared.js";
+import type { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk";
 
 export type WorkflowTaskOpts<C extends WorkflowHostCtor<any>> = Omit<
 	CreateWorkflowTaskOpts,

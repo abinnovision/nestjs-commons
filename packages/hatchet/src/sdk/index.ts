@@ -1,1 +1,1 @@
-export * from "./hatchet-client.factory";
+export * from "./hatchet-client.factory.js";
