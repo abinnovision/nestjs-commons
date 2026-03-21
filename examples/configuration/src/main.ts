@@ -13,9 +13,11 @@ async function bootstrap() {
 	// Disable the X-Powered-By header to not expose information about the server
 	app.getHttpAdapter().getInstance().disable("x-powered-by");
 
-	// Using the enableShutdownHooks method,
-	// the application will gracefully shut down
-	// when the process receives a termination signal.
+	/*
+	 * Using the enableShutdownHooks method,
+	 * the application will gracefully shut down
+	 * when the process receives a termination signal.
+	 */
 	app.enableShutdownHooks();
 
 	// Get the config for the application.

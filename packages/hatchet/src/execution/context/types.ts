@@ -108,6 +108,7 @@ export type WorkflowCtx<T extends WorkflowHost<any>> = BaseCtx<
 	T extends WorkflowHost<infer I> ? I : never
 > & {
 	[TASK_MARKER]: true;
+
 	/**
 	 * Provides the output of a parent task.
 	 */

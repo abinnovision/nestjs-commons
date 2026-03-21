@@ -22,6 +22,7 @@ describe("client/client.ts", () => {
 
 	beforeEach(() => {
 		mockHatchetClient = mockDeep<HatchetClient>();
+
 		// Set up default return values for methods that return nested objects
 		mockHatchetClient.events.bulkPush.mockResolvedValue({ events: [] });
 		client = new Client(mockHatchetClient);

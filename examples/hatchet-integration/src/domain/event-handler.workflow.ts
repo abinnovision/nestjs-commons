@@ -22,6 +22,7 @@ export class EventHandlerWorkflow extends workflowHost() {
 			console.log(
 				"[EventHandler] Workflow triggered by direct run, not an event.",
 			);
+
 			return {
 				eventType: "run" as const,
 				message: "Workflow executed via direct run.",
@@ -55,6 +56,7 @@ export class EventHandlerWorkflow extends workflowHost() {
 
 		// Unknown event type
 		console.log("[EventHandler] Unknown event type received");
+
 		return {
 			eventType: "unknown" as const,
 			message: "Unknown event received",

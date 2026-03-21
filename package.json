@@ -33,8 +33,8 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"devDependencies": {
-		"@abinnovision/commitlint-config": "^2.2.3",
-		"@abinnovision/eslint-config-base": "^3.0.2",
+		"@abinnovision/commitlint-config": "^2.2.4",
+		"@abinnovision/eslint-config-base": "^3.2.0",
 		"@abinnovision/prettier-config": "^2.1.5",
 		"@commitlint/cli": "^20.5.0",
 		"@vitest/coverage-v8": "^4.1.0",

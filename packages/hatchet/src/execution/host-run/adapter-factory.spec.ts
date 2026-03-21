@@ -16,6 +16,7 @@ const createMockHatchetClient = () => mockDeep<HatchetClient>();
 const createMockSdkContext = <I>(input?: I) => {
 	const mock = mockDeep<Context<I, any>>();
 	Object.defineProperty(mock, "input", { value: input, writable: true });
+
 	return mock;
 };
 

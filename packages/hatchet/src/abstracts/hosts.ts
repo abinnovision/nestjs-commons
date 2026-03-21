@@ -56,9 +56,7 @@ export abstract class TaskHost<I> implements InputSchemaProvider<I> {
  * @param input The input schema.
  */
 export function workflowHost<I>(
-	input:
-		| ReturnType<InputSchemaProvider<I>["inputSchema"]>
-		| undefined = undefined,
+	input?: ReturnType<InputSchemaProvider<I>["inputSchema"]>,
 ) {
 	class WorkflowHostIntermediate extends WorkflowHost<I> {
 		public constructor() {
@@ -75,9 +73,7 @@ export function workflowHost<I>(
  * @param input The input schema.
  */
 export function taskHost<I>(
-	input:
-		| ReturnType<InputSchemaProvider<I>["inputSchema"]>
-		| undefined = undefined,
+	input?: ReturnType<InputSchemaProvider<I>["inputSchema"]>,
 ) {
 	class TaskHostIntermediate extends TaskHost<I> {
 		public constructor() {

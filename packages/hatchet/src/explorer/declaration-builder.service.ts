@@ -112,8 +112,10 @@ export class DeclarationBuilderService {
 		// Mapping of task name to task declaration.
 		const taskDecls = new Map<string, CreateWorkflowTaskOpts>();
 
-		// Topologically sort the graph.
-		// This helps us to initialize the tasks in the correct order and ensure the parents are present.
+		/*
+		 * Topologically sort the graph.
+		 * This helps us to initialize the tasks in the correct order and ensure the parents are present.
+		 */
 		const topoSorted = graph.topologicalSort("key") as string[];
 
 		for (const method of topoSorted) {
@@ -255,8 +257,10 @@ export class DeclarationBuilderService {
 			}
 		}
 
-		// Validate that there are no circular dependencies.
-		// Per docs of topologicalSort(), it returns undefined if there is a cycle.
+		/*
+		 * Validate that there are no circular dependencies.
+		 * Per docs of topologicalSort(), it returns undefined if there is a cycle.
+		 */
 		if (graph.topologicalSort() === undefined) {
 			throw new Error(
 				`WorkflowHost '${host.constructor.name}' has a circular dependency between its tasks`,
@@ -279,8 +283,10 @@ export class DeclarationBuilderService {
 		// Infer the trigger source.
 		const triggerSource = this.inferTriggerSource(context);
 
-		// Extract the input from the context.
-		// We default to an empty object if input is undefined.
+		/*
+		 * Extract the input from the context.
+		 * We default to an empty object if input is undefined.
+		 */
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const input = context.input ?? {};
 
@@ -293,8 +299,10 @@ export class DeclarationBuilderService {
 			onCrons: accessor.metadata.onCrons ?? [],
 		};
 
-		// Only run validation for "run" triggers.
-		// All other triggers skip validation here.
+		/*
+		 * Only run validation for "run" triggers.
+		 * All other triggers skip validation here.
+		 */
 		if (triggerSource === "run") {
 			// Resolve the schema from the host.
 			const schema = host.inputSchema();
@@ -320,6 +328,7 @@ export class DeclarationBuilderService {
 			return { input, triggerSource, hostConfig };
 		}
 	}
+
 	/**
 	 * Executes a function, optionally intercepted by the interceptors.
 	 * Interceptors are chained in array order (first = outermost).
@@ -368,9 +377,11 @@ export class DeclarationBuilderService {
 			return "event";
 		}
 
-		// Default to "run" for direct runs.
-		// We cannot reliably detect other sources at this time.
-		// The "other" source is reserved for future use.
+		/*
+		 * Default to "run" for direct runs.
+		 * We cannot reliably detect other sources at this time.
+		 * The "other" source is reserved for future use.
+		 */
 		return "run";
 	}
 }

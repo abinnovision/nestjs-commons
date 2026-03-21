@@ -21,6 +21,7 @@ import { LoggingInterceptor } from "./logging-interceptor";
 				},
 				worker: { name: "common-worker" },
 			}),
+
 			// Interceptor classes
 			interceptors: [LoggingInterceptor],
 		}),

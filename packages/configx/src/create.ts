@@ -19,8 +19,10 @@ export function configx<T extends ConfigxSchema>(schema: T): ConfigxType<T> {
 				resolveEnv: () => process.env,
 			});
 
-			// Assign the resolved configuration to the instance.
-			// This is currently the most efficient way to do this without relying on proxies.
+			/*
+			 * Assign the resolved configuration to the instance.
+			 * This is currently the most efficient way to do this without relying on proxies.
+			 */
 			Object.assign(this, config);
 		}
 	}

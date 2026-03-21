@@ -150,8 +150,10 @@ describe("declaration-builder.service.ts", () => {
 		it("skips validation for event-triggered inputs", () => {
 			const host = new TestTask();
 
-			// Access private method via declaration creation and verify no error thrown
-			// Event-triggered inputs (with EVENT_MARKER) skip schema validation
+			/*
+			 * Access private method via declaration creation and verify no error thrown
+			 * Event-triggered inputs (with EVENT_MARKER) skip schema validation
+			 */
 			const declaration = service.createDeclaration(host);
 			expect(declaration).toBeDefined();
 		});
@@ -272,6 +274,7 @@ describe("declaration-builder.service.ts", () => {
 					executionOrder.push("interceptor1-start");
 					const result = await next();
 					executionOrder.push("interceptor1-end");
+
 					return result;
 				},
 			};
@@ -281,6 +284,7 @@ describe("declaration-builder.service.ts", () => {
 					executionOrder.push("interceptor2-start");
 					const result = await next();
 					executionOrder.push("interceptor2-end");
+
 					return result;
 				},
 			};
