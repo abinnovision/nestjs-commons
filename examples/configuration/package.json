@@ -40,14 +40,14 @@
 		"@nestjs/cli": "^11.0.2",
 		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.5",
-		"@swc/cli": "^0.6.0",
-		"@swc/core": "^1.11.5",
+		"@swc/cli": "^0.8.0",
+		"@swc/core": "^1.15.18",
 		"@types/express": "^5.0.0",
 		"@types/node": "^22.10.10",
-		"eslint": "^9.39.1",
-		"prettier": "^3.7.4",
+		"eslint": "^9.39.4",
+		"prettier": "^3.8.1",
 		"source-map-support": "^0.5.21",
-		"typescript": "^5.8.2",
+		"typescript": "^5.9.3",
 		"unplugin-swc": "^1.5.9"
 	}
 }

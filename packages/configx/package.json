@@ -54,14 +54,14 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.0.2",
 		"@abinnovision/prettier-config": "^2.1.5",
-		"@swc/core": "^1.11.5",
+		"@swc/core": "^1.15.18",
 		"arktype": "^2.1.9",
-		"eslint": "^9.39.1",
-		"prettier": "^3.7.4",
+		"eslint": "^9.39.4",
+		"prettier": "^3.8.1",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
-		"typescript": "^5.8.2",
-		"vitest": "^4.0.15",
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.0",
 		"zod": "^3.24.1"
 	},
 	"publishConfig": {
