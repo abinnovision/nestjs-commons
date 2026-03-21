@@ -12,7 +12,7 @@
 		"lint:fix": {},
 		"lint:check": {},
 		"build": {
-			"inputs": ["src/**/*"],
+			"inputs": ["src/**/*", "tsdown.config.ts"],
 			"outputs": ["dist/**/*"],
 			"dependsOn": ["^build", "generate"]
 		},

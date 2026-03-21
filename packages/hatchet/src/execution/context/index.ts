@@ -5,9 +5,9 @@ export type {
 	HelperCtx,
 	TriggerSource,
 	HostTriggerConfig,
-} from "./types";
+} from "./types.js";
 
-export { TASK_MARKER } from "./types";
-export type { TaskMarker } from "./types";
+export { TASK_MARKER } from "./types.js";
+export type { TaskMarker } from "./types.js";
 
-export { createTaskCtx, createWorkflowCtx } from "./factory";
+export { createTaskCtx, createWorkflowCtx } from "./factory.js";

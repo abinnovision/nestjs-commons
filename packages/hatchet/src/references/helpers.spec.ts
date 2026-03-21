@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getRefAccessor, taskRef, workflowRef } from "./helpers";
-import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts";
+import { getRefAccessor, taskRef, workflowRef } from "./helpers.js";
+import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts.js";
 
 describe("ref/helpers.ts", () => {
 	describe("#taskRef()", () => {

@@ -3,19 +3,27 @@ import {
 	TaskWorkflowDeclaration,
 	WorkflowDeclaration,
 } from "@hatchet-dev/typescript-sdk";
-import { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1/task";
 import { Inject, Injectable, Optional } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
-import { TaskHost, WorkflowHost } from "../abstracts";
-import { createTaskCtx, createWorkflowCtx } from "../execution/context";
-import { Interceptor } from "../interceptor";
-import { InterceptorRegistration } from "../internal/registrations";
-import { fromInstance } from "../metadata/accessor";
-import { AnyHost } from "../references/shared";
+import { TaskHost, WorkflowHost } from "../abstracts/index.js";
+import {
+	createTaskCtx,
+	createWorkflowCtx,
+} from "../execution/context/index.js";
+import { Interceptor } from "../interceptor/index.js";
+import { InterceptorRegistration } from "../internal/registrations.js";
+import { fromInstance } from "../metadata/accessor.js";
+import { AnyHost } from "../references/shared.js";
 
-import type { BaseCtx, HostTriggerConfig, TriggerSource } from "../execution";
+import type {
+	BaseCtx,
+	HostTriggerConfig,
+	TriggerSource,
+} from "../execution/index.js";
+
+type CreateWorkflowTaskOpts = ReturnType<WorkflowDeclaration["task"]>;
 
 @Injectable()
 export class DeclarationBuilderService {

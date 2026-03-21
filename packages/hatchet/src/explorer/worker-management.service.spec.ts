@@ -2,14 +2,13 @@ import { Logger } from "@nestjs/common";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDeep } from "vitest-mock-extended";
 
-import { WorkerManagementService } from "./worker-management.service";
-import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts";
-import { HatchetFeatureRegistration } from "../internal/registrations";
+import { WorkerManagementService } from "./worker-management.service.js";
+import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts.js";
+import { HatchetFeatureRegistration } from "../internal/registrations.js";
 
-import type { HatchetModuleConfig } from "../hatchet.module-config";
-import type { DeclarationBuilderService } from "./declaration-builder.service";
+import type { HatchetModuleConfig } from "../hatchet.module-config.js";
+import type { DeclarationBuilderService } from "./declaration-builder.service.js";
 import type { HatchetClient } from "@hatchet-dev/typescript-sdk";
-import type { WorkflowList } from "@hatchet-dev/typescript-sdk/clients/rest/generated/data-contracts";
 import type { ModuleRef } from "@nestjs/core";
 
 /**
@@ -38,14 +37,14 @@ const createService = (opts: {
 		mockClient.workflows.list.mockRejectedValue(new Error("API error"));
 	} else if (opts.serverWorkflowPages) {
 		for (const page of opts.serverWorkflowPages) {
-			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- test uses partial Workflow stubs
-			const response = { rows: page } as WorkflowList;
-			mockClient.workflows.list.mockResolvedValueOnce(response);
+			const response = { rows: page };
+
+			mockClient.workflows.list.mockResolvedValueOnce(response as any);
 		}
 	} else {
-		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- test uses partial Workflow stubs
-		const response = { rows: opts.serverWorkflows ?? [] } as WorkflowList;
-		mockClient.workflows.list.mockResolvedValue(response);
+		const response = { rows: opts.serverWorkflows ?? [] };
+
+		mockClient.workflows.list.mockResolvedValue(response as any);
 	}
 
 	const service = new WorkerManagementService(

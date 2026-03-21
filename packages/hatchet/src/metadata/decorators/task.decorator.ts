@@ -1,4 +1,4 @@
-import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../keys";
+import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../keys.js";
 
 import type {
 	CreateBaseWorkflowOpts,

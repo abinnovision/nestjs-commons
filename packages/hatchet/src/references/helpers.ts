@@ -1,6 +1,6 @@
-import { fromCtor } from "../metadata/accessor";
+import { fromCtor } from "../metadata/accessor.js";
 
-import type { AnyCallableRef, TaskRef, WorkflowRef } from "./refs";
+import type { AnyCallableRef, TaskRef, WorkflowRef } from "./refs.js";
 import type {
 	AnyHostCtor,
 	TaskHostCtor,
@@ -8,7 +8,7 @@ import type {
 	ValidTaskHost,
 	ValidWorkflowHost,
 	WorkflowHostCtor,
-} from "./shared";
+} from "./shared.js";
 
 /**
  * Creates a reference to a task within a {@link TaskHost}.

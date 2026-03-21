@@ -2,6 +2,7 @@ import { ModuleRef } from "@nestjs/core";
 import { beforeEach, describe, expect, it } from "vitest";
 import { any, captor, mock } from "vitest-mock-extended";
 
+import { DeclarationBuilderService } from "./declaration-builder.service.js";
 import {
 	NoMethodsTask,
 	NoMethodsWorkflow,
@@ -9,15 +10,14 @@ import {
 	setParamTypes,
 	TestTask,
 	TestWorkflow,
-} from "../__fixtures__/test-hosts";
-import { taskHost, workflowHost } from "../abstracts";
-import { BaseCtx } from "../execution";
-import { Interceptor } from "../interceptor";
-import { InterceptorRegistration } from "../internal/registrations";
-import { Host, Task, WorkflowTask } from "../metadata";
-import { DeclarationBuilderService } from "./declaration-builder.service";
+} from "../__fixtures__/test-hosts.js";
+import { taskHost, workflowHost } from "../abstracts/index.js";
+import { BaseCtx } from "../execution/index.js";
+import { Interceptor } from "../interceptor/index.js";
+import { InterceptorRegistration } from "../internal/registrations.js";
+import { Host, Task, WorkflowTask } from "../metadata/index.js";
 
-import type { TaskCtx, WorkflowCtx } from "../execution";
+import type { TaskCtx, WorkflowCtx } from "../execution/index.js";
 
 // Set design:paramtypes for shared fixtures
 setParamTypes(TestTask.prototype, "execute", [Object]);

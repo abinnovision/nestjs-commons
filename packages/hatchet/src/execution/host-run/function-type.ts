@@ -1,6 +1,10 @@
-import type { AnyCallableRef, InputOfRef, OutputOfRef } from "../../references";
+import type {
+	AnyCallableRef,
+	InputOfRef,
+	OutputOfRef,
+} from "../../references/index.js";
+import type { WorkflowRunRef } from "../../sdk/types.js";
 import type { RunOpts } from "@hatchet-dev/typescript-sdk";
-import type WorkflowRunRef from "@hatchet-dev/typescript-sdk/util/workflow-run-ref";
 
 /**
  * Describes the return type of the {@link HostRunFn} function.

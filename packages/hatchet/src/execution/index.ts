@@ -6,7 +6,11 @@ export type {
 	HelperCtx,
 	TriggerSource,
 	HostTriggerConfig,
-} from "./context";
+} from "./context/index.js";
 
 // Host run types
-export type { HostRunFn, HostRunOpts, HostRunReturn } from "./host-run";
+export type {
+	HostRunFn,
+	HostRunOpts,
+	HostRunReturn,
+} from "./host-run/index.js";

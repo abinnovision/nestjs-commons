@@ -1,18 +1,15 @@
 import { HatchetClient } from "@hatchet-dev/typescript-sdk";
-import { PushEventOptions } from "@hatchet-dev/typescript-sdk/clients/event/event-client";
 import { Injectable } from "@nestjs/common";
 
-import { EVENT_MARKER } from "../events/event-definition";
-import { createHostRunForAdmin } from "../execution/host-run";
+import { EVENT_MARKER } from "../events/event-definition.js";
+import { createHostRunForAdmin } from "../execution/host-run/index.js";
 
-import type { AnyEventDefinition, EventInput } from "../events";
-import type { HostRunFn } from "../execution";
-import type { Event } from "@hatchet-dev/typescript-sdk/protoc/events";
+import type { AnyEventDefinition, EventInput } from "../events/index.js";
+import type { HostRunFn } from "../execution/index.js";
 
-/**
- * Options for emitting events.
- */
-type EmitOptions = PushEventOptions;
+type EventClient = HatchetClient["events"];
+type EventEmitOptions = Parameters<EventClient["push"]>[2];
+type Event = Awaited<ReturnType<EventClient["push"]>>;
 
 @Injectable()
 export class Client {
@@ -46,7 +43,7 @@ export class Client {
 	public async emit<E extends AnyEventDefinition>(
 		event: E,
 		input: EventInput<E>,
-		options?: EmitOptions,
+		options?: EventEmitOptions,
 	): Promise<Event> {
 		return await this.client.events.push(
 			event.name,
@@ -74,7 +71,7 @@ export class Client {
 	public async emitBulk<E extends AnyEventDefinition>(
 		event: E,
 		inputs: EventInput<E>[],
-		options?: EmitOptions,
+		options?: EventEmitOptions,
 	): Promise<Event[]> {
 		if (inputs.length === 0) {
 			return [];

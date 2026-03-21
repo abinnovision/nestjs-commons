@@ -6,22 +6,22 @@ import {
 	Type,
 } from "@nestjs/common";
 
-import { Client } from "./client";
-import { DeclarationBuilderService } from "./explorer/declaration-builder.service";
-import { WorkerManagementService } from "./explorer/worker-management.service";
+import { Client } from "./client/index.js";
+import { DeclarationBuilderService } from "./explorer/declaration-builder.service.js";
+import { WorkerManagementService } from "./explorer/worker-management.service.js";
 import {
-	HatchetModuleConfig,
+	type HatchetModuleConfig,
 	hatchetModuleConfigToken,
-} from "./hatchet.module-config";
-import { Interceptor } from "./interceptor";
+} from "./hatchet.module-config.js";
+import { Interceptor } from "./interceptor/index.js";
 import {
 	HatchetFeatureRegistration,
 	InterceptorRegistration,
-} from "./internal/registrations";
-import { hatchetClientFactory } from "./sdk";
+} from "./internal/registrations.js";
+import { hatchetClientFactory } from "./sdk/index.js";
 
-import type { AnyCallableRef } from "./references";
-import type { AnyHostCtor } from "./references/shared";
+import type { AnyCallableRef } from "./references/index.js";
+import type { AnyHostCtor } from "./references/shared.js";
 
 /**
  * Extra options for the module (processed at module definition time).

@@ -6,7 +6,7 @@ import type {
 	WorkflowHostCtor,
 	WorkflowInput,
 	WorkflowOutput,
-} from "./shared";
+} from "./shared.js";
 
 /**
  * Reference to a task within a {@link TaskHost}

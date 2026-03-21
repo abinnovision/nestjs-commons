@@ -1,6 +1,6 @@
-import { ConfigxError, InvalidConfigError } from "./errors";
+import { ConfigxError, InvalidConfigError } from "./errors.js";
 
-import type { ConfigxSchema } from "./types";
+import type { ConfigxSchema } from "./types.js";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 interface ResolveConfigArgs<T extends ConfigxSchema> {

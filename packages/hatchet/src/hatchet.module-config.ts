@@ -1,5 +1,9 @@
-import type { CreateWorkerOpts } from "@hatchet-dev/typescript-sdk";
-import type { ClientConfig } from "@hatchet-dev/typescript-sdk/clients/hatchet-client";
+import type {
+	CreateWorkerOpts,
+	HatchetClient,
+} from "@hatchet-dev/typescript-sdk";
+
+type ClientConfig = HatchetClient["config"];
 
 /**
  * Configuration for the Hatchet worker.

@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { mockDeep } from "vitest-mock-extended";
 
-import { createTaskCtx, createWorkflowCtx } from "./factory";
+import { createTaskCtx, createWorkflowCtx } from "./factory.js";
 
-import type { HostTriggerConfig } from "./types";
-import type { AnyEventDefinition } from "../../events";
+import type { HostTriggerConfig } from "./types.js";
+import type { AnyEventDefinition } from "../../events/index.js";
 import type { Context } from "@hatchet-dev/typescript-sdk";
 
 const createMockSdkContext = <I>(input?: I) => {

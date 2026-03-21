@@ -1,4 +1,4 @@
-import type { HostOpts } from "./decorators";
+import type { HostOpts } from "./decorators/index.js";
 import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk";
 
 /**

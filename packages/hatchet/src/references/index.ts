@@ -5,10 +5,10 @@ export type {
 	AnyCallableRef,
 	InputOfRef,
 	OutputOfRef,
-} from "./refs";
+} from "./refs.js";
 
 // *Ref functions
-export { taskRef, workflowRef } from "./helpers";
+export { taskRef, workflowRef } from "./helpers.js";
 
 // Type utilities
 export type {
@@ -17,4 +17,4 @@ export type {
 	WorkflowInput,
 	WorkflowOutput,
 	WorkflowTasksOutputMap,
-} from "./shared";
+} from "./shared.js";
