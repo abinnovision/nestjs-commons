@@ -3,5 +3,5 @@
  * Used internally to avoid deep subpath imports from the SDK.
  */
 export interface WorkflowRunRef<T> {
-	get output(): Promise<T>;
+	readonly output: Promise<T>;
 }

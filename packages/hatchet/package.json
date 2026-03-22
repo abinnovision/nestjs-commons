@@ -25,7 +25,7 @@
 				"default": "./dist/index.mjs"
 			},
 			"require": {
-				"types": "./dist/index.d.cts",
+				"types": "./dist/index.d.ts",
 				"default": "./dist/index.cjs"
 			}
 		},
@@ -35,7 +35,7 @@
 				"default": "./dist/sdk-export/index.mjs"
 			},
 			"require": {
-				"types": "./dist/sdk-export/index.d.cts",
+				"types": "./dist/sdk-export/index.d.ts",
 				"default": "./dist/sdk-export/index.cjs"
 			}
 		}
@@ -48,7 +48,7 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "tsdown && tsc --project tsconfig.build.json --emitDeclarationOnly && find dist -name '*.d.ts' -exec sh -c 'cp \"$1\" \"${1%.d.ts}.d.cts\"' _ {} \\; && publint",
+		"build": "tsdown && tsc --project tsconfig.build.json --emitDeclarationOnly && publint",
 		"format:check": "prettier --check '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
 		"format:fix": "prettier --write '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
 		"lint:check": "eslint '{{src,test}/**/*,*}.{js,jsx,ts,tsx}'",
@@ -67,7 +67,7 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"@hatchet-dev/typescript-sdk": "patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch",
+		"@hatchet-dev/typescript-sdk": "^1.17.2",
 		"@standard-schema/spec": "^1.0.0",
 		"directed-graph-typed": "^2.1.0"
 	},

@@ -1,4 +1,4 @@
-import { HatchetClient } from "@hatchet-dev/typescript-sdk/v1";
+import { HatchetClient } from "@hatchet-dev/typescript-sdk";
 import { Logger } from "@nestjs/common";
 
 import { hatchetModuleConfigToken } from "../hatchet.module-config.js";

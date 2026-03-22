@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { METADATA_KEY_HOST_OPTS } from "../keys.js";
 
 import type { AnyEventDefinition } from "../../events/index.js";
-import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk/v1";
+import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk";
 
 /**
  * Properties we enhance beyond SDK types.

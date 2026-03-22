@@ -2,7 +2,7 @@ import {
 	Context,
 	TaskWorkflowDeclaration,
 	WorkflowDeclaration,
-} from "@hatchet-dev/typescript-sdk/v1";
+} from "@hatchet-dev/typescript-sdk";
 import { Inject, Injectable, Optional } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
