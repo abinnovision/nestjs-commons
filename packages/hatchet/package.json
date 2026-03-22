@@ -28,6 +28,16 @@
 				"types": "./dist/index.d.cts",
 				"default": "./dist/index.cjs"
 			}
+		},
+		"./sdk": {
+			"import": {
+				"types": "./dist/sdk-export/index.d.ts",
+				"default": "./dist/sdk-export/index.mjs"
+			},
+			"require": {
+				"types": "./dist/sdk-export/index.d.cts",
+				"default": "./dist/sdk-export/index.cjs"
+			}
 		}
 	},
 	"main": "./dist/index.cjs",
