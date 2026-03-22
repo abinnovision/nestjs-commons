@@ -2,7 +2,7 @@ import type { TaskHost, WorkflowHost } from "../../abstracts/index.js";
 import type { AnyEventDefinition, EventOutput } from "../../events/index.js";
 import type { AnyTaskFn, OutputOfTaskFn } from "../../references/shared.js";
 import type { HostRunFn } from "../host-run/index.js";
-import type { Context } from "@hatchet-dev/typescript-sdk";
+import type { Context } from "@hatchet-dev/typescript-sdk/v1";
 
 export const TASK_MARKER = Symbol("TASK_MARKER");
 export type TaskMarker = typeof TASK_MARKER;

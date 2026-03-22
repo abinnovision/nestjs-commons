@@ -5,7 +5,7 @@ import type {
 	ContextMethodKeys,
 	WorkflowHostCtor,
 } from "../../references/shared.js";
-import type { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk";
+import type { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk/v1";
 
 export type WorkflowTaskOpts<C extends WorkflowHostCtor<any>> = Omit<
 	CreateWorkflowTaskOpts,

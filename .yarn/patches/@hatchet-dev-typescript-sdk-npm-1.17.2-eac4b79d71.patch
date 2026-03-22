@@ -1,0 +1,21 @@
+diff --git a/package.json b/package.json
+index 080c2095f634c700f13413ace5b02044fc24d949..ecf9f3ee1446515ead82f2cd90312c3e3f1ac877 100644
+--- a/package.json
++++ b/package.json
+@@ -15,6 +15,16 @@
+     "type": "git",
+     "url": "https://github.com/hatchet-dev/hatchet.git"
+   },
++  "exports": {
++    ".": {
++      "types": "./index.d.ts",
++      "require": "./index.js"
++    },
++    "./v1": {
++      "types": "./v1/index.d.ts",
++      "require": "./v1/index.js"
++    }
++  },
+   "keywords": [],
+   "author": "",
+   "license": "MIT",

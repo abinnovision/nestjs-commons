@@ -3,7 +3,7 @@ import { getRefAccessor } from "../../references/helpers.js";
 import type { HostRunFn, HostRunOpts, HostRunReturn } from "./function-type.js";
 import type { AnyCallableRef, InputOfRef } from "../../references/index.js";
 import type { WorkflowRunRef } from "../../sdk/types.js";
-import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
+import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk/v1";
 
 /**
  * Strategy function for running a workflow.
