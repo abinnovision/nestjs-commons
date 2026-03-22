@@ -745,7 +745,7 @@ __metadata:
 
 "@hatchet-dev/typescript-sdk@patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch":
   version: 1.17.2
-  resolution: "@hatchet-dev/typescript-sdk@patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch::version=1.17.2&hash=5e4b37"
+  resolution: "@hatchet-dev/typescript-sdk@patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch::version=1.17.2&hash=af56be"
   dependencies:
     "@bufbuild/protobuf": "npm:^2.11.0"
     "@types/qs": "npm:^6.15.0"
@@ -764,7 +764,7 @@ __metadata:
   dependenciesMeta:
     prom-client:
       optional: true
-  checksum: 10c0/27e99e048c08263440a571e69f57c2eda8e6857f2d9f0427155b3464a18d64516d86718db79a59529eddfa8b85d0f24c0febf32ef64411e2d07a8de2d7ef13ed
+  checksum: 10c0/207c373d0cc54900746061d38fa6bb611902599867628085a9f2734af1bfd97fb14fe43ebe633c25b1a8af106e4e1eb0bce323dc04df9ad1b931c38d17b83852
   languageName: node
   linkType: hard
 
