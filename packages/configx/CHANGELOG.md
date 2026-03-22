@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.1...nestjs-configx-v2.0.2) (2026-03-21)
+
+
+### Bug Fixes
+
+* migrate build-system and use dual export with cjs and esm ([#98](https://github.com/abinnovision/nestjs-commons/issues/98)) ([28ea7a6](https://github.com/abinnovision/nestjs-commons/commit/28ea7a6f6d5685a400787eab443b1437beff0f6b))
+
 ## [2.0.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.0...nestjs-configx-v2.0.1) (2025-12-16)
 
 

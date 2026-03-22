@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.3.2...nestjs-hatchet-v0.4.0) (2026-03-21)
+
+
+### Features
+
+* add workflow/task orphan detection ([#91](https://github.com/abinnovision/nestjs-commons/issues/91)) ([dd574d4](https://github.com/abinnovision/nestjs-commons/commit/dd574d4bfe35639aa6ffba28afcdb141ce948a8e))
+
+
+### Bug Fixes
+
+* migrate build-system and use dual export with cjs and esm ([#98](https://github.com/abinnovision/nestjs-commons/issues/98)) ([28ea7a6](https://github.com/abinnovision/nestjs-commons/commit/28ea7a6f6d5685a400787eab443b1437beff0f6b))
+
 ## [0.3.2](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.3.1...nestjs-hatchet-v0.3.2) (2026-01-28)
 
 
