@@ -8,7 +8,7 @@ import { HatchetFeatureRegistration } from "../internal/registrations.js";
 
 import type { HatchetModuleConfig } from "../hatchet.module-config.js";
 import type { DeclarationBuilderService } from "./declaration-builder.service.js";
-import type { HatchetClient } from "@hatchet-dev/typescript-sdk/v1";
+import type { HatchetClient } from "@hatchet-dev/typescript-sdk";
 import type { ModuleRef } from "@nestjs/core";
 
 /**

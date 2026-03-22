@@ -1,4 +1,4 @@
-import type { InputType } from "@hatchet-dev/typescript-sdk/v1";
+import type { InputType } from "@hatchet-dev/typescript-sdk";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**

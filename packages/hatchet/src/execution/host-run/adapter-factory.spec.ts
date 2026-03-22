@@ -8,7 +8,7 @@ import {
 import { TestTask } from "../../__fixtures__/test-hosts.js";
 import { taskRef } from "../../references/index.js";
 
-import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk/v1";
+import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 
 const createMockHatchetClient = () => mockDeep<HatchetClient>();
 

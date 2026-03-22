@@ -1,7 +1,7 @@
 import type {
 	CreateWorkerOpts,
 	HatchetClient,
-} from "@hatchet-dev/typescript-sdk/v1";
+} from "@hatchet-dev/typescript-sdk";
 
 type ClientConfig = HatchetClient["config"];
 

@@ -1,5 +1,5 @@
-import swc from "unplugin-swc";
 import { defineConfig } from "tsdown";
+import swc from "unplugin-swc";
 
 export default defineConfig({
 	attw: true,
@@ -8,5 +8,5 @@ export default defineConfig({
 	format: ["cjs", "esm"],
 	clean: true,
 	deps: { skipNodeModulesBundle: true },
-	plugins: [swc.rollup()],
+	plugins: [swc.rolldown()],
 });
