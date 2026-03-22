@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.2...nestjs-configx-v2.0.3) (2026-03-22)
+
+
+### Bug Fixes
+
+* align nestjs-hatchet export ([#104](https://github.com/abinnovision/nestjs-commons/issues/104)) ([9e32d5d](https://github.com/abinnovision/nestjs-commons/commit/9e32d5d97936c2e2b1106e2bc9a6900bc5668b9c))
+
 ## [2.0.2](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.1...nestjs-configx-v2.0.2) (2026-03-21)
 
 

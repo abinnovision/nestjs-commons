@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.4.0...nestjs-hatchet-v0.5.0) (2026-03-22)
+
+
+### Features
+
+* use pinned Hatchet SDK and re-export ([#102](https://github.com/abinnovision/nestjs-commons/issues/102)) ([6651fb1](https://github.com/abinnovision/nestjs-commons/commit/6651fb1a9dd9fd4d51ae6b02bc23b6de8b735e04))
+
+
+### Bug Fixes
+
+* align nestjs-hatchet export ([#104](https://github.com/abinnovision/nestjs-commons/issues/104)) ([9e32d5d](https://github.com/abinnovision/nestjs-commons/commit/9e32d5d97936c2e2b1106e2bc9a6900bc5668b9c))
+
 ## [0.4.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.3.2...nestjs-hatchet-v0.4.0) (2026-03-21)
 
 
