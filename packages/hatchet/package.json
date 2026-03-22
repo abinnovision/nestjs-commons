@@ -28,6 +28,16 @@
 				"types": "./dist/index.d.cts",
 				"default": "./dist/index.cjs"
 			}
+		},
+		"./sdk": {
+			"import": {
+				"types": "./dist/sdk-export/index.d.ts",
+				"default": "./dist/sdk-export/index.mjs"
+			},
+			"require": {
+				"types": "./dist/sdk-export/index.d.cts",
+				"default": "./dist/sdk-export/index.cjs"
+			}
 		}
 	},
 	"main": "./dist/index.cjs",
@@ -57,7 +67,7 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"@hatchet-dev/typescript-sdk": "^1.10.0",
+		"@hatchet-dev/typescript-sdk": "patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch",
 		"@standard-schema/spec": "^1.0.0",
 		"directed-graph-typed": "^2.1.0"
 	},

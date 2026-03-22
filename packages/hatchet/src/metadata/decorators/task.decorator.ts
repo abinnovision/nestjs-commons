@@ -3,7 +3,7 @@ import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../keys.js";
 import type {
 	CreateBaseWorkflowOpts,
 	CreateTaskWorkflowOpts,
-} from "@hatchet-dev/typescript-sdk";
+} from "@hatchet-dev/typescript-sdk/v1";
 
 export type TaskOpts = Omit<
 	CreateTaskWorkflowOpts,

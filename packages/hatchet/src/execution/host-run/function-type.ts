@@ -4,7 +4,7 @@ import type {
 	OutputOfRef,
 } from "../../references/index.js";
 import type { WorkflowRunRef } from "../../sdk/types.js";
-import type { RunOpts } from "@hatchet-dev/typescript-sdk";
+import type { RunOpts } from "@hatchet-dev/typescript-sdk/v1";
 
 /**
  * Describes the return type of the {@link HostRunFn} function.

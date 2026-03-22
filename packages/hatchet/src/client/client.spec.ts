@@ -6,7 +6,7 @@ import { Client } from "./client.js";
 import { EVENT_MARKER } from "../events/event-definition.js";
 import { defineEvent } from "../events/index.js";
 
-import type { HatchetClient } from "@hatchet-dev/typescript-sdk";
+import type { HatchetClient } from "@hatchet-dev/typescript-sdk/v1";
 
 describe("client/client.ts", () => {
 	const TestEvent = defineEvent(

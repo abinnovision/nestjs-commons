@@ -5,7 +5,7 @@ import { createTaskCtx, createWorkflowCtx } from "./factory.js";
 
 import type { HostTriggerConfig } from "./types.js";
 import type { AnyEventDefinition } from "../../events/index.js";
-import type { Context } from "@hatchet-dev/typescript-sdk";
+import type { Context } from "@hatchet-dev/typescript-sdk/v1";
 
 const createMockSdkContext = <I>(input?: I) => {
 	const mock = mockDeep<Context<I, any>>();

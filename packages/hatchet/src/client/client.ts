@@ -1,4 +1,4 @@
-import { HatchetClient } from "@hatchet-dev/typescript-sdk";
+import { HatchetClient } from "@hatchet-dev/typescript-sdk/v1";
 import { Injectable } from "@nestjs/common";
 
 import { EVENT_MARKER } from "../events/event-definition.js";

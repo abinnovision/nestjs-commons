@@ -60,7 +60,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.2.0"
     "@abinnovision/prettier-config": "npm:^2.1.5"
-    "@hatchet-dev/typescript-sdk": "npm:^1.10.0"
+    "@hatchet-dev/typescript-sdk": "patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch"
     "@standard-schema/spec": "npm:^1.0.0"
     "@swc/core": "npm:^1.15.18"
     directed-graph-typed: "npm:^2.1.0"
@@ -718,7 +718,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hatchet-dev/typescript-sdk@npm:^1.10.0":
+"@hatchet-dev/typescript-sdk@npm:1.17.2":
   version: 1.17.2
   resolution: "@hatchet-dev/typescript-sdk@npm:1.17.2"
   dependencies:
@@ -740,6 +740,31 @@ __metadata:
     prom-client:
       optional: true
   checksum: 10c0/3e79e831d22882d2475ca9b1feb7352b26ea690e96e27f64ea80cbf135a385d59e40880a8248c850ef1c2d3fc584120e52e18002834cf3bb05f81d1498368470
+  languageName: node
+  linkType: hard
+
+"@hatchet-dev/typescript-sdk@patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch":
+  version: 1.17.2
+  resolution: "@hatchet-dev/typescript-sdk@patch:@hatchet-dev/typescript-sdk@npm%3A1.17.2#~/.yarn/patches/@hatchet-dev-typescript-sdk-npm-1.17.2-eac4b79d71.patch::version=1.17.2&hash=af56be"
+  dependencies:
+    "@bufbuild/protobuf": "npm:^2.11.0"
+    "@types/qs": "npm:^6.15.0"
+    abort-controller-x: "npm:^0.4.3"
+    axios: "npm:^1.13.5"
+    long: "npm:^5.3.1"
+    nice-grpc: "npm:^2.1.14"
+    nice-grpc-common: "npm:^2.0.2"
+    prom-client: "npm:^15.1.3"
+    protobufjs: "npm:^7.4.0"
+    qs: "npm:^6.14.2"
+    semver: "npm:^7.7.4"
+    yaml: "npm:^2.8.2"
+    zod: "npm:^3.24.2"
+    zod-to-json-schema: "npm:^3.24.1"
+  dependenciesMeta:
+    prom-client:
+      optional: true
+  checksum: 10c0/207c373d0cc54900746061d38fa6bb611902599867628085a9f2734af1bfd97fb14fe43ebe633c25b1a8af106e4e1eb0bce323dc04df9ad1b931c38d17b83852
   languageName: node
   linkType: hard
 

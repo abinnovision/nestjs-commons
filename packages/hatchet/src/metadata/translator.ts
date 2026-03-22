@@ -1,5 +1,5 @@
 import type { HostOpts } from "./decorators/index.js";
-import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk";
+import type { CreateBaseWorkflowOpts } from "@hatchet-dev/typescript-sdk/v1";
 
 /**
  * Translates onEvents to SDK-compatible string array.
