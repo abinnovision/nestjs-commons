@@ -1,0 +1,82 @@
+{
+	"$schema": "https://json.schemastore.org/package.json",
+	"name": "@abinnovision/nestjs-exceptions",
+	"version": "0.0.1",
+	"description": "NestJS exception handling with entity-focused exceptions and GraphQL support",
+	"keywords": [
+		"nestjs",
+		"exceptions",
+		"error-handling",
+		"graphql"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/abinnovision/nestjs-commons.git",
+		"directory": "packages/exceptions"
+	},
+	"license": "Apache-2.0",
+	"author": {
+		"name": "AB INNOVISION GmbH",
+		"email": "info@abinnovision.com",
+		"url": "https://abinnovision.com/"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"LICENSE",
+		"README.md"
+	],
+	"scripts": {
+		"build": "tsc --project tsconfig.build.json",
+		"format:check": "prettier --check 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
+		"format:fix": "prettier --write 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
+		"lint:check": "eslint 'src/**/*.ts'",
+		"lint:fix": "eslint 'src/**/*.ts' --fix",
+		"test-unit": "vitest --run --coverage --config vitest.config.mts",
+		"test-unit:watch": "vitest --config vitest.config.mts"
+	},
+	"lint-staged": {
+		"src/**/*.ts": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{json{,5},md,y{,a}ml}": "prettier --write"
+	},
+	"prettier": "@abinnovision/prettier-config",
+	"devDependencies": {
+		"@abinnovision/eslint-config-base": "^3.0.2",
+		"@abinnovision/prettier-config": "^2.1.5",
+		"@nestjs/common": "^11.0.0",
+		"@nestjs/core": "^11.0.0",
+		"@nestjs/graphql": "^13.0.0",
+		"@swc/core": "^1.11.5",
+		"eslint": "^9.39.1",
+		"graphql": "^16.10.0",
+		"prettier": "^3.7.4",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.1",
+		"typescript": "^5.8.2",
+		"vitest": "^4.0.15"
+	},
+	"peerDependencies": {
+		"@nestjs/common": "^11.0.0",
+		"@nestjs/core": "^11.0.0",
+		"@nestjs/graphql": "^12.0.0 || ^13.0.0"
+	},
+	"peerDependenciesMeta": {
+		"@nestjs/graphql": {
+			"optional": true
+		}
+	},
+	"publishConfig": {
+		"ghpr": true,
+		"npm": true,
+		"npmAccess": "public"
+	}
+}
