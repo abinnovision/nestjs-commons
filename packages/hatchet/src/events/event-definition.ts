@@ -44,6 +44,46 @@ export class EventDefinition<
 	}
 
 	/**
+	 * Type guard: casts the context input to this event's schema output type
+	 * without requiring the event marker to be present.
+	 *
+	 * Use this for externally sourced events that arrive without the marker
+	 * injected by Client.emit(). Schema validation still runs and throws if
+	 * the payload is malformed.
+	 *
+	 * @param ctx The context to check (TaskCtx, WorkflowCtx, HelperCtx, or SDK Context).
+	 * @returns True if the context input is a non-null object that passes schema validation.
+	 * @throws Error if the payload fails schema validation.
+	 */
+	public cast<C extends { input: unknown }>(
+		ctx: C,
+	): ctx is C & { input: StandardSchemaV1.InferOutput<TSchema> } {
+		// Require a non-null object as a baseline guard
+		if (typeof ctx.input !== "object" || ctx.input === null) {
+			return false;
+		}
+
+		// Validate the input against the schema
+		const result = this.schema["~standard"].validate(ctx.input);
+
+		// Handle async validation - not supported
+		if (result instanceof Promise) {
+			throw new Error(
+				`Event '${this.name}' schema validation must be synchronous. Use a sync schema.`,
+			);
+		}
+
+		// Check for validation errors
+		if ("issues" in result && result.issues) {
+			throw new Error(
+				`Event '${this.name}' payload is malformed: ${JSON.stringify(result.issues)}`,
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Type guard: checks if the context was triggered by this event.
 	 * Validates the input against the event schema and throws if malformed.
 	 *
@@ -66,24 +106,8 @@ export class EventDefinition<
 			return false;
 		}
 
-		// Validate the input against the schema
-		const result = this.schema["~standard"].validate(ctx.input);
-
-		// Handle async validation - not supported
-		if (result instanceof Promise) {
-			throw new Error(
-				`Event '${this.name}' schema validation must be synchronous. Use a sync schema.`,
-			);
-		}
-
-		// Check for validation errors
-		if ("issues" in result && result.issues) {
-			throw new Error(
-				`Event '${this.name}' payload is malformed: ${JSON.stringify(result.issues)}`,
-			);
-		}
-
-		return true;
+		// Delegate schema validation to cast
+		return this.cast(ctx);
 	}
 }
 
