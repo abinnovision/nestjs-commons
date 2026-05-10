@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.5.0...nestjs-hatchet-v0.6.0) (2026-05-10)
+
+
+### Features
+
+* **hatchet:** add cast() method to EventDefinition ([#107](https://github.com/abinnovision/nestjs-commons/issues/107)) ([b0664e9](https://github.com/abinnovision/nestjs-commons/commit/b0664e95421c08d4d5793663bf0314e251f1db83))
+
 ## [0.5.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.4.0...nestjs-hatchet-v0.5.0) (2026-03-22)
 
 
