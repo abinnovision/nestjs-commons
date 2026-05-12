@@ -57,7 +57,7 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"@standard-schema/spec": "^1.0.0"
+		"@standard-schema/spec": "^1.1.0"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.0",
