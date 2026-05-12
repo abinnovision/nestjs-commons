@@ -67,9 +67,9 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"@hatchet-dev/typescript-sdk": "^1.17.2",
-		"@standard-schema/spec": "^1.0.0",
-		"directed-graph-typed": "^2.1.0"
+		"@hatchet-dev/typescript-sdk": "^1.22.1",
+		"@standard-schema/spec": "^1.1.0",
+		"directed-graph-typed": "^2.6.0"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.0",
