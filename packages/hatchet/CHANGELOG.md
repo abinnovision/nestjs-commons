@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.6.0...nestjs-hatchet-v0.6.1) (2026-05-12)
+
+
+### Bug Fixes
+
+* update runtime dependencies ([#109](https://github.com/abinnovision/nestjs-commons/issues/109)) ([38260a8](https://github.com/abinnovision/nestjs-commons/commit/38260a8bc027b57eff34f900b2deb8eeb3819d43))
+
 ## [0.6.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.5.0...nestjs-hatchet-v0.6.0) (2026-05-10)
 
 

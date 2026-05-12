@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.3...nestjs-configx-v2.0.4) (2026-05-12)
+
+
+### Bug Fixes
+
+* update runtime dependencies ([#109](https://github.com/abinnovision/nestjs-commons/issues/109)) ([38260a8](https://github.com/abinnovision/nestjs-commons/commit/38260a8bc027b57eff34f900b2deb8eeb3819d43))
+
 ## [2.0.3](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.2...nestjs-configx-v2.0.3) (2026-03-22)
 
 
