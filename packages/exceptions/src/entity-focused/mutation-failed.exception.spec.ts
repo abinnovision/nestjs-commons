@@ -4,7 +4,7 @@ import {
 	configureEntityNameRenderer,
 	resetEntityNameRenderer,
 } from "./entity-name-renderer";
-import { MutationFailedException } from "./mutation-failed.exception";
+import { EntityMutationFailedException } from "./mutation-failed.exception";
 
 describe("entity-focused/mutation-failed.exception.ts", () => {
 	afterEach(() => {
@@ -13,7 +13,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 
 	describe("mutationFailedException", () => {
 		it("creates error for create mutation", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "create",
@@ -23,7 +23,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("creates error for update mutation", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "update",
@@ -33,7 +33,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("creates error for delete mutation", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "delete",
@@ -45,7 +45,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		it("creates error with configured renderer", () => {
 			configureEntityNameRenderer({ user: "User" });
 
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "update",
@@ -55,7 +55,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("has correct code", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "create",
@@ -65,7 +65,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("has correct httpStatus", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "create",
@@ -75,7 +75,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("stores mutationType", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "delete",
@@ -85,7 +85,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("stores entity and entityId", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "create",
@@ -96,7 +96,7 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 		});
 
 		it("sets meta with entity info", () => {
-			const error = new MutationFailedException({
+			const error = new EntityMutationFailedException({
 				entity: "user",
 				entityId: "123",
 				mutationType: "create",

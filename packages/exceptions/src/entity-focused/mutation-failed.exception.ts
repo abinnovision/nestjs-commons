@@ -9,16 +9,16 @@ import type { EntityFocusedArgs } from "./entity-focused.interface";
 /**
  * The type of mutation that failed.
  */
-export type MutationType = "create" | "update" | "delete";
+export type EntityMutationType = "create" | "update" | "delete";
 
 /**
- * Arguments for creating a MutationFailedException.
+ * Arguments for creating an EntityMutationFailedException.
  */
-export interface MutationFailedArgs extends EntityFocusedArgs {
+export interface EntityMutationFailedArgs extends EntityFocusedArgs {
 	/**
 	 * The type of mutation that failed.
 	 */
-	mutationType: MutationType;
+	mutationType: EntityMutationType;
 }
 
 /**
@@ -27,7 +27,7 @@ export interface MutationFailedArgs extends EntityFocusedArgs {
  * @example
  * ```typescript
  * // Basic usage
- * throw new MutationFailedException({
+ * throw new EntityMutationFailedException({
  *   entity: 'user',
  *   entityId: '123',
  *   mutationType: 'update',
@@ -36,7 +36,7 @@ export interface MutationFailedArgs extends EntityFocusedArgs {
  *
  * // With configured entity name renderer
  * configureEntityNameRenderer({ user: 'User' });
- * throw new MutationFailedException({
+ * throw new EntityMutationFailedException({
  *   entity: 'user',
  *   entityId: '123',
  *   mutationType: 'delete',
@@ -44,7 +44,7 @@ export interface MutationFailedArgs extends EntityFocusedArgs {
  * // Error message: "Failed to delete User with ID '123'"
  * ```
  */
-export class MutationFailedException
+export class EntityMutationFailedException
 	extends EntityFocusedAppException
 	implements HttpAwareException
 {
@@ -54,16 +54,16 @@ export class MutationFailedException
 	/**
 	 * The type of mutation that failed.
 	 */
-	public readonly mutationType: MutationType;
+	public readonly mutationType: EntityMutationType;
 
 	/**
-	 * Creates a new MutationFailedException.
+	 * Creates a new EntityMutationFailedException.
 	 *
 	 * @param args - The entity type, ID, and mutation type
 	 * @param opts - Additional exception options
 	 */
 	public constructor(
-		args: MutationFailedArgs,
+		args: EntityMutationFailedArgs,
 		opts?: AppExceptionOptsWithoutMeta,
 	) {
 		super(

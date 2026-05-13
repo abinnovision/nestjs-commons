@@ -7,4 +7,3 @@
 export * from "./app-exception";
 export * from "./multi-app-exception";
 export * from "./generic-exception-filter";
-export * from "./entity-focused";
