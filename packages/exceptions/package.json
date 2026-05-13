@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "@abinnovision/nestjs-exceptions",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Standardized NestJS exception handling with entity-focused exceptions, HTTP awareness, and built-in support for GraphQL and REST APIs.",
 	"keywords": [
 		"nestjs",

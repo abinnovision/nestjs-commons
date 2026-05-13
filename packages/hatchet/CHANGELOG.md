@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.6.1...nestjs-hatchet-v0.7.0) (2026-05-13)
+
+
+### Features
+
+* add nestjs-toolkit and nestjs-exceptions packages ([#106](https://github.com/abinnovision/nestjs-commons/issues/106)) ([1655e03](https://github.com/abinnovision/nestjs-commons/commit/1655e03d4a0202bdd59e00be634a22ea69bdb8b1))
+
+
+### Bug Fixes
+
+* **hatchet:** tolerate startup with no forFeature registrations ([#119](https://github.com/abinnovision/nestjs-commons/issues/119)) ([7b4cb4c](https://github.com/abinnovision/nestjs-commons/commit/7b4cb4cc1f6252d7810f9d1b7567cde7f70b542b))
+
 ## [0.6.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.6.0...nestjs-hatchet-v0.6.1) (2026-05-12)
 
 
