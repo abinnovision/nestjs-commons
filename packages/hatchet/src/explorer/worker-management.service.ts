@@ -92,12 +92,21 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 
 	/**
 	 * Discovers all feature registrations from forFeature() calls.
+	 *
+	 * Returns an empty array when no `HatchetModule.forFeature()` has been
+	 * registered anywhere. Nest's `ModuleRef.get(..., { each: true })` throws
+	 * `UnknownElementException` when zero providers exist for the token, even
+	 * with `strict: false`, so we catch that case and treat it as "no features".
 	 */
 	private discoverFeatureRegistrations(): HatchetFeatureRegistration[] {
-		return this.moduleRef.get(HatchetFeatureRegistration, {
-			strict: false,
-			each: true,
-		});
+		try {
+			return this.moduleRef.get(HatchetFeatureRegistration, {
+				strict: false,
+				each: true,
+			});
+		} catch {
+			return [];
+		}
 	}
 
 	/**
