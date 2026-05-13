@@ -3,16 +3,14 @@ import { DiscoveryModule } from "@nestjs/core";
 
 import { AttestorExplorer } from "./explorer/attestor-explorer.service";
 import { HealthzController } from "./healthz.controller";
-import { HEALTHZ_MODULE_CONFIG_TOKEN } from "./healthz.module-config";
 import { HealthzService } from "./healthz.service";
 import { AttestorRunner } from "./runner/attestor-runner.service";
 
-import type { HealthzModuleConfig } from "./healthz.module-config";
 import type { DynamicModule } from "@nestjs/common";
 
 /**
  * The healthz module — import once at the application root via
- * `HealthzModule.forRoot({})` to mount the `/livez`, `/readyz`, and
+ * `HealthzModule.forRoot()` to mount the `/livez`, `/readyz`, and
  * `/healthz` endpoints and enable discovery of `@HealthAttestor()`
  * providers across the application graph.
  *
@@ -25,7 +23,7 @@ import type { DynamicModule } from "@nestjs/common";
  * @Module({
  *   imports: [
  *     DatabaseModule,
- *     HealthzModule.forRoot({}),
+ *     HealthzModule.forRoot(),
  *   ],
  * })
  * export class AppModule {}
@@ -39,21 +37,15 @@ import type { DynamicModule } from "@nestjs/common";
 })
 export class HealthzModule {
 	/**
-	 * Registers the healthz module globally and binds its configuration.
+	 * Registers the healthz module globally.
 	 *
-	 * All fields of `config` are optional — `forRoot({})` is the
-	 * minimal call to accept every default.
+	 * Takes no arguments today; reserved as the canonical entry point
+	 * for any future module configuration.
 	 */
-	public static forRoot(config: HealthzModuleConfig): DynamicModule {
+	public static forRoot(): DynamicModule {
 		return {
 			module: HealthzModule,
 			global: true,
-			providers: [
-				{
-					provide: HEALTHZ_MODULE_CONFIG_TOKEN,
-					useValue: config,
-				},
-			],
 		};
 	}
 }

@@ -19,12 +19,12 @@ yarn add @abinnovision/nestjs-healthz
 import { HealthzModule } from "@abinnovision/nestjs-healthz";
 
 @Module({
-  imports: [DatabaseModule, HealthzModule.forRoot({})],
+  imports: [DatabaseModule, HealthzModule.forRoot()],
 })
 export class AppModule {}
 ```
 
-`HealthzModule.forRoot({})` is global — every module that loads into
+`HealthzModule.forRoot()` is global — every module that loads into
 the app graph is scanned for attestors.
 
 ### 2. Declare an attestor inside the module that owns the dependency
@@ -133,8 +133,6 @@ text to whoever curls `/readyz`.
 
 ## Response shape
 
-Default response (`detail: "full"`):
-
 ```json
 {
   "status": "ok",
@@ -142,44 +140,31 @@ Default response (`detail: "full"`):
     {
       "name": "database",
       "status": "ok",
-      "critical": true,
-      "durationMs": 12,
-      "cached": false
+      "durationMs": 12
     },
     {
       "name": "redis",
       "status": "down",
-      "critical": false,
-      "durationMs": 2003,
-      "cached": false
+      "durationMs": 2003
     }
   ],
   "timestamp": "2026-05-13T12:34:56.000Z"
 }
 ```
 
-The detail level is configurable via `HealthzModule.forRoot()`:
-
-```typescript
-HealthzModule.forRoot({ detail: "summary" });
-```
-
-| `detail`    | Body                                                     |
-| ----------- | -------------------------------------------------------- |
-| `"full"`    | Aggregate status + per-attestor breakdown (default).     |
-| `"summary"` | `{ status, timestamp }` only.                            |
-| `"none"`    | Empty body — clients rely on the HTTP status code alone. |
-
-The HTTP status code is identical across detail modes.
+The HTTP status code is `503` when the aggregate status is `"down"`
+and `200` otherwise.
 
 ## API
 
-### `HealthzModule.forRoot(config)`
+### `HealthzModule.forRoot()`
 
-Registers the module globally and mounts the three endpoints.
+Registers the module globally and mounts the three endpoints. Takes
+no arguments today; reserved as the canonical entry point for any
+future module configuration.
 
 ```typescript
-HealthzModule.forRoot({ detail: "full" });
+HealthzModule.forRoot();
 ```
 
 ### `@HealthAttestor(options)`
@@ -218,11 +203,11 @@ interface HealthCheckOutcome {
 }
 ```
 
-`details` is surfaced in `detail: "full"` responses — useful for
-small, safe-to-publish diagnostics (e.g. `{ "lag_seconds": "12" }`).
-Values are restricted to strings so the response stays predictable
-and no caller can accidentally publish unbounded objects or sensitive
-fields.
+`details` is surfaced under `checks[].details` in the response —
+useful for small, safe-to-publish diagnostics (e.g.
+`{ "lag_seconds": "12" }`). Values are restricted to strings so the
+response stays predictable and no caller can accidentally publish
+unbounded objects or sensitive fields.
 
 ## License
 
