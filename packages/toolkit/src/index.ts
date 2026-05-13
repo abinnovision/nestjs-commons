@@ -5,5 +5,7 @@
  */
 
 export { R } from "./remeda";
+export * from "./assert";
+export * from "./equality";
 export * from "./string";
 export * from "./uuid";
