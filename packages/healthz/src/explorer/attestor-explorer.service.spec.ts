@@ -99,6 +99,32 @@ describe("explorer/attestor-explorer.service.ts", () => {
 			expect(explorer.getAll()).toHaveLength(0);
 		});
 
+		it("skips providers whose metatype is undefined (Nest internals)", () => {
+			const explorer = new AttestorExplorer(
+				stubDiscovery([
+					{ instance: { check: () => null }, metatype: undefined },
+				]),
+			);
+
+			expect(() => {
+				explorer.onApplicationBootstrap();
+			}).not.toThrow();
+			expect(explorer.getAll()).toHaveLength(0);
+		});
+
+		it("skips providers whose metatype is a non-function token", () => {
+			const explorer = new AttestorExplorer(
+				stubDiscovery([
+					{ instance: { check: () => null }, metatype: "SOME_TOKEN" },
+				]),
+			);
+
+			expect(() => {
+				explorer.onApplicationBootstrap();
+			}).not.toThrow();
+			expect(explorer.getAll()).toHaveLength(0);
+		});
+
 		it("warns and skips a decorated class missing check()", () => {
 			@HealthAttestor({ name: "broken" })
 			class Broken {
