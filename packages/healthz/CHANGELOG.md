@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-healthz-v0.1.0...nestjs-healthz-v0.1.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* **healthz:** skip non-class providers in attestor discovery ([#128](https://github.com/abinnovision/nestjs-commons/issues/128)) ([e7b8b58](https://github.com/abinnovision/nestjs-commons/commit/e7b8b58cfc2b1f4cc89d970e347ed9b3c8dfb4ae))
+
 ## [0.1.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-healthz-v0.0.1...nestjs-healthz-v0.1.0) (2026-05-13)
 
 
