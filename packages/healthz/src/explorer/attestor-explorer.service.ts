@@ -29,7 +29,15 @@ export class AttestorExplorer implements OnApplicationBootstrap {
 		for (const wrapper of providers) {
 			const { metatype } = wrapper;
 
-			if (metatype === null) {
+			/*
+			 * `DiscoveryService.getProviders()` returns every provider in the
+			 * application graph — including value/factory providers and Nest
+			 * internals whose `metatype` may be `null`, `undefined`, or a
+			 * non-function token. `Reflect.getMetadata` throws `TypeError`
+			 * unless the target is an object/function, so we skip anything
+			 * that isn't a class constructor before touching it.
+			 */
+			if (typeof metatype !== "function") {
 				continue;
 			}
 
