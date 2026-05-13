@@ -9,6 +9,7 @@
 			"bump-minor-pre-major": false,
 			"bump-patch-for-minor-pre-major": false
 		},
+		"packages/healthz": {},
 		"packages/toolkit": {},
 		"apps/docs": {}
 	}
