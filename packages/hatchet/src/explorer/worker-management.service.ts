@@ -7,13 +7,12 @@ import {
 } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 
-import {
-	type HatchetModuleConfig,
-	hatchetModuleConfigToken,
-} from "../hatchet.module-config.js";
+import { hatchetModuleConfigToken } from "../hatchet.module-config.js";
 import { DeclarationBuilderService } from "./declaration-builder.service.js";
 import { HatchetFeatureRegistration } from "../internal/registrations.js";
 import { fromCtor } from "../metadata/accessor.js";
+
+import type { HatchetModuleConfig } from "../hatchet.module-config.js";
 
 @Injectable()
 export class WorkerManagementService implements OnApplicationBootstrap {

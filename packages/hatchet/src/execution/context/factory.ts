@@ -1,13 +1,13 @@
-import {
-	type BaseCtx,
-	type HostTriggerConfig,
-	TASK_MARKER,
-	type TaskCtx,
-	type TriggerSource,
-	type WorkflowCtx,
-} from "./types.js";
+import { TASK_MARKER } from "./types.js";
 import { createHostRunForContext } from "../host-run/adapter-factory.js";
 
+import type {
+	BaseCtx,
+	HostTriggerConfig,
+	TaskCtx,
+	TriggerSource,
+	WorkflowCtx,
+} from "./types.js";
 import type { AnyEventDefinition, EventOutput } from "../../events/index.js";
 import type { AnyTaskFn, OutputOfTaskFn } from "../../references/shared.js";
 

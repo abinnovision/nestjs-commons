@@ -4,9 +4,11 @@
 	"release-type": "node",
 	"packages": {
 		"packages/configx": {},
+		"packages/exceptions": {},
 		"packages/hatchet": {
 			"bump-minor-pre-major": false,
 			"bump-patch-for-minor-pre-major": false
-		}
+		},
+		"packages/toolkit": {}
 	}
 }
