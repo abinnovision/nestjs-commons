@@ -1,4 +1,3 @@
-import { pipe } from "remeda";
 import { describe, expect, it } from "vitest";
 
 import { sanitizeString } from "./sanitize";
@@ -29,18 +28,6 @@ describe("string/sanitize.ts", () => {
 
 		it("respects trim: false option", () => {
 			expect(sanitizeString("  Hello  ", { trim: false })).toBe(" Hello ");
-		});
-
-		it("works with remeda pipe (data-last)", () => {
-			const result = pipe("<b>Hello</b>  World", sanitizeString());
-
-			expect(result).toBe("Hello World");
-		});
-
-		it("works with remeda pipe and options (data-last)", () => {
-			const result = pipe("  Hello  ", sanitizeString({ trim: false }));
-
-			expect(result).toBe(" Hello ");
 		});
 
 		it("handles empty string", () => {

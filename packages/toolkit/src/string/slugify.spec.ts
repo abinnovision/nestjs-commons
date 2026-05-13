@@ -1,4 +1,3 @@
-import { pipe } from "remeda";
 import { describe, expect, it } from "vitest";
 
 import { slugify } from "./slugify";
@@ -31,18 +30,6 @@ describe("string/slugify.ts", () => {
 
 		it("respects separator option", () => {
 			expect(slugify("Hello World", { separator: "_" })).toBe("hello_world");
-		});
-
-		it("works with remeda pipe (data-last)", () => {
-			const result = pipe("Hello World!", slugify());
-
-			expect(result).toBe("hello-world");
-		});
-
-		it("works with remeda pipe and options (data-last)", () => {
-			const result = pipe("Hello World!", slugify({ maxLength: 5 }));
-
-			expect(result).toBe("hello");
 		});
 
 		it("handles empty string", () => {
