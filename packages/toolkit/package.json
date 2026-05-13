@@ -2,12 +2,16 @@
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "@abinnovision/nestjs-toolkit",
 	"version": "0.0.1",
-	"description": "NestJS toolkit with remeda utilities and common helpers",
+	"description": "NestJS utility library providing Remeda functional helpers, string manipulation, and UUID operations for common development tasks.",
 	"keywords": [
 		"nestjs",
 		"toolkit",
+		"utilities",
 		"remeda",
-		"utilities"
+		"functional-programming",
+		"helpers",
+		"uuid",
+		"string-utilities"
 	],
 	"repository": {
 		"type": "git",
