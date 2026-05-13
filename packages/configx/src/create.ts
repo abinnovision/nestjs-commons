@@ -27,5 +27,5 @@ export function configx<T extends ConfigxSchema>(schema: T): ConfigxType<T> {
 		}
 	}
 
-	return ConfigxUsage as unknown as ConfigxType<T>;
+	return ConfigxUsage;
 }
