@@ -3,6 +3,7 @@
 	"name": "@internal/nestjs-commons",
 	"private": true,
 	"workspaces": [
+		"apps/*",
 		"packages/*",
 		"examples/*"
 	],

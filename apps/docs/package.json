@@ -1,0 +1,31 @@
+{
+	"$schema": "https://json.schemastore.org/package.json",
+	"name": "@internal/docs",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev",
+		"postinstall": "fumadocs-mdx",
+		"start": "next start"
+	},
+	"dependencies": {
+		"fumadocs-core": "^16.8.10",
+		"fumadocs-mdx": "^15.0.4",
+		"fumadocs-ui": "^16.8.10",
+		"next": "^16.0.0",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0"
+	},
+	"devDependencies": {
+		"@tailwindcss/postcss": "^4.0.0",
+		"@types/mdx": "^2.0.13",
+		"@types/node": "^22.10.0",
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"postcss": "^8.4.49",
+		"tailwindcss": "^4.0.0",
+		"typescript": "^5.9.3"
+	}
+}

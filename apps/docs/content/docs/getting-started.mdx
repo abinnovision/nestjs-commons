@@ -1,0 +1,53 @@
+---
+title: Getting Started
+description: Install and use the @abinnovision/nestjs-commons packages.
+---
+
+`@abinnovision/nestjs-commons` is a small family of independently versioned packages.
+You pick the ones you need — there is no umbrella runtime to install.
+
+## Requirements
+
+- Node.js 24 or newer (see [`.tool-versions`](https://github.com/abinnovision/nestjs-commons/blob/main/.tool-versions))
+- NestJS 11+
+- A package manager: `yarn`, `npm`, or `pnpm`
+
+## Install a package
+
+Pick the package that solves your problem and install it directly. Each page below shows the full
+public API.
+
+```bash
+yarn add @abinnovision/nestjs-configx
+yarn add @abinnovision/nestjs-exceptions
+yarn add @abinnovision/nestjs-hatchet
+yarn add @abinnovision/nestjs-toolkit
+```
+
+## Packages at a glance
+
+| Package | What it does |
+| --- | --- |
+| [`nestjs-configx`](/docs/packages/configx) | Schema-validated, type-safe configuration sourced from `process.env`. |
+| [`nestjs-exceptions`](/docs/packages/exceptions) | `AppException` base class, entity-focused exceptions, unified HTTP + GraphQL filter. |
+| [`nestjs-hatchet`](/docs/packages/hatchet) | Decorator-driven NestJS bindings for [Hatchet](https://hatchet.run) workflow orchestration. |
+| [`nestjs-toolkit`](/docs/packages/toolkit) | Re-export of [remeda](https://remedajs.com/) plus pipe-friendly slug, sanitize, and UUID helpers. |
+
+## Source layout
+
+The repository is a Yarn 4 / Turbo monorepo:
+
+```
+.
+├── apps/
+│   └── docs/          ← this site
+├── examples/          ← runnable integration examples
+└── packages/          ← published npm packages
+    ├── configx/
+    ├── exceptions/
+    ├── hatchet/
+    └── toolkit/
+```
+
+See the [repository README](https://github.com/abinnovision/nestjs-commons#readme) for development
+commands and contributor setup.
