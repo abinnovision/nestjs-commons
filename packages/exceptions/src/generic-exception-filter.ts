@@ -4,7 +4,18 @@ import { AppException, isHttpAwareException } from "./app-exception";
 import { MultiAppException } from "./multi-app-exception";
 
 import type { ArgumentsHost, ExceptionFilter } from "@nestjs/common";
-import type { Response } from "express";
+
+/**
+ * Minimal HTTP response interface used by the filter.
+ *
+ * Avoids a hard dependency on express types while remaining compatible
+ * with the express response shape NestJS exposes.
+ */
+interface HttpResponse {
+	setHeader: (name: string, value: string) => void;
+	status: (code: number) => HttpResponse;
+	json: (body: unknown) => HttpResponse;
+}
 
 /**
  * Intermediate error object used for consistent error formatting.
@@ -128,7 +139,7 @@ export class GenericExceptionFilter implements ExceptionFilter {
 		}
 
 		// HTTP context
-		const response = host.switchToHttp().getResponse<Response>();
+		const response = host.switchToHttp().getResponse<HttpResponse>();
 		const statusCode = parseInt(this.resolveStatusCodeForHttp(errors), 10);
 		const aggregatedHeaders = this.aggregateHeaders(errors);
 
