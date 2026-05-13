@@ -16,6 +16,7 @@ jobs:
       enable-package-publishing: true
       enable-packages-registry-npm: true
       enable-packages-registry-ghpr: true
+      enable-gh-pages: "true"
       run-build-before-check: true
       test-types: unit
       prerelease-channel: beta
