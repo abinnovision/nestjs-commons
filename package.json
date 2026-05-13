@@ -33,18 +33,18 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"devDependencies": {
-		"@abinnovision/commitlint-config": "^2.2.4",
-		"@abinnovision/eslint-config-base": "^3.2.0",
-		"@abinnovision/prettier-config": "^2.1.5",
-		"@commitlint/cli": "^20.5.0",
-		"@vitest/coverage-v8": "^4.1.0",
-		"eslint": "^9.39.4",
+		"@abinnovision/commitlint-config": "^2.3.0",
+		"@abinnovision/eslint-config-base": "^3.4.1",
+		"@abinnovision/prettier-config": "^2.2.0",
+		"@commitlint/cli": "^21.0.1",
+		"@vitest/coverage-v8": "^4.1.6",
+		"eslint": "^10.3.0",
 		"husky": "^9.1.7",
-		"lint-staged": "^16.4.0",
-		"prettier": "^3.8.1",
+		"lint-staged": "^17.0.4",
+		"prettier": "^3.8.3",
 		"sort-package-json": "^3.6.1",
-		"turbo": "^2.8.20",
-		"vitest": "^4.1.0"
+		"turbo": "^2.9.12",
+		"vitest": "^4.1.6"
 	},
-	"packageManager": "yarn@4.13.0"
+	"packageManager": "yarn@4.14.1"
 }
