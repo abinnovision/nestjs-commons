@@ -2,12 +2,15 @@
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "@abinnovision/nestjs-exceptions",
 	"version": "0.0.1",
-	"description": "NestJS exception handling with entity-focused exceptions and GraphQL support",
+	"description": "Standardized NestJS exception handling with entity-focused exceptions, HTTP awareness, and built-in support for GraphQL and REST APIs.",
 	"keywords": [
 		"nestjs",
 		"exceptions",
 		"error-handling",
-		"graphql"
+		"graphql",
+		"http",
+		"entity-exceptions",
+		"error-codes"
 	],
 	"repository": {
 		"type": "git",
@@ -16,9 +19,9 @@
 	},
 	"license": "Apache-2.0",
 	"author": {
-		"name": "AB INNOVISION GmbH",
-		"email": "info@abinnovision.com",
-		"url": "https://abinnovision.com/"
+		"name": "abi group GmbH",
+		"email": "info@abigroup.io",
+		"url": "https://abigroup.io"
 	},
 	"exports": {
 		".": {

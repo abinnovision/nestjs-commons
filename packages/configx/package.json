@@ -2,11 +2,15 @@
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "@abinnovision/nestjs-configx",
 	"version": "2.0.4",
+	"description": "Schema-based environment configuration with Standard Schema support for type-safe configuration management in NestJS applications.",
 	"keywords": [
 		"nestjs",
 		"config",
 		"configuration",
-		"standard-schema"
+		"environment",
+		"standard-schema",
+		"validation",
+		"env-validation"
 	],
 	"repository": {
 		"type": "git",
@@ -15,9 +19,9 @@
 	},
 	"license": "Apache-2.0",
 	"author": {
-		"name": "AB INNOVISION GmbH",
-		"email": "info@abinnovision.com",
-		"url": "https://abinnovision.com/"
+		"name": "abi group GmbH",
+		"email": "info@abigroup.io",
+		"url": "https://abigroup.io"
 	},
 	"type": "module",
 	"exports": {
