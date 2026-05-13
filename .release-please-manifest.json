@@ -2,6 +2,7 @@
 	"packages/configx": "2.0.4",
 	"packages/exceptions": "0.0.1",
 	"packages/hatchet": "0.6.1",
+	"packages/healthz": "0.0.0",
 	"packages/toolkit": "0.0.1",
 	"apps/docs": "0.0.0"
 }

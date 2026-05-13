@@ -6,10 +6,11 @@ A collection of common packages for NestJS.
 
 ## Packages
 
-| Package                                             | Version                                                                                                                                           | Description                                                             |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [`@abinnovision/nestjs-configx`](/packages/configx) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-configx?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-configx) | Simple configuration management for NestJS, supporting Standard Schema. |
-| [`@abinnovision/nestjs-hatchet`](/packages/hatchet) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet) | NestJS integration for Hatchet workflow orchestration.                  |
+| Package                                             | Version                                                                                                                                           | Description                                                                                         |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [`@abinnovision/nestjs-configx`](/packages/configx) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-configx?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-configx) | Simple configuration management for NestJS, supporting Standard Schema.                             |
+| [`@abinnovision/nestjs-hatchet`](/packages/hatchet) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet) | NestJS integration for Hatchet workflow orchestration.                                              |
+| [`@abinnovision/nestjs-healthz`](/packages/healthz) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-healthz?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-healthz) | Self-mounting health check module with cross-module attestor discovery and Kubernetes-style probes. |
 
 See each package README for installation and usage instructions.
 

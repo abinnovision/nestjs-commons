@@ -111,6 +111,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@abinnovision/nestjs-healthz@workspace:packages/healthz":
+  version: 0.0.0-use.local
+  resolution: "@abinnovision/nestjs-healthz@workspace:packages/healthz"
+  dependencies:
+    "@abinnovision/eslint-config-base": "npm:^3.4.1"
+    "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@nestjs/common": "npm:^11.0.0"
+    "@nestjs/core": "npm:^11.0.0"
+    "@swc/core": "npm:^1.11.5"
+    eslint: "npm:^10.3.0"
+    prettier: "npm:^3.8.3"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.1"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^4.0.15"
+  peerDependencies:
+    "@nestjs/common": ^11.0.0
+    "@nestjs/core": ^11.0.0
+  languageName: unknown
+  linkType: soft
+
 "@abinnovision/nestjs-toolkit@workspace:packages/toolkit":
   version: 0.0.0-use.local
   resolution: "@abinnovision/nestjs-toolkit@workspace:packages/toolkit"
