@@ -17,8 +17,8 @@
 		"postinstall": "husky",
 		"lint:check": "eslint '*.{m,c,}{j,t}s'",
 		"lint:fix": "eslint '*.{m,c,}{j,t}s' --fix",
-		"sort:check": "sort-package-json --check '**/package.json'",
-		"sort:fix": "sort-package-json '**/package.json'",
+		"sort:check": "sort-package-json '{apps,packages}/**!(node_modules)/package.json' 'package.json' --check",
+		"sort:fix": "sort-package-json '{apps,packages}/**!(node_modules)/package.json' 'package.json'",
 		"test": "vitest run --coverage",
 		"test-unit": "vitest run --project '*#unit' --coverage"
 	},
