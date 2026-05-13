@@ -12,16 +12,16 @@ import type { EntityFocusedArgs } from "./entity-focused.interface";
  * @example
  * ```typescript
  * // Basic usage
- * throw new NotFoundException({ entity: 'user', entityId: '123' });
+ * throw new EntityNotFoundException({ entity: 'user', entityId: '123' });
  * // Error message: "user with ID '123' not found"
  *
  * // With configured entity name renderer
  * configureEntityNameRenderer({ user: 'User' });
- * throw new NotFoundException({ entity: 'user', entityId: '123' });
+ * throw new EntityNotFoundException({ entity: 'user', entityId: '123' });
  * // Error message: "User with ID '123' not found"
  * ```
  */
-export class NotFoundException
+export class EntityNotFoundException
 	extends EntityFocusedAppException
 	implements HttpAwareException
 {
@@ -29,7 +29,7 @@ export class NotFoundException
 	public readonly httpStatus = 404;
 
 	/**
-	 * Creates a new NotFoundException.
+	 * Creates a new EntityNotFoundException.
 	 *
 	 * @param args - The entity type and ID that was not found
 	 * @param opts - Additional exception options

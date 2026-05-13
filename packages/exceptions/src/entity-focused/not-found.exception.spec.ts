@@ -4,7 +4,7 @@ import {
 	configureEntityNameRenderer,
 	resetEntityNameRenderer,
 } from "./entity-name-renderer";
-import { NotFoundException } from "./not-found.exception";
+import { EntityNotFoundException } from "./not-found.exception";
 
 describe("entity-focused/not-found.exception.ts", () => {
 	afterEach(() => {
@@ -13,7 +13,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 
 	describe("notFoundException", () => {
 		it("creates error with default renderer", () => {
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -24,7 +24,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 		it("creates error with configured renderer", () => {
 			configureEntityNameRenderer({ user: "User Account" });
 
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -33,7 +33,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 		});
 
 		it("has correct code", () => {
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -42,7 +42,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 		});
 
 		it("has correct httpStatus", () => {
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -51,7 +51,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 		});
 
 		it("stores entity and entityId", () => {
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -63,7 +63,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 		it("stores entityDisplayName", () => {
 			configureEntityNameRenderer({ user: "User" });
 
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -72,7 +72,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 		});
 
 		it("sets meta with entity info", () => {
-			const error = new NotFoundException({
+			const error = new EntityNotFoundException({
 				entity: "user",
 				entityId: "123",
 			});
@@ -85,7 +85,7 @@ describe("entity-focused/not-found.exception.ts", () => {
 
 		it("accepts additional options", () => {
 			const cause = new Error("DB error");
-			const error = new NotFoundException(
+			const error = new EntityNotFoundException(
 				{ entity: "user", entityId: "123" },
 				{ cause, sourcePointer: "/data/user" },
 			);

@@ -25,6 +25,11 @@
 			"types": "./dist/index.d.ts",
 			"require": "./dist/index.js",
 			"default": "./dist/index.js"
+		},
+		"./entity": {
+			"types": "./dist/entity.d.ts",
+			"require": "./dist/entity.js",
+			"default": "./dist/entity.js"
 		}
 	},
 	"files": [
