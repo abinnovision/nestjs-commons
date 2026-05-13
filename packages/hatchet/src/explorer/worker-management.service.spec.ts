@@ -19,6 +19,7 @@ import type { ModuleRef } from "@nestjs/core";
 const createService = (opts: {
 	config: HatchetModuleConfig;
 	registrations?: HatchetFeatureRegistration[];
+	registrationsLookupShouldThrow?: boolean;
 	serverWorkflows?: Array<{ name: string }>;
 	serverWorkflowPages?: Array<Array<{ name: string }>>;
 	listShouldReject?: boolean;
@@ -29,8 +30,19 @@ const createService = (opts: {
 
 	const registrations = opts.registrations ?? [];
 
-	// discoverFeatureRegistrations calls moduleRef.get once per invocation.
-	mockModuleRef.get.mockReturnValue(registrations);
+	/*
+	 * discoverFeatureRegistrations calls moduleRef.get once per invocation.
+	 * When `registrationsLookupShouldThrow` is set we mirror Nest's real
+	 * behaviour of throwing `UnknownElementException` for absent providers,
+	 * since the default mock would otherwise hide the bug from issue #105.
+	 */
+	if (opts.registrationsLookupShouldThrow) {
+		mockModuleRef.get.mockImplementation(() => {
+			throw new Error("UnknownElementException");
+		});
+	} else {
+		mockModuleRef.get.mockReturnValue(registrations);
+	}
 
 	// Mock workflows.list
 	if (opts.listShouldReject) {
@@ -83,6 +95,38 @@ describe("worker-management.service.ts", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks();
+	});
+
+	describe("initWorker (onApplicationBootstrap)", () => {
+		it("does not throw when no forFeature() registrations exist", async () => {
+			/*
+			 * Reproduces issue #105: with `forRoot()` only and no `forFeature()`
+			 * calls, Nest's ModuleRef throws `UnknownElementException` when asked
+			 * for the registration token. The service must swallow that and skip
+			 * worker initialization instead of failing application bootstrap.
+			 */
+			const { service, mockClient } = createService({
+				config: {
+					...workerConfig,
+					enableOrphanDetection: false,
+				},
+				registrationsLookupShouldThrow: true,
+			});
+
+			await expect(service.onApplicationBootstrap()).resolves.toBeUndefined();
+
+			expect(mockClient.worker).not.toHaveBeenCalled();
+		});
+
+		it("skips worker initialization when worker config is undefined", async () => {
+			const { service, mockClient } = createService({
+				config: noWorkerConfig,
+			});
+
+			await service.onApplicationBootstrap();
+
+			expect(mockClient.worker).not.toHaveBeenCalled();
+		});
 	});
 
 	describe("detectOrphanWorkflows", () => {
