@@ -9,6 +9,7 @@
 			"bump-minor-pre-major": false,
 			"bump-patch-for-minor-pre-major": false
 		},
-		"packages/toolkit": {}
+		"packages/toolkit": {},
+		"apps/docs": {}
 	}
 }
