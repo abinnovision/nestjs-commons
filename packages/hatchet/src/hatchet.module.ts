@@ -9,10 +9,7 @@ import {
 import { Client } from "./client/index.js";
 import { DeclarationBuilderService } from "./explorer/declaration-builder.service.js";
 import { WorkerManagementService } from "./explorer/worker-management.service.js";
-import {
-	type HatchetModuleConfig,
-	hatchetModuleConfigToken,
-} from "./hatchet.module-config.js";
+import { hatchetModuleConfigToken } from "./hatchet.module-config.js";
 import { Interceptor } from "./interceptor/index.js";
 import {
 	HatchetFeatureRegistration,
@@ -20,6 +17,7 @@ import {
 } from "./internal/registrations.js";
 import { hatchetClientFactory } from "./sdk/index.js";
 
+import type { HatchetModuleConfig } from "./hatchet.module-config.js";
 import type { AnyCallableRef } from "./references/index.js";
 import type { AnyHostCtor } from "./references/shared.js";
 

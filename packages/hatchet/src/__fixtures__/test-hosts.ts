@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { z } from "zod";
 
 import { taskHost, workflowHost } from "../abstracts/index.js";
