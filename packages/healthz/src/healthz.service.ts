@@ -18,6 +18,18 @@ export interface AggregateReport {
 }
 
 /**
+ * Internal pairing of an attestor with the result of its most recent
+ * execution. The `critical` flag is read off the attestor's options
+ * when deriving the aggregate status, so it does not need to live on
+ * the public report.
+ */
+interface AttestorRun {
+	attestor: RegisteredAttestor;
+	outcome: HealthCheckOutcome;
+	durationMs: number;
+}
+
+/**
  * Orchestrates execution of all discovered attestors and computes the
  * aggregate status.
  *
@@ -40,28 +52,26 @@ export class HealthzService {
 	public async runAll(): Promise<AggregateReport> {
 		const attestors = this.explorer.getAll();
 
-		const checks = await Promise.all(
+		const runs = await Promise.all(
 			attestors.map((attestor) => this.runOne(attestor)),
 		);
 
 		return {
-			status: this.deriveStatus(checks),
-			checks,
+			status: this.deriveStatus(runs),
+			checks: runs.map((run) => this.toReport(run)),
 			timestamp: new Date().toISOString(),
 		};
 	}
 
-	private async runOne(
-		attestor: RegisteredAttestor,
-	): Promise<HealthCheckReport> {
+	private async runOne(attestor: RegisteredAttestor): Promise<AttestorRun> {
 		const cached = this.cache.get(attestor.options.name);
 
 		if (cached !== undefined) {
-			return this.toReport(attestor, {
+			return {
+				attestor,
 				outcome: cached.outcome,
 				durationMs: cached.durationMs,
-				cached: true,
-			});
+			};
 		}
 
 		const { outcome, durationMs } = await this.runner.execute(attestor);
@@ -76,38 +86,31 @@ export class HealthzService {
 			);
 		}
 
-		return this.toReport(attestor, { outcome, durationMs, cached: false });
+		return { attestor, outcome, durationMs };
 	}
 
-	private toReport(
-		attestor: RegisteredAttestor,
-		result: {
-			outcome: HealthCheckOutcome;
-			durationMs: number;
-			cached: boolean;
-		},
-	): HealthCheckReport {
+	private toReport(run: AttestorRun): HealthCheckReport {
 		const report: HealthCheckReport = {
-			name: attestor.options.name,
-			status: result.outcome.status,
-			critical: attestor.options.critical ?? true,
-			durationMs: result.durationMs,
-			cached: result.cached,
+			name: run.attestor.options.name,
+			status: run.outcome.status,
+			durationMs: run.durationMs,
 		};
 
-		if (result.outcome.details !== undefined) {
-			report.details = result.outcome.details;
+		if (run.outcome.details !== undefined) {
+			report.details = run.outcome.details;
 		}
 
 		return report;
 	}
 
-	private deriveStatus(checks: readonly HealthCheckReport[]): HealthStatus {
+	private deriveStatus(runs: readonly AttestorRun[]): HealthStatus {
 		let degraded = false;
 
-		for (const check of checks) {
-			if (check.status === "down") {
-				if (check.critical) {
+		for (const run of runs) {
+			if (run.outcome.status === "down") {
+				const critical = run.attestor.options.critical ?? true;
+
+				if (critical) {
 					return "down";
 				}
 

@@ -23,8 +23,8 @@ export interface HealthCheckOutcome {
 	status: Exclude<HealthStatus, "degraded">;
 
 	/**
-	 * Optional structured details surfaced in the response payload when
-	 * the configured detail level includes per-attestor information.
+	 * Optional structured details surfaced in the response payload
+	 * under `checks[].details`.
 	 *
 	 * Values are restricted to strings to keep the response payload
 	 * predictable and avoid accidental serialisation of unbounded
@@ -104,9 +104,7 @@ export interface HealthAttestorOptions {
 export interface HealthCheckReport {
 	name: string;
 	status: HealthStatus;
-	critical: boolean;
 	durationMs: number;
-	cached: boolean;
 	details?: Record<string, string>;
 }
 

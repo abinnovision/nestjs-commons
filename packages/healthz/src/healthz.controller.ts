@@ -1,9 +1,6 @@
-import { Controller, Get, HttpStatus, Inject, Res } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Res } from "@nestjs/common";
 
-import { HEALTHZ_MODULE_CONFIG_TOKEN } from "./healthz.module-config";
 import { HealthzService } from "./healthz.service";
-
-import type { HealthzModuleConfig } from "./healthz.module-config";
 
 /**
  * Minimal structural shape covering both Express' `Response` and
@@ -27,11 +24,7 @@ interface ResponseLike {
  */
 @Controller()
 export class HealthzController {
-	public constructor(
-		private readonly service: HealthzService,
-		@Inject(HEALTHZ_MODULE_CONFIG_TOKEN)
-		private readonly config: HealthzModuleConfig,
-	) {}
+	public constructor(private readonly service: HealthzService) {}
 
 	@Get("livez")
 	public livez(): { status: "ok"; timestamp: string } {
@@ -58,16 +51,6 @@ export class HealthzController {
 		res.status(
 			report.status === "down" ? HttpStatus.SERVICE_UNAVAILABLE : HttpStatus.OK,
 		);
-
-		const detail = this.config.detail ?? "full";
-
-		if (detail === "none") {
-			return undefined;
-		}
-
-		if (detail === "summary") {
-			return { status: report.status, timestamp: report.timestamp };
-		}
 
 		return report;
 	}

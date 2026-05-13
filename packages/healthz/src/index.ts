@@ -7,9 +7,6 @@
  */
 
 export * from "./health-attestor";
-export {
-	HEALTHZ_MODULE_CONFIG_TOKEN,
-	type HealthzModuleConfig,
-} from "./healthz.module-config";
+export { type HealthzModuleConfig } from "./healthz.module-config";
 export { HealthzModule } from "./healthz.module";
 export type { HealthStatus } from "./interfaces/health-status";

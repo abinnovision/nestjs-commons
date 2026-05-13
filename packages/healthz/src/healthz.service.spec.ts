@@ -117,7 +117,6 @@ describe("healthz.service.ts", () => {
 			const report = await service.runAll();
 
 			expect(report.status).toBe("down");
-			expect(report.checks[0]?.critical).toBe(true);
 		});
 
 		it("rate-limits execution when minIntervalMs is set and reuses the previous outcome", async () => {
@@ -139,12 +138,10 @@ describe("healthz.service.ts", () => {
 
 			const service = new HealthzService(stubExplorer(attestors), runner);
 
-			const first = await service.runAll();
-			const second = await service.runAll();
+			await service.runAll();
+			await service.runAll();
 
 			expect(executions).toBe(1);
-			expect(first.checks[0]?.cached).toBe(false);
-			expect(second.checks[0]?.cached).toBe(true);
 		});
 
 		it("re-runs uncached attestors on every call", async () => {
