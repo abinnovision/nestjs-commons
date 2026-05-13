@@ -30,7 +30,7 @@ const createService = (opts: {
 	const registrations = opts.registrations ?? [];
 
 	// discoverFeatureRegistrations calls moduleRef.get once per invocation.
-	mockModuleRef.get.mockReturnValue(registrations as any);
+	mockModuleRef.get.mockReturnValue(registrations);
 
 	// Mock workflows.list
 	if (opts.listShouldReject) {
@@ -48,10 +48,10 @@ const createService = (opts: {
 	}
 
 	const service = new WorkerManagementService(
-		mockClient as any,
-		mockDeclarationBuilder as any,
+		mockClient,
+		mockDeclarationBuilder,
 		opts.config,
-		mockModuleRef as any,
+		mockModuleRef,
 	);
 
 	return { service, mockClient, mockModuleRef };
