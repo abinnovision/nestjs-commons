@@ -3,9 +3,9 @@
 	"version": "0.0.0",
 	"private": true,
 	"author": {
-		"name": "AB INNOVISION GmbH",
-		"email": "info@abinnovision.com",
-		"url": "https://abinnovision.com"
+		"name": "abi group GmbH",
+		"email": "info@abigroup.io",
+		"url": "https://abigroup.io"
 	},
 	"scripts": {
 		"build": "nest build",
