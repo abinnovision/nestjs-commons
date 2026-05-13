@@ -16,9 +16,18 @@ export interface SlugifyOptions {
 }
 
 /**
- * Implementation of the slugify function.
+ * Convert a string to a URL-safe slug.
+ *
+ * For remeda-compatible (data-last / pipe-friendly) usage, use
+ * `R.slugify(opts?)` from the `R` namespace instead.
+ *
+ * @example
+ * ```typescript
+ * slugify("Hello World!");                   // "hello-world"
+ * slugify("Hello World!", { maxLength: 5 }); // "hello"
+ * ```
  */
-function slugifyImpl(data: string, options: SlugifyOptions = {}): string {
+export function slugify(data: string, options: SlugifyOptions = {}): string {
 	const { maxLength = 100, separator = "-" } = options;
 
 	return (
@@ -28,7 +37,7 @@ function slugifyImpl(data: string, options: SlugifyOptions = {}): string {
 			// Normalize Unicode characters (decompose accented characters)
 			.normalize("NFD")
 			// Remove diacritical marks
-			.replace(/[\u0300-\u036f]/g, "")
+			.replace(/[̀-ͯ]/g, "")
 			// Replace any non-alphanumeric characters with the separator
 			.replace(/[^a-z0-9]+/g, separator)
 			// Remove leading/trailing separators
@@ -36,39 +45,4 @@ function slugifyImpl(data: string, options: SlugifyOptions = {}): string {
 			// Truncate to max length
 			.slice(0, maxLength)
 	);
-}
-
-/**
- * Convert a string to a URL-safe slug.
- *
- * This function is pipe-compatible with remeda, supporting both data-first
- * and data-last calling styles.
- *
- * @example Data-first (direct call)
- * ```typescript
- * slugify("Hello World!"); // "hello-world"
- * slugify("Hello World!", { maxLength: 5 }); // "hello"
- * ```
- *
- * @example Data-last (in pipes)
- * ```typescript
- * import { R } from '@abinnovision/nestjs-toolkit';
- *
- * R.pipe("Hello World!", slugify()); // "hello-world"
- * R.pipe("Hello World!", slugify({ separator: "_" })); // "hello_world"
- * ```
- */
-export function slugify(options?: SlugifyOptions): (data: string) => string;
-export function slugify(data: string, options?: SlugifyOptions): string;
-export function slugify(
-	dataOrOptions?: string | SlugifyOptions,
-	options?: SlugifyOptions,
-): string | ((data: string) => string) {
-	// Data-last: called with no args or with options object
-	if (dataOrOptions === undefined || typeof dataOrOptions === "object") {
-		return (data: string) => slugifyImpl(data, dataOrOptions);
-	}
-
-	// Data-first: called with string data
-	return slugifyImpl(dataOrOptions, options);
 }

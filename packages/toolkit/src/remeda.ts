@@ -1,14 +1,27 @@
+import * as remeda from "remeda";
+
+import { isNullishOrEmptyString } from "./string/guards";
+import { sanitizeString } from "./string/sanitize.remeda";
+import { slugify } from "./string/slugify.remeda";
+import { isUUID } from "./uuid/is-uuid";
+
 /**
- * Re-export remeda as R for convenient access to functional utilities.
+ * Remeda re-export augmented with toolkit's remeda-compatible utilities.
+ *
+ * Exposes every function from `remeda` (see https://remedajs.com/docs/)
+ * alongside data-last / pipe-friendly variants of toolkit helpers.
  *
  * @example
  * ```typescript
  * import { R } from '@abinnovision/nestjs-toolkit';
  *
- * const doubled = R.pipe([1, 2, 3], R.map(x => x * 2));
- * const unique = R.unique([1, 2, 2, 3]);
+ * R.pipe("  <b>Hello World!</b>  ", R.sanitizeString(), R.slugify()); // "hello-world"
  * ```
- *
- * @see https://remedajs.com/docs/ for full documentation
  */
-export * as R from "remeda";
+export const R = {
+	...remeda,
+	slugify,
+	sanitizeString,
+	isUUID,
+	isNullishOrEmptyString,
+} as const;

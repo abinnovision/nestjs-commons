@@ -28,4 +28,20 @@ describe("remeda.ts", () => {
 			expect(R.unique([1, 2, 2, 3])).toEqual([1, 2, 3]);
 		});
 	});
+
+	describe("toolkit-augmented utilities", () => {
+		it("chains R.sanitizeString and R.slugify in a pipe", () => {
+			expect(
+				R.pipe("  <b>Hello World!</b>  ", R.sanitizeString(), R.slugify()),
+			).toBe("hello-world");
+		});
+
+		it("exposes R.isUUID and R.isNullishOrEmptyString as guards", () => {
+			expect(R.isUUID("550e8400-e29b-41d4-a716-446655440000")).toBe(true);
+			expect(R.isUUID("not-a-uuid")).toBe(false);
+
+			expect(R.isNullishOrEmptyString("")).toBe(true);
+			expect(R.isNullishOrEmptyString("hello")).toBe(false);
+		});
+	});
 });

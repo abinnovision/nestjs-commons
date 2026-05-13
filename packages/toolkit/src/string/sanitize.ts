@@ -10,9 +10,18 @@ export interface SanitizeOptions {
 }
 
 /**
- * Implementation of the sanitizeString function.
+ * Sanitize a string by removing HTML tags and normalizing whitespace.
+ *
+ * For remeda-compatible (data-last / pipe-friendly) usage, use
+ * `R.sanitizeString(opts?)` from the `R` namespace instead.
+ *
+ * @example
+ * ```typescript
+ * sanitizeString("  <b>Hello</b>  World  ");     // "Hello World"
+ * sanitizeString("  Hello  ", { trim: false }); // " Hello "
+ * ```
  */
-function sanitizeStringImpl(
+export function sanitizeString(
 	data: string,
 	options: SanitizeOptions = {},
 ): string {
@@ -34,40 +43,4 @@ function sanitizeStringImpl(
 	}
 
 	return result;
-}
-
-/**
- * Sanitize a string by removing HTML tags and normalizing whitespace.
- *
- * This function is pipe-compatible with remeda, supporting both data-first
- * and data-last calling styles.
- *
- * @example Data-first (direct call)
- * ```typescript
- * sanitizeString("  <b>Hello</b>  World  "); // "Hello World"
- * sanitizeString("  Hello  ", { trim: false }); // " Hello "
- * ```
- *
- * @example Data-last (in pipes)
- * ```typescript
- * import { R } from '@abinnovision/nestjs-toolkit';
- *
- * R.pipe("<script>alert('xss')</script>Hello", sanitizeString()); // "Hello"
- * ```
- */
-export function sanitizeString(
-	options?: SanitizeOptions,
-): (data: string) => string;
-export function sanitizeString(data: string, options?: SanitizeOptions): string;
-export function sanitizeString(
-	dataOrOptions?: string | SanitizeOptions,
-	options?: SanitizeOptions,
-): string | ((data: string) => string) {
-	// Data-last: called with no args or with options object
-	if (dataOrOptions === undefined || typeof dataOrOptions === "object") {
-		return (data: string) => sanitizeStringImpl(data, dataOrOptions);
-	}
-
-	// Data-first: called with string data
-	return sanitizeStringImpl(dataOrOptions, options);
 }
