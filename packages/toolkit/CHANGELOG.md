@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-toolkit-v0.1.0...nestjs-toolkit-v0.2.0) (2026-05-13)
+
+
+### Features
+
+* **toolkit:** add assertNever and deepEqual utilities ([#126](https://github.com/abinnovision/nestjs-commons/issues/126)) ([75c3453](https://github.com/abinnovision/nestjs-commons/commit/75c345380c0e23a1b30afdab3f2e71b0d2ec03c0))
+* **toolkit:** add toUUID() validating parse helper ([#125](https://github.com/abinnovision/nestjs-commons/issues/125)) ([3aaa8be](https://github.com/abinnovision/nestjs-commons/commit/3aaa8bebc8be1e950029f5764543ac34daddca02))
+
 ## [0.1.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-toolkit-v0.0.1...nestjs-toolkit-v0.1.0) (2026-05-13)
 
 
