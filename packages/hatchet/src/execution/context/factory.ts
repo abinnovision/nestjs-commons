@@ -104,7 +104,6 @@ export const createWorkflowCtx = <I>(
 	): Promise<OutputOfTaskFn<F>> => {
 		const methodName = method.name;
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return await args.fromSDK.parentOutput(methodName);
 	};
 
