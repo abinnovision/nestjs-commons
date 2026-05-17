@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.0...nestjs-hatchet-v0.7.1) (2026-05-17)
+
+
+### Bug Fixes
+
+* **hatchet:** propagate emitBulk options.priority and scope to each input ([#129](https://github.com/abinnovision/nestjs-commons/issues/129)) ([83c98f9](https://github.com/abinnovision/nestjs-commons/commit/83c98f9c221b7fc4eac75bf56a978c4b1d0ef0c8))
+
 ## [0.7.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.6.1...nestjs-hatchet-v0.7.0) (2026-05-13)
 
 
