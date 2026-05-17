@@ -131,6 +131,42 @@ describe("client/client.ts", () => {
 			);
 		});
 
+		it("propagates options.priority and options.scope onto each input", async () => {
+			const options = {
+				additionalMetadata: { tenant: "acme" },
+				priority: 5,
+				scope: "tenant-acme",
+			};
+
+			await client.emitBulk(
+				TestEvent,
+				[
+					{ id: "1", value: 10 },
+					{ id: "2", value: 20 },
+				],
+				options,
+			);
+
+			expect(mockHatchetClient.events.bulkPush).toHaveBeenCalledWith(
+				"test:event",
+				[
+					{
+						payload: { id: "1", value: 10, [EVENT_MARKER]: "test:event" },
+						additionalMetadata: options.additionalMetadata,
+						priority: options.priority,
+						scope: options.scope,
+					},
+					{
+						payload: { id: "2", value: 20, [EVENT_MARKER]: "test:event" },
+						additionalMetadata: options.additionalMetadata,
+						priority: options.priority,
+						scope: options.scope,
+					},
+				],
+				options,
+			);
+		});
+
 		it("returns emitted events", async () => {
 			const mockEvents = [{ eventId: "1" }, { eventId: "2" }];
 			mockHatchetClient.events.bulkPush.mockResolvedValueOnce({

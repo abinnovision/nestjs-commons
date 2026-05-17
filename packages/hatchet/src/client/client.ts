@@ -81,6 +81,13 @@ export class Client {
 			event.name,
 			inputs.map((input) => ({
 				payload: { ...(input as object), [EVENT_MARKER]: event.name },
+				...(options?.additionalMetadata !== undefined && {
+					additionalMetadata: options.additionalMetadata,
+				}),
+				...(options?.priority !== undefined && {
+					priority: options.priority,
+				}),
+				...(options?.scope !== undefined && { scope: options.scope }),
 			})),
 			options,
 		);
