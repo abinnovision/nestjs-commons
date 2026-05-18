@@ -14,8 +14,8 @@ updates:
     # Dependabot limits the commit messages to 15 characters.
     # Those messages fit exactly in this requirement :)
     commit-message:
-      prefix: "build(deps)"
-      prefix-development: "build(deps/dev)"
+      prefix: "fix(deps)"
+      prefix-development: "build(deps)"
     ignore:
       # Only create updates for Major and Minor versions for now.
       # Security updates are handled by Dependabot's security updates (even for patch versions).
