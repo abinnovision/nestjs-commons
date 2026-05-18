@@ -12,36 +12,42 @@ yarn add @abinnovision/nestjs-exceptions
 
 ## Features
 
-- **AppException**: Base exception class with typed metadata support
+- **AppException**: Transport-agnostic base exception class with typed metadata support
+- **HttpAwareException**: Opt-in interface for HTTP status codes and headers
 - **MultiAppException**: Wrapper for multiple exceptions
 - **GenericExceptionFilter**: Unified error handling for HTTP and GraphQL
-- **Entity-focused exceptions**: `NotFoundException`, `MutationFailedException` with configurable entity display names
+- **Entity-focused exceptions**: `EntityNotFoundException`, `EntityMutationFailedException` with configurable entity display names
+
+## Package entry points
+
+The package exposes two entry points:
+
+- `@abinnovision/nestjs-exceptions` — base classes, the HTTP-aware interface, `MultiAppException`, and `GenericExceptionFilter`.
+- `@abinnovision/nestjs-exceptions/entity` — entity-focused exceptions, the `EntityRegistry` augmentation point, and the entity name renderer helpers.
 
 ## Quick Start
 
 ```typescript
+import { GenericExceptionFilter } from "@abinnovision/nestjs-exceptions";
 import {
-  NotFoundException,
-  MutationFailedException,
+  EntityNotFoundException,
+  EntityMutationFailedException,
   configureEntityNameRenderer,
-  createEntityNameRenderer,
-  GenericExceptionFilter,
-} from "@abinnovision/nestjs-exceptions";
+} from "@abinnovision/nestjs-exceptions/entity";
 
-// Configure entity display names at app startup
-configureEntityNameRenderer(
-  createEntityNameRenderer({
-    user: "User",
-    organization: "Organization",
-    user_profile: "User profile",
-  }),
-);
+/**
+ * Configure entity display names at app startup.
+ */
+configureEntityNameRenderer({
+  user: "User",
+  organization: "Organization",
+  user_profile: "User profile",
+});
 
-// Use in services
-throw new NotFoundException({ entity: "user", entityId: "123" });
+throw new EntityNotFoundException({ entity: "user", entityId: "123" });
 // Error message: "User with ID '123' not found"
 
-throw new MutationFailedException({
+throw new EntityMutationFailedException({
   entity: "user",
   entityId: "123",
   mutationType: "update",
@@ -55,18 +61,13 @@ throw new MutationFailedException({
 
 ```typescript
 // main.ts (or app.module.ts constructor)
-import {
-  configureEntityNameRenderer,
-  createEntityNameRenderer,
-} from "@abinnovision/nestjs-exceptions";
+import { configureEntityNameRenderer } from "@abinnovision/nestjs-exceptions/entity";
 
-configureEntityNameRenderer(
-  createEntityNameRenderer({
-    user: "User",
-    organization: "Organization",
-    user_profile: "User profile",
-  }),
-);
+configureEntityNameRenderer({
+  user: "User",
+  organization: "Organization",
+  user_profile: "User profile",
+});
 ```
 
 ### 2. Register the exception filter
@@ -84,14 +85,17 @@ async function bootstrap() {
 
 ## Drizzle Type Augmentation
 
-For type-safe entity names derived from your Drizzle schema:
+For type-safe entity names derived from your Drizzle schema, augment the
+`EntityRegistry` interface exposed from `@abinnovision/nestjs-exceptions/entity`.
+Once augmented, every entity-focused exception's `entity` field is automatically
+narrowed — no subclassing required.
 
-### 1. Create Drizzle-derived entity types
+### 1. Derive an `EntityName` union from your Drizzle schema
 
 ```typescript
 // src/common/exceptions/entity-types.ts
-import type { db } from "../../database";
 import type { Table } from "drizzle-orm";
+import type { db } from "../../database";
 
 type GetTableName<T> = T extends Table<infer C> ? C["name"] : never;
 type TableKeys<T> = {
@@ -100,23 +104,30 @@ type TableKeys<T> = {
 
 /**
  * Union of all entity names derived from Drizzle schema.
- * Provides type-safety when throwing entity-focused exceptions.
  */
 export type EntityName = GetTableName<(typeof db)[TableKeys<typeof db>]>;
 ```
 
-### 2. Create type-safe wrappers
+### 2. Register the union with `EntityRegistry`
 
 ```typescript
-// src/common/exceptions/not-found.exception.ts
-import { NotFoundException as BaseNotFoundException } from "@abinnovision/nestjs-exceptions";
+// src/common/exceptions/entity-registry.ts
 import type { EntityName } from "./entity-types";
 
-export class NotFoundException extends BaseNotFoundException<EntityName> {}
+declare module "@abinnovision/nestjs-exceptions/entity" {
+  interface EntityRegistry {
+    entities: EntityName;
+  }
+}
+```
 
-// Usage - entity is now type-checked against your Drizzle schema
-throw new NotFoundException({ entity: "user", entityId: id }); // OK
-throw new NotFoundException({ entity: "invalid", entityId: id }); // Type error!
+### 3. Use the exceptions directly — `entity` is now type-checked
+
+```typescript
+import { EntityNotFoundException } from "@abinnovision/nestjs-exceptions/entity";
+
+throw new EntityNotFoundException({ entity: "user", entityId: id }); // OK
+throw new EntityNotFoundException({ entity: "invalid", entityId: id }); // Type error!
 ```
 
 ## API
@@ -125,16 +136,31 @@ throw new NotFoundException({ entity: "invalid", entityId: id }); // Type error!
 
 #### `AppException<M>`
 
-Abstract base class for all application exceptions.
+Abstract, transport-agnostic base class for all application exceptions.
 
 ```typescript
 abstract class AppException<M = unknown> extends Error {
   abstract code: string;
-  abstract httpStatus: number;
+  readonly details: string;
   readonly meta?: M;
   readonly cause?: Error;
   readonly sourcePointer?: string;
 }
+```
+
+#### `HttpAwareException`
+
+Interface implemented by exceptions that carry HTTP-specific information.
+Implement this on `AppException` subclasses that should influence HTTP
+response status codes and headers.
+
+```typescript
+interface HttpAwareException {
+  readonly httpStatus: number;
+  readonly headers?: Record<string, string>;
+}
+
+function isHttpAwareException(value: unknown): value is HttpAwareException;
 ```
 
 #### `MultiAppException`
@@ -142,9 +168,12 @@ abstract class AppException<M = unknown> extends Error {
 Wrapper for multiple exceptions.
 
 ```typescript
+import { MultiAppException } from "@abinnovision/nestjs-exceptions";
+import { EntityNotFoundException } from "@abinnovision/nestjs-exceptions/entity";
+
 const errors = new MultiAppException([
-  new NotFoundException({ entity: "user", entityId: "1" }),
-  new NotFoundException({ entity: "user", entityId: "2" }),
+  new EntityNotFoundException({ entity: "user", entityId: "1" }),
+  new EntityNotFoundException({ entity: "user", entityId: "2" }),
 ]);
 ```
 
@@ -154,22 +183,24 @@ Exception filter that handles both HTTP and GraphQL contexts.
 
 ### Entity-Focused Exceptions
 
-#### `NotFoundException<T>`
+All symbols below are imported from `@abinnovision/nestjs-exceptions/entity`.
+
+#### `EntityNotFoundException`
 
 Thrown when an entity is not found.
 
 ```typescript
-throw new NotFoundException({ entity: "user", entityId: "123" });
+throw new EntityNotFoundException({ entity: "user", entityId: "123" });
 // Code: COMMON__NOT_FOUND
 // HTTP Status: 404
 ```
 
-#### `MutationFailedException<T>`
+#### `EntityMutationFailedException`
 
 Thrown when a create/update/delete operation fails.
 
 ```typescript
-throw new MutationFailedException({
+throw new EntityMutationFailedException({
   entity: "user",
   entityId: "123",
   mutationType: "update", // 'create' | 'update' | 'delete'
@@ -180,39 +211,44 @@ throw new MutationFailedException({
 
 ### Entity Name Renderer
 
-#### `configureEntityNameRenderer(renderer)`
+#### `configureEntityNameRenderer(displayNames)`
 
 Configure the global entity name renderer. Call once at app startup.
-
-#### `createEntityNameRenderer(displayNames)`
-
-Create a renderer from a record of display names.
+Accepts a `Record<EntityName, string>` mapping entity names to display names.
 
 #### `getEntityDisplayName(entity)`
 
-Get the display name for an entity using the global renderer.
+Get the display name for an entity using the global renderer. Falls back to
+the raw entity name when no mapping is configured.
 
 #### `resetEntityNameRenderer()`
 
-Reset to default renderer (useful for testing).
+Reset to the default (empty) renderer. Useful for testing.
 
 ## Creating Custom Exceptions
 
-Extend `AppException` for custom exceptions:
+Extend `AppException` for custom exceptions. Opt into HTTP semantics by
+implementing `HttpAwareException`:
 
 ```typescript
-import { AppException } from "@abinnovision/nestjs-exceptions";
+import {
+  AppException,
+  type HttpAwareException,
+} from "@abinnovision/nestjs-exceptions";
 
 interface ValidationMeta {
   field: string;
   constraint: string;
 }
 
-export class ValidationException extends AppException<ValidationMeta> {
+export class ValidationException
+  extends AppException<ValidationMeta>
+  implements HttpAwareException
+{
   public override code = "VALIDATION__FAILED";
-  public override httpStatus = 400;
+  public readonly httpStatus = 400;
 
-  constructor(field: string, constraint: string) {
+  public constructor(field: string, constraint: string) {
     super(`Validation failed for field '${field}': ${constraint}`, {
       meta: { field, constraint },
     });
@@ -223,19 +259,30 @@ export class ValidationException extends AppException<ValidationMeta> {
 Or extend `EntityFocusedAppException` for entity-related exceptions:
 
 ```typescript
-import { EntityFocusedAppException } from "@abinnovision/nestjs-exceptions";
+import { type HttpAwareException } from "@abinnovision/nestjs-exceptions";
+import {
+  EntityFocusedAppException,
+  type EntityFocusedArgs,
+} from "@abinnovision/nestjs-exceptions/entity";
 
-export class DuplicateEntityException<
-  T extends string = string,
-> extends EntityFocusedAppException<T> {
+import type { AppExceptionOptsWithoutMeta } from "@abinnovision/nestjs-exceptions";
+
+export class DuplicateEntityException
+  extends EntityFocusedAppException
+  implements HttpAwareException
+{
   public override code = "COMMON__DUPLICATE";
-  public override httpStatus = 409;
+  public readonly httpStatus = 409;
 
-  constructor(args: { entity: T; entityId: string }) {
+  public constructor(
+    args: EntityFocusedArgs,
+    opts?: AppExceptionOptsWithoutMeta,
+  ) {
     super(
       args,
       (displayName, entityId) =>
         `${displayName} with ID '${entityId}' already exists`,
+      opts,
     );
   }
 }
