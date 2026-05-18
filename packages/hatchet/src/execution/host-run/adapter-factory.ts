@@ -32,17 +32,19 @@ function createHostRunFn(runner: RunnerFn): HostRunFn {
 		const wait = options?.wait ?? true;
 
 		if (Array.isArray(input)) {
-			const results = await Promise.all(
-				(input as InputOfRef<R>[]).map((i) => runner(workflowName, i, options)),
+			const runs = (input as InputOfRef<R>[]).map((i) =>
+				runner(workflowName, i, options),
 			);
 
 			if (wait) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-				return (await Promise.all(results.map((r) => r.output))) as any;
+				return (await Promise.all(
+					runs.map((p) => p.then((r) => r.output)),
+				)) as any;
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return results as any;
+			return (await Promise.all(runs)) as any;
 		}
 
 		const runRef = await runner(workflowName, input, options);
