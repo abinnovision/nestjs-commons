@@ -68,6 +68,7 @@
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@arethetypeswrong/core": "^0.18.2",
 		"@swc/core": "^1.15.18",
+		"@types/node": "^25.8.0",
 		"arktype": "^2.2.0",
 		"eslint": "^10.3.0",
 		"prettier": "^3.8.3",
@@ -75,7 +76,7 @@
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.2",
 		"tsdown": "^0.22.0",
-		"typescript": "^5.9.3",
+		"typescript": "^6.0.3",
 		"unplugin-swc": "^1.5.9",
 		"vitest": "^4.1.6",
 		"zod": "^4.3.6"
