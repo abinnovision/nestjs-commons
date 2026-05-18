@@ -88,7 +88,7 @@
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.2",
 		"tsdown": "^0.22.0",
-		"typescript": "^5.9.3",
+		"typescript": "^6.0.3",
 		"unplugin-swc": "^1.5.9",
 		"vitest": "^4.1.6",
 		"vitest-mock-extended": "^4.0.0",
