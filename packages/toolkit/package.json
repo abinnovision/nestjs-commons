@@ -55,7 +55,7 @@
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
 		"remeda": "^2.21.0",
-		"uuid": "^11.1.0"
+		"uuid": "^14.0.0"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.0.2",
