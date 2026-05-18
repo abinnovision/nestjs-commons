@@ -1,8 +1,8 @@
 {
-	"packages/configx": "2.0.4",
-	"packages/exceptions": "0.1.0",
-	"packages/hatchet": "0.7.1",
-	"packages/healthz": "0.1.1",
-	"packages/toolkit": "0.2.0",
-	"apps/docs": "0.1.0"
+	"packages/configx": "2.1.0",
+	"packages/exceptions": "0.2.0",
+	"packages/hatchet": "0.8.0",
+	"packages/healthz": "0.2.0",
+	"packages/toolkit": "0.3.0",
+	"apps/docs": "0.2.0"
 }

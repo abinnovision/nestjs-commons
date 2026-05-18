@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/abinnovision/nestjs-commons/compare/docs-v0.1.0...docs-v0.2.0) (2026-05-18)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+* **docs:** publish docs app to GitHub Pages ([#143](https://github.com/abinnovision/nestjs-commons/issues/143)) ([9a52cd8](https://github.com/abinnovision/nestjs-commons/commit/9a52cd8022dcfaa0f26c9e04a63d01963548e0f4))
+
 ## [0.1.0](https://github.com/abinnovision/nestjs-commons/compare/docs-v0.0.1...docs-v0.1.0) (2026-05-13)
 
 

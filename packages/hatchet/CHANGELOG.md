@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.1...nestjs-hatchet-v0.8.0) (2026-05-18)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+
+
+### Bug Fixes
+
+* **hatchet:** parallelize array run outputs and memoize accessor.methods ([#142](https://github.com/abinnovision/nestjs-commons/issues/142)) ([3eb23f0](https://github.com/abinnovision/nestjs-commons/commit/3eb23f0fae36e148b53ffd6758e711d24ac9cd0c))
+
 ## [0.7.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.0...nestjs-hatchet-v0.7.1) (2026-05-17)
 
 
