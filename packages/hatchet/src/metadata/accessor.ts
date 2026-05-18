@@ -16,6 +16,13 @@ import type { SdkHostOpts } from "./translator.js";
 import type { AnyHost, AnyHostCtor } from "../references/shared.js";
 
 /**
+ * Cache of decorated method names keyed by host constructor. Decorator
+ * metadata is fixed at class-definition time, so this is safe to memoize for
+ * the lifetime of the constructor.
+ */
+const methodsCache = new WeakMap<AnyHostCtor, string[]>();
+
+/**
  * Accessor for host metadata and methods.
  */
 class HostAccessor {
@@ -48,19 +55,29 @@ class HostAccessor {
 	}
 
 	public get methods(): string[] {
+		const cached = methodsCache.get(this.ctor);
+
+		if (cached !== undefined) {
+			return cached;
+		}
+
 		const markerKey = this.isWorkflow
 			? METADATA_KEY_WORKFLOW_TASK_OPTS
 			: METADATA_KEY_TASK_OPTS;
 
 		const proto = this.ctor.prototype;
 
-		return Object.getOwnPropertyNames(proto)
+		const result = Object.getOwnPropertyNames(proto)
 			.filter(
 				(name) => name !== "constructor" && typeof proto[name] === "function",
 			)
 			.filter(
 				(method) => Reflect.getMetadata(markerKey, proto[method]) !== undefined,
 			);
+
+		methodsCache.set(this.ctor, result);
+
+		return result;
 	}
 
 	public getWorkflowTaskMeta(method: string): WorkflowTaskOpts<any> {
