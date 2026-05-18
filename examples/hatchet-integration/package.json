@@ -32,7 +32,7 @@
 		"@nestjs/common": "^11.1.17",
 		"@nestjs/core": "^11.1.17",
 		"@nestjs/platform-express": "^11.1.17",
-		"@nestjs/swagger": "^11.2.6",
+		"@nestjs/swagger": "^11.4.3",
 		"arktype": "^2.2.0",
 		"dotenv": "^17.4.2",
 		"reflect-metadata": "^0.2.2",
