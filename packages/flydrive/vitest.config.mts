@@ -1,0 +1,10 @@
+import { defineProject } from "vitest/config";
+
+export default defineProject({
+	test: {
+		name: "@abinnovision/nestjs-flydrive#unit",
+		include: ["src/**/*.spec.ts", "src/**/*.spec.mts"],
+		environment: "node",
+		typecheck: { enabled: true, include: ["src/**/*.spec.ts"] },
+	},
+});
