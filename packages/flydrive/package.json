@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
 	"name": "@abinnovision/nestjs-flydrive",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "NestJS integration for flydrive with class-token disks, eager fail-fast startup, and a fakes API for tests.",
 	"keywords": [
 		"nestjs",
@@ -73,8 +73,8 @@
 		"@nestjs/core": "^11.0.0",
 		"@nestjs/testing": "^11.0.0",
 		"@swc/core": "^1.15.18",
-		"@types/node": "^25.8.0",
-		"eslint": "^10.3.0",
+		"@types/node": "^25.9.1",
+		"eslint": "^10.4.0",
 		"prettier": "^3.8.3",
 		"publint": "^0.3.21",
 		"reflect-metadata": "^0.2.2",
