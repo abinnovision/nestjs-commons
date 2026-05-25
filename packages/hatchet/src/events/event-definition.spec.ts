@@ -6,11 +6,25 @@ import {
 	EVENT_MARKER,
 	EventDefinition,
 } from "./event-definition.js";
+import {
+	EventPayloadMalformedException,
+	HatchetException,
+} from "../exceptions/index.js";
 
 const testSchema = z.object({
 	userId: z.string(),
 	email: z.email(),
 });
+
+function captureThrow(fn: () => unknown): unknown {
+	try {
+		fn();
+	} catch (err) {
+		return err;
+	}
+
+	throw new Error("Expected function to throw");
+}
 
 describe("defineEvent()", () => {
 	it("creates definition with correct name", () => {
@@ -89,7 +103,7 @@ describe("#isCtx()", () => {
 		expect(event.isCtx(ctx)).toBe(false);
 	});
 
-	it("throws when payload fails schema validation", () => {
+	it("throws EventPayloadMalformedException when payload fails schema validation", () => {
 		const ctx = {
 			input: {
 				userId: "123",
@@ -98,10 +112,10 @@ describe("#isCtx()", () => {
 			},
 		};
 
-		expect(() => event.isCtx(ctx)).toThrow(/payload is malformed/);
+		expect(() => event.isCtx(ctx)).toThrow(EventPayloadMalformedException);
 	});
 
-	it("throws when required field is missing", () => {
+	it("throws EventPayloadMalformedException when required field is missing", () => {
 		const ctx = {
 			input: {
 				userId: "123",
@@ -109,7 +123,32 @@ describe("#isCtx()", () => {
 			},
 		};
 
-		expect(() => event.isCtx(ctx)).toThrow(/payload is malformed/);
+		expect(() => event.isCtx(ctx)).toThrow(EventPayloadMalformedException);
+	});
+
+	it("exposes the event name and structured issues on the thrown exception", () => {
+		const ctx = {
+			input: {
+				userId: "123",
+				email: "not-an-email",
+				[EVENT_MARKER]: "user:created",
+			},
+		};
+
+		const exception = captureThrow(() =>
+			event.isCtx(ctx),
+		) as EventPayloadMalformedException;
+
+		expect(exception).toBeInstanceOf(EventPayloadMalformedException);
+		expect(exception).toBeInstanceOf(HatchetException);
+		expect(exception.eventName).toBe("user:created");
+		expect(exception.issues.length).toBeGreaterThan(0);
+		expect(exception.issues[0]?.path).toBe("email");
+		expect(exception.message).toContain(
+			"Event 'user:created' payload is malformed",
+		);
+		expect(exception.message).toContain("email:");
+		expect(exception.message).not.toContain("[{");
 	});
 });
 
@@ -134,16 +173,29 @@ describe("#cast()", () => {
 		expect(event.cast(ctx)).toBe(false);
 	});
 
-	it("throws when payload fails schema validation", () => {
+	it("throws EventPayloadMalformedException when payload fails schema validation", () => {
 		const ctx = { input: { userId: "123", email: "not-an-email" } };
 
-		expect(() => event.cast(ctx)).toThrow(/payload is malformed/);
+		expect(() => event.cast(ctx)).toThrow(EventPayloadMalformedException);
 	});
 
-	it("throws when required field is missing", () => {
+	it("throws EventPayloadMalformedException when required field is missing", () => {
 		const ctx = { input: { userId: "123" } };
 
-		expect(() => event.cast(ctx)).toThrow(/payload is malformed/);
+		expect(() => event.cast(ctx)).toThrow(EventPayloadMalformedException);
+	});
+
+	it("exposes the event name and structured issues on the thrown exception", () => {
+		const ctx = { input: { userId: "123" } };
+
+		const exception = captureThrow(() =>
+			event.cast(ctx),
+		) as EventPayloadMalformedException;
+
+		expect(exception).toBeInstanceOf(EventPayloadMalformedException);
+		expect(exception.eventName).toBe("user:created");
+		expect(exception.issues.length).toBeGreaterThan(0);
+		expect(exception.issues[0]?.path).toBe("email");
 	});
 
 	it("returns true for payload that has the marker (marker is irrelevant to cast)", () => {

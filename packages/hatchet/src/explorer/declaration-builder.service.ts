@@ -8,6 +8,7 @@ import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
 import { TaskHost, WorkflowHost } from "../abstracts/index.js";
+import { InputValidationFailedException } from "../exceptions/index.js";
 import {
 	createTaskCtx,
 	createWorkflowCtx,
@@ -328,9 +329,7 @@ export class DeclarationBuilderService {
 				return { input: result.value, triggerSource, hostConfig };
 			}
 
-			throw new Error(
-				`Input validation failed: ${JSON.stringify(result.issues)}`,
-			);
+			throw new InputValidationFailedException(result.issues);
 		} else {
 			// For non-"run" triggers, skip validation and return the input as is.
 			return { input, triggerSource, hostConfig };
