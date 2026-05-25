@@ -1,5 +1,7 @@
 # @abinnovision/nestjs-exceptions
 
+[![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-exceptions?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-exceptions)
+
 NestJS exception handling with entity-focused exceptions and GraphQL support.
 
 ## Installation

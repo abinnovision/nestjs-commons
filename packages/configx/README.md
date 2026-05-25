@@ -1,5 +1,7 @@
 # @abinnovision/nestjs-configx
 
+[![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-configx?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-configx)
+
 Type-safe configuration for NestJS using [Standard Schema](https://standardschema.dev/).
 
 ## Goals
@@ -88,3 +90,7 @@ export class AppConfigx extends configx(
 ## Error Handling
 
 Invalid configuration throws `InvalidConfigError` at instantiation with details about which fields failed validation.
+
+## License
+
+Apache-2.0

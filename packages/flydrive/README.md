@@ -1,5 +1,7 @@
 # @abinnovision/nestjs-flydrive
 
+[![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-flydrive?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-flydrive)
+
 NestJS integration for [flydrive](https://flydrive.dev). Drivers for the
 local filesystem, AWS S3 (incl. R2, Spaces, Supabase), and Google Cloud
 Storage.

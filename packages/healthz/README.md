@@ -1,5 +1,7 @@
 # @abinnovision/nestjs-healthz
 
+[![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-healthz?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-healthz)
+
 Self-mounting health check module for NestJS. Mounts Kubernetes-style
 `/livez`, `/readyz`, and `/healthz` endpoints, and discovers health
 attestors decorated across the application — no central registry,
