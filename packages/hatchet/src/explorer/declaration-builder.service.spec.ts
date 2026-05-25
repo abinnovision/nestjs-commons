@@ -12,6 +12,10 @@ import {
 	TestWorkflow,
 } from "../__fixtures__/test-hosts.js";
 import { taskHost, workflowHost } from "../abstracts/index.js";
+import {
+	HatchetException,
+	InputValidationFailedException,
+} from "../exceptions/index.js";
 import { BaseCtx } from "../execution/index.js";
 import { Interceptor } from "../interceptor/index.js";
 import { InterceptorRegistration } from "../internal/registrations.js";
@@ -83,6 +87,16 @@ const createMockSdkContext = (
 	input,
 	additionalMetadata: () => additionalMetadata,
 });
+
+async function captureRejection(fn: () => Promise<unknown>): Promise<unknown> {
+	try {
+		await fn();
+	} catch (err) {
+		return err;
+	}
+
+	throw new Error("Expected promise to reject");
+}
 
 describe("declaration-builder.service.ts", () => {
 	let service: DeclarationBuilderService;
@@ -171,6 +185,43 @@ describe("declaration-builder.service.ts", () => {
 
 			const declaration = service.createDeclaration(host);
 			expect(declaration).toBeDefined();
+		});
+
+		it("throws InputValidationFailedException for run-triggered input that fails the schema", async () => {
+			const declaration = service.createDeclaration(new TestTask());
+			const fn = (declaration.definition as any).fn as (
+				_: unknown,
+				ctx: unknown,
+			) => Promise<unknown>;
+
+			// `data` should be a string per TestTask's schema
+			const sdkContext = createMockSdkContext({ data: 42 });
+
+			await expect(fn(undefined, sdkContext)).rejects.toBeInstanceOf(
+				InputValidationFailedException,
+			);
+		});
+
+		it("exposes structured issues on the thrown InputValidationFailedException", async () => {
+			const declaration = service.createDeclaration(new TestTask());
+			const fn = (declaration.definition as any).fn as (
+				_: unknown,
+				ctx: unknown,
+			) => Promise<unknown>;
+
+			const sdkContext = createMockSdkContext({ data: 42 });
+
+			const exception = (await captureRejection(() =>
+				fn(undefined, sdkContext),
+			)) as InputValidationFailedException;
+
+			expect(exception).toBeInstanceOf(InputValidationFailedException);
+			expect(exception).toBeInstanceOf(HatchetException);
+			expect(exception.issues.length).toBeGreaterThan(0);
+			expect(exception.issues[0]?.path).toBe("data");
+			expect(exception.message).toContain("Input validation failed");
+			expect(exception.message).toContain("data:");
+			expect(exception.message).not.toContain("[{");
 		});
 	});
 

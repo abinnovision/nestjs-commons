@@ -1,3 +1,5 @@
+import { EventPayloadMalformedException } from "../exceptions/index.js";
+
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 /**
@@ -53,7 +55,7 @@ export class EventDefinition<
 	 *
 	 * @param ctx The context to check (TaskCtx, WorkflowCtx, HelperCtx, or SDK Context).
 	 * @returns True if the context input is a non-null object that passes schema validation.
-	 * @throws Error if the payload fails schema validation.
+	 * @throws {EventPayloadMalformedException} If the payload fails schema validation.
 	 */
 	public cast<C extends { input: unknown }>(
 		ctx: C,
@@ -75,9 +77,7 @@ export class EventDefinition<
 
 		// Check for validation errors
 		if ("issues" in result && result.issues) {
-			throw new Error(
-				`Event '${this.name}' payload is malformed: ${JSON.stringify(result.issues)}`,
-			);
+			throw new EventPayloadMalformedException(this.name, result.issues);
 		}
 
 		return true;
@@ -89,7 +89,7 @@ export class EventDefinition<
 	 *
 	 * @param ctx The context to check (TaskCtx, WorkflowCtx, HelperCtx, or SDK Context).
 	 * @returns True if the context input contains the event marker matching this event.
-	 * @throws Error if the event marker matches but the payload fails schema validation.
+	 * @throws {EventPayloadMalformedException} If the event marker matches but the payload fails schema validation.
 	 */
 	public isCtx<C extends { input: unknown }>(
 		ctx: C,

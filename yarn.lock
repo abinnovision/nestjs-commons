@@ -123,6 +123,7 @@ __metadata:
     "@standard-schema/spec": "npm:^1.1.0"
     "@swc/core": "npm:^1.15.18"
     "@types/node": "npm:^25.9.1"
+    arktype: "npm:^2.2.0"
     directed-graph-typed: "npm:^2.6.0"
     eslint: "npm:^10.4.0"
     prettier: "npm:^3.8.3"

@@ -83,6 +83,7 @@
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@swc/core": "^1.15.18",
 		"@types/node": "^25.9.1",
+		"arktype": "^2.2.0",
 		"eslint": "^10.4.0",
 		"prettier": "^3.8.3",
 		"publint": "^0.3.21",
