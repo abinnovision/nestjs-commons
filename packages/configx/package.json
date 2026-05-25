@@ -70,7 +70,7 @@
 		"@swc/core": "^1.15.18",
 		"@types/node": "^25.8.0",
 		"arktype": "^2.2.0",
-		"eslint": "^10.3.0",
+		"eslint": "^10.4.0",
 		"prettier": "^3.8.3",
 		"publint": "^0.3.21",
 		"reflect-metadata": "^0.2.2",
