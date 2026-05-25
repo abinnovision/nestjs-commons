@@ -1,5 +1,7 @@
 # @abinnovision/nestjs-toolkit
 
+[![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-toolkit?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-toolkit)
+
 Common helpers for NestJS apps, with [remeda](https://remedajs.com/) re-exported as `R`.
 
 ## Installation

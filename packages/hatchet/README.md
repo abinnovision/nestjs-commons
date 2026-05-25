@@ -1,5 +1,7 @@
 # @abinnovision/nestjs-hatchet
 
+[![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet)
+
 NestJS integration for [Hatchet](https://hatchet.run) - a distributed workflow
 orchestration engine. Provides type-safe decorators, services, and event
 handling for building robust workflows.
@@ -231,3 +233,7 @@ export class MyTask extends taskHost(schema) {
   }
 }
 ```
+
+## License
+
+Apache-2.0
