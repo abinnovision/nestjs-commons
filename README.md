@@ -6,20 +6,16 @@ A collection of common packages for NestJS.
 
 ## Packages
 
-| Package                                             | Version                                                                                                                                           | Description                                                                                         |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| [`@abinnovision/nestjs-configx`](/packages/configx) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-configx?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-configx) | Simple configuration management for NestJS, supporting Standard Schema.                             |
-| [`@abinnovision/nestjs-hatchet`](/packages/hatchet) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet) | NestJS integration for Hatchet workflow orchestration.                                              |
-| [`@abinnovision/nestjs-healthz`](/packages/healthz) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-healthz?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-healthz) | Self-mounting health check module with cross-module attestor discovery and Kubernetes-style probes. |
+| Package                                                   | Version                                                                                                                                                 | Description                                                                                                                            |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@abinnovision/nestjs-configx`](/packages/configx)       | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-configx?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-configx)       | Simple configuration management for NestJS, supporting Standard Schema.                                                                |
+| [`@abinnovision/nestjs-exceptions`](/packages/exceptions) | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-exceptions?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-exceptions) | Standardized NestJS exception handling with entity-focused exceptions, HTTP awareness, and built-in support for GraphQL and REST APIs. |
+| [`@abinnovision/nestjs-flydrive`](/packages/flydrive)     | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-flydrive?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-flydrive)     | NestJS integration for flydrive with class-token disks, eager fail-fast startup, and a fakes API for tests.                            |
+| [`@abinnovision/nestjs-hatchet`](/packages/hatchet)       | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet)       | NestJS integration for Hatchet workflow orchestration.                                                                                 |
+| [`@abinnovision/nestjs-healthz`](/packages/healthz)       | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-healthz?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-healthz)       | Self-mounting health check module with cross-module attestor discovery and Kubernetes-style probes.                                    |
+| [`@abinnovision/nestjs-toolkit`](/packages/toolkit)       | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-toolkit?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-toolkit)       | NestJS utility library providing Remeda functional helpers, string manipulation, and UUID operations for common development tasks.     |
 
 See each package README for installation and usage instructions.
-
-### Examples
-
-| Example                                                | Description                                       |
-| ------------------------------------------------------ | ------------------------------------------------- |
-| [`configuration`](/examples/configuration)             | Usage example for `@abinnovision/nestjs-configx`. |
-| [`hatchet-integration`](/examples/hatchet-integration) | Usage example for `@abinnovision/nestjs-hatchet`. |
 
 ## Development
 
