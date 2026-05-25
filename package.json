@@ -39,7 +39,7 @@
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@commitlint/cli": "^21.0.1",
 		"@vitest/coverage-v8": "^4.1.6",
-		"eslint": "^10.3.0",
+		"eslint": "^10.4.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^17.0.4",
 		"prettier": "^3.8.3",
