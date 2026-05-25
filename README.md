@@ -4,6 +4,15 @@
 
 A collection of common packages for NestJS.
 
+## Goals
+
+The packages in this repo share a deliberate house style:
+
+- **Class-based DI** — no string tokens; injection sites are typed and refactor-safe.
+- **Schema-driven types** — Standard Schema (Zod, ArkType, …) and TypeScript module augmentation, not call-site generics.
+- **Testable by default** — every public token is `overrideProvider`-friendly; dedicated fakes where it helps.
+- **Thin wrappers** — we glue best-in-class upstream libraries into Nest, not replace them.
+
 ## Packages
 
 | Package                                                   | Version                                                                                                                                                 | Description                                                                                                                            |
@@ -16,6 +25,24 @@ A collection of common packages for NestJS.
 | [`@abinnovision/nestjs-toolkit`](/packages/toolkit)       | [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-toolkit?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-toolkit)       | NestJS utility library providing Remeda functional helpers, string manipulation, and UUID operations for common development tasks.     |
 
 See each package README for installation and usage instructions.
+
+## Compatibility
+
+- **NestJS** 11+
+- **Node.js** 24+
+- **Module formats** — ESM and CJS dual builds; types for both
+- **License** — Apache-2.0
+
+## Examples
+
+Runnable Nest apps under [`examples/`](./examples):
+
+- [`configuration`](./examples/configuration) — `@abinnovision/nestjs-configx` end-to-end.
+- [`hatchet-integration`](./examples/hatchet-integration) — `@abinnovision/nestjs-hatchet` workflows + events.
+
+## Versioning
+
+Each package is versioned independently via [release-please](https://github.com/googleapis/release-please) — versions in the table above are not aligned.
 
 ## Development
 
