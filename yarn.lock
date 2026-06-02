@@ -1692,7 +1692,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.0"
     fumadocs-core: "npm:^16.9.3"
     fumadocs-mdx: "npm:^15.0.4"
-    fumadocs-ui: "npm:^16.8.10"
+    fumadocs-ui: "npm:^16.9.3"
     next: "npm:^16.0.0"
     postcss: "npm:^8.4.49"
     react: "npm:^19.2.0"
@@ -7252,12 +7252,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.38.0":
-  version: 12.38.0
-  resolution: "framer-motion@npm:12.38.0"
+"framer-motion@npm:^12.40.0":
+  version: 12.40.0
+  resolution: "framer-motion@npm:12.40.0"
   dependencies:
-    motion-dom: "npm:^12.38.0"
-    motion-utils: "npm:^12.36.0"
+    motion-dom: "npm:^12.40.0"
+    motion-utils: "npm:^12.39.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -7270,7 +7270,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/bca830d85606ba49e84a1b12fb2b5353622a992809a4ae302084f06fd142e21d790f07ca3678c27e4fb75a8b8e687f42f2ae0cbb13345f2e5730a3fa2c4a5ecf
+  checksum: 10c0/a1d26908d6661028fcdba0cf200fca18927a4d4eae0b1e64c37dfb7fdea9da66a8991abd0007079e98687060ba9c83db55620c238bc363106a24ff411d22f533
   languageName: node
   linkType: hard
 
@@ -7452,9 +7452,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fumadocs-ui@npm:^16.8.10":
-  version: 16.8.10
-  resolution: "fumadocs-ui@npm:16.8.10"
+"fumadocs-ui@npm:^16.9.3":
+  version: 16.9.3
+  resolution: "fumadocs-ui@npm:16.9.3"
   dependencies:
     "@fumadocs/tailwind": "npm:0.0.5"
     "@radix-ui/react-accordion": "npm:^1.2.12"
@@ -7468,20 +7468,20 @@ __metadata:
     "@radix-ui/react-slot": "npm:^1.2.4"
     "@radix-ui/react-tabs": "npm:^1.1.13"
     class-variance-authority: "npm:^0.7.1"
-    lucide-react: "npm:^1.14.0"
-    motion: "npm:^12.38.0"
+    lucide-react: "npm:^1.17.0"
+    motion: "npm:^12.40.0"
     next-themes: "npm:^0.4.6"
     react-remove-scroll: "npm:^2.7.2"
     rehype-raw: "npm:^7.0.0"
     scroll-into-view-if-needed: "npm:^3.1.0"
-    shiki: "npm:^4.0.2"
-    tailwind-merge: "npm:^3.5.0"
+    shiki: "npm:^4.1.0"
+    tailwind-merge: "npm:^3.6.0"
     unist-util-visit: "npm:^5.1.0"
   peerDependencies:
     "@takumi-rs/image-response": "*"
     "@types/mdx": "*"
     "@types/react": "*"
-    fumadocs-core: 16.8.10
+    fumadocs-core: 16.9.3
     next: 16.x.x
     react: ^19.2.0
     react-dom: ^19.2.0
@@ -7494,7 +7494,7 @@ __metadata:
       optional: true
     next:
       optional: true
-  checksum: 10c0/f6280b9acc5d74d5663c708f1986f4c017afd42461f8e83dc14f0564487252d205c684d7ee35a3ba341b154803b4072c8ee4adaba88bf0f0e8f932261c287074
+  checksum: 10c0/0797b1cd46a7d2df2f366b2cf10ab35856948d4c91c7e5bd1607f92510165785745a3b2c77ef15b3f52acdc9e4e808122f61e0910eda6b8824e3eb8fa4966f19
   languageName: node
   linkType: hard
 
@@ -8722,12 +8722,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "lucide-react@npm:1.14.0"
+"lucide-react@npm:^1.17.0":
+  version: 1.17.0
+  resolution: "lucide-react@npm:1.17.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/25c5dd878945842ffb519532f1a66f59f2d461e7be7bd322091b0ecd3cd32561c1ae3d9b50161432d39a72bf8c8f1a039268f2f20a035e520dd3f49dd46ffaf2
+  checksum: 10c0/a600d882afceffa5d3479666549e801e201ff5a95c19961648e45fc288cf3d2248a345e563cd3891f3ff3dbc052730121feeb54aa75628b663810159246b9468
   languageName: node
   linkType: hard
 
@@ -9632,27 +9632,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:^12.38.0":
-  version: 12.38.0
-  resolution: "motion-dom@npm:12.38.0"
+"motion-dom@npm:^12.40.0":
+  version: 12.40.0
+  resolution: "motion-dom@npm:12.40.0"
   dependencies:
-    motion-utils: "npm:^12.36.0"
-  checksum: 10c0/ce41da75c240568abd9708cc859cbffb7d6aa490913619e20d23df57abe232ad6cce961c129933535c92b64bfb886958d73e5d162bcd5ddf174378f869977bbe
+    motion-utils: "npm:^12.39.0"
+  checksum: 10c0/79da846a36fd5f6762a0fcfa6e0b7128e4d58f7c07d1467a9f789a9cd0b5adbef9bfbde75760901a13cf2bddd9b31e93e4348a714f570c45ca1e2bfabd22859e
   languageName: node
   linkType: hard
 
-"motion-utils@npm:^12.36.0":
-  version: 12.36.0
-  resolution: "motion-utils@npm:12.36.0"
-  checksum: 10c0/fe08231759064eef5d351a869379246f1e1b2031bda357a6197d2a99ff6b472bce69f8250212713d8bff2ff46978f354ca8c3b8c8f0c5bd337d26a6793ba42fa
+"motion-utils@npm:^12.39.0":
+  version: 12.39.0
+  resolution: "motion-utils@npm:12.39.0"
+  checksum: 10c0/6d7a2a2cc0797b72410a666a9cc1c201c8e39bf9669670464e433fe1e72af5f0217154c869867b34fbadf3664cf222c0d022bbc4eed7927f201ae971918e7440
   languageName: node
   linkType: hard
 
-"motion@npm:^12.38.0":
-  version: 12.38.0
-  resolution: "motion@npm:12.38.0"
+"motion@npm:^12.40.0":
+  version: 12.40.0
+  resolution: "motion@npm:12.40.0"
   dependencies:
-    framer-motion: "npm:^12.38.0"
+    framer-motion: "npm:^12.40.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -9665,7 +9665,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/661a08b17592295b267df6a4a4887e9da78b29c310aaf60860fcfa68dac6cf2c39ce03701d6182159ad6f3000f28b8c62c3c6d139e620435d56b3bb5f28c5c1b
+  checksum: 10c0/d0c118ed4829f2999c3ab7eb1ee916df70c65e95d262e951b69d3cea67a74e4a1d12e181badf4180e0d01c1ca8a9b109be4ea5456cad04bb58d4510f071af60f
   languageName: node
   linkType: hard
 
@@ -11149,7 +11149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^4.0.2, shiki@npm:^4.1.0":
+"shiki@npm:^4.1.0":
   version: 4.1.0
   resolution: "shiki@npm:4.1.0"
   dependencies:
@@ -11618,7 +11618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^3.5.0":
+"tailwind-merge@npm:^3.6.0":
   version: 3.6.0
   resolution: "tailwind-merge@npm:3.6.0"
   checksum: 10c0/a728d929f4786bcb48641db4228cc8c006a7545491783a658fb4d24d177dab960620991d17805a047309228de50ab949ca8d9e112c30183da0432367796ae186
