@@ -55,9 +55,9 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
-		"@nestjs/common": "^11.0.0",
-		"@nestjs/core": "^11.0.0",
-		"@swc/core": "^1.11.5",
+		"@nestjs/common": "^11.1.26",
+		"@nestjs/core": "^11.1.26",
+		"@swc/core": "^1.15.41",
 		"@types/node": "^25.9.1",
 		"eslint": "^10.4.1",
 		"prettier": "^3.8.4",
