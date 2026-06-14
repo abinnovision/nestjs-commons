@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { AttestorCache } from "./attestor-cache";
+import { AttestorCache } from "./attestor-cache.js";
 
-import type { HealthCheckOutcome } from "../health-attestor";
+import type { HealthCheckOutcome } from "../health-attestor.js";
 
 const okOutcome: HealthCheckOutcome = { status: "ok" };
 

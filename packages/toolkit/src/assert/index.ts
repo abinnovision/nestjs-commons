@@ -1,1 +1,1 @@
-export * from "./assert-never";
+export * from "./assert-never.js";

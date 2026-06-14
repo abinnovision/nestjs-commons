@@ -1,14 +1,14 @@
 import "reflect-metadata";
 import { describe, expect, it } from "vitest";
 
-import { HealthAttestor } from "./health-attestor";
-import { METADATA_KEY_HEALTH_ATTESTOR } from "./metadata/keys";
+import { HealthAttestor } from "./health-attestor.js";
+import { METADATA_KEY_HEALTH_ATTESTOR } from "./metadata/keys.js";
 
 import type {
 	HealthAttestor as HealthAttestorContract,
 	HealthAttestorOptions,
 	HealthCheckOutcome,
-} from "./health-attestor";
+} from "./health-attestor.js";
 
 describe("health-attestor.ts", () => {
 	describe("@HealthAttestor()", () => {

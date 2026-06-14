@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { deepEqual } from "./deep-equal";
+import { deepEqual } from "./deep-equal.js";
 
 describe("equality/deep-equal.ts", () => {
 	describe("#deepEqual()", () => {

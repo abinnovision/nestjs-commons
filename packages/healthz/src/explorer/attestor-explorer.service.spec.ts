@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import { describe, expect, it } from "vitest";
 
-import { HealthAttestor } from "../health-attestor";
-import { AttestorExplorer } from "./attestor-explorer.service";
+import { HealthAttestor } from "../health-attestor.js";
+import { AttestorExplorer } from "./attestor-explorer.service.js";
 
 import type {
 	HealthAttestor as HealthAttestorContract,
 	HealthCheckOutcome,
-} from "../health-attestor";
+} from "../health-attestor.js";
 import type { DiscoveryService } from "@nestjs/core";
 
 interface FakeProvider {

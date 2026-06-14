@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { toUUID } from "./to-uuid";
+import { toUUID } from "./to-uuid.js";
 
 describe("uuid/to-uuid.ts", () => {
 	describe("#toUUID()", () => {

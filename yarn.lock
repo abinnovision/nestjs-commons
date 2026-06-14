@@ -61,6 +61,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.1.26"
     "@nestjs/core": "npm:^11.1.26"
     "@nestjs/graphql": "npm:^13.4.2"
@@ -69,9 +70,12 @@ __metadata:
     eslint: "npm:^10.4.1"
     graphql: "npm:^16.10.0"
     prettier: "npm:^3.8.4"
+    publint: "npm:^0.3.21"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"
+    tsdown: "npm:^0.22.2"
     typescript: "npm:^6.0.3"
+    unplugin-swc: "npm:^1.5.9"
     vitest: "npm:^4.0.15"
   peerDependencies:
     "@nestjs/common": ^11.0.0
@@ -92,6 +96,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.1.26"
     "@nestjs/core": "npm:^11.1.26"
     "@nestjs/testing": "npm:^11.1.26"
@@ -119,6 +124,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@arethetypeswrong/core": "npm:^0.18.3"
     "@hatchet-dev/typescript-sdk": "npm:^1.23.0"
     "@standard-schema/spec": "npm:^1.1.0"
     "@swc/core": "npm:^1.15.41"
@@ -148,15 +154,19 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.1.26"
     "@nestjs/core": "npm:^11.1.26"
     "@swc/core": "npm:^1.15.41"
     "@types/node": "npm:^25.9.1"
     eslint: "npm:^10.4.1"
     prettier: "npm:^3.8.4"
+    publint: "npm:^0.3.21"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"
+    tsdown: "npm:^0.22.2"
     typescript: "npm:^6.0.3"
+    unplugin-swc: "npm:^1.5.9"
     vitest: "npm:^4.0.15"
   peerDependencies:
     "@nestjs/common": ^11.0.0
@@ -170,13 +180,17 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@arethetypeswrong/core": "npm:^0.18.3"
     "@swc/core": "npm:^1.15.41"
     "@types/node": "npm:^25.9.1"
     "@types/uuid": "npm:^11.0.0"
     eslint: "npm:^10.4.1"
     prettier: "npm:^3.8.4"
+    publint: "npm:^0.3.21"
     remeda: "npm:^2.37.0"
+    tsdown: "npm:^0.22.2"
     typescript: "npm:^6.0.3"
+    unplugin-swc: "npm:^1.5.9"
     uuid: "npm:^14.0.0"
     vitest: "npm:^4.0.15"
   languageName: unknown
@@ -10834,7 +10848,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rolldown-plugin-dts@npm:^0.25.2":
+"rolldown-plugin-dts@npm:0.25.2":
   version: 0.25.2
   resolution: "rolldown-plugin-dts@npm:0.25.2"
   dependencies:
@@ -10862,6 +10876,37 @@ __metadata:
     vue-tsc:
       optional: true
   checksum: 10c0/8bfce712dcbabf8a3554cf1e106644920b500790382c7ec4026f27293db267dd0709d85c6587680b3d1d4591908281bc435f2469c265b258c129d00a579f7bbd
+  languageName: node
+  linkType: hard
+
+"rolldown-plugin-dts@patch:rolldown-plugin-dts@npm%3A0.25.2#~/.yarn/patches/rolldown-plugin-dts-npm-0.25.2-106fad70f1.patch":
+  version: 0.25.2
+  resolution: "rolldown-plugin-dts@patch:rolldown-plugin-dts@npm%3A0.25.2#~/.yarn/patches/rolldown-plugin-dts-npm-0.25.2-106fad70f1.patch::version=0.25.2&hash=0abcbf"
+  dependencies:
+    "@babel/generator": "npm:8.0.0-rc.6"
+    "@babel/helper-validator-identifier": "npm:8.0.0-rc.6"
+    "@babel/parser": "npm:8.0.0-rc.6"
+    ast-kit: "npm:^3.0.0-beta.1"
+    birpc: "npm:^4.0.0"
+    dts-resolver: "npm:^3.0.0"
+    get-tsconfig: "npm:5.0.0-beta.5"
+    obug: "npm:^2.1.1"
+  peerDependencies:
+    "@ts-macro/tsc": ^0.3.6
+    "@typescript/native-preview": ">=7.0.0-dev.20260325.1"
+    rolldown: ^1.0.0
+    typescript: ^5.0.0 || ^6.0.0
+    vue-tsc: ~3.2.0
+  peerDependenciesMeta:
+    "@ts-macro/tsc":
+      optional: true
+    "@typescript/native-preview":
+      optional: true
+    typescript:
+      optional: true
+    vue-tsc:
+      optional: true
+  checksum: 10c0/9d84f558958ce5be3e211b1fd1ba9f6d29fe7f2da98fb8635204393ef2a3a36a5d4adcff613460131a9a0afb0e32f1b686d8a13cfdf0d26da7bb9dc88703da55
   languageName: node
   linkType: hard
 

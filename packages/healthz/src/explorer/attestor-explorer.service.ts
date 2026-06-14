@@ -1,10 +1,13 @@
 import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
 import { DiscoveryService } from "@nestjs/core";
 
-import { METADATA_KEY_HEALTH_ATTESTOR } from "../metadata/keys";
+import { METADATA_KEY_HEALTH_ATTESTOR } from "../metadata/keys.js";
 
-import type { HealthAttestor, HealthAttestorOptions } from "../health-attestor";
-import type { RegisteredAttestor } from "../runner/attestor-runner.service";
+import type {
+	HealthAttestor,
+	HealthAttestorOptions,
+} from "../health-attestor.js";
+import type { RegisteredAttestor } from "../runner/attestor-runner.service.js";
 
 /**
  * Discovers every provider annotated with `@HealthAttestor()` at

@@ -1,6 +1,6 @@
-import { sanitizeString as sanitizeStringDirect } from "./sanitize";
+import { sanitizeString as sanitizeStringDirect } from "./sanitize.js";
 
-import type { SanitizeOptions } from "./sanitize";
+import type { SanitizeOptions } from "./sanitize.js";
 
 /**
  * Remeda-compatible (data-last) variant of `sanitizeString`.

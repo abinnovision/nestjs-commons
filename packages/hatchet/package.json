@@ -28,34 +28,34 @@
 	"exports": {
 		".": {
 			"import": {
-				"types": "./dist/index.d.ts",
+				"types": "./dist/index.d.mts",
 				"default": "./dist/index.mjs"
 			},
 			"require": {
-				"types": "./dist/index.d.ts",
+				"types": "./dist/index.d.cts",
 				"default": "./dist/index.cjs"
 			}
 		},
 		"./sdk": {
 			"import": {
-				"types": "./dist/sdk-export/index.d.ts",
+				"types": "./dist/sdk-export/index.d.mts",
 				"default": "./dist/sdk-export/index.mjs"
 			},
 			"require": {
-				"types": "./dist/sdk-export/index.d.ts",
+				"types": "./dist/sdk-export/index.d.cts",
 				"default": "./dist/sdk-export/index.cjs"
 			}
 		}
 	},
 	"main": "./dist/index.cjs",
-	"types": "./dist/index.d.ts",
+	"types": "./dist/index.d.cts",
 	"files": [
 		"dist",
 		"LICENSE",
 		"README.md"
 	],
 	"scripts": {
-		"build": "tsdown && tsc --project tsconfig.build.json --emitDeclarationOnly && publint",
+		"build": "tsdown",
 		"format:check": "prettier --check '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
 		"format:fix": "prettier --write '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
 		"lint:check": "eslint '{{src,test}/**/*,*}.{js,jsx,ts,tsx}'",
@@ -81,6 +81,7 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
+		"@arethetypeswrong/core": "^0.18.3",
 		"@swc/core": "^1.15.41",
 		"@types/node": "^25.9.1",
 		"arktype": "^2.2.0",

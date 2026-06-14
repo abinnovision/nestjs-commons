@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { AttestorRunner } from "./attestor-runner.service";
+import { AttestorRunner } from "./attestor-runner.service.js";
 
-import type { HealthAttestor, HealthCheckOutcome } from "../health-attestor";
-import type { RegisteredAttestor } from "./attestor-runner.service";
+import type { HealthAttestor, HealthCheckOutcome } from "../health-attestor.js";
+import type { RegisteredAttestor } from "./attestor-runner.service.js";
 
 const buildRegistered = (
 	check: HealthAttestor["check"],

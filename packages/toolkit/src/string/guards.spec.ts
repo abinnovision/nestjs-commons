@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isNullishOrEmptyString } from "./guards";
+import { isNullishOrEmptyString } from "./guards.js";
 
 describe("string/guards.ts", () => {
 	describe("#isNullishOrEmptyString()", () => {

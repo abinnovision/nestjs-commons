@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { generateUUID } from "./generate-uuid";
-import { isUUID } from "./is-uuid";
-import { UUID_NAMESPACE_DNS, UUID_NAMESPACE_URL } from "./uuid-namespaces";
+import { generateUUID } from "./generate-uuid.js";
+import { isUUID } from "./is-uuid.js";
+import { UUID_NAMESPACE_DNS, UUID_NAMESPACE_URL } from "./uuid-namespaces.js";
 
 describe("uuid/generate-uuid.ts", () => {
 	describe("#generateUUID()", () => {

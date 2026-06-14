@@ -45,7 +45,7 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "tsdown && publint",
+		"build": "tsdown",
 		"format:check": "prettier --check '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
 		"format:fix": "prettier --write '{{src,test}/**/*,*}.{js,jsx,ts,tsx,json,json5,yml,yaml,md}'",
 		"lint:check": "eslint '{{src,test}/**/*,*}.{js,jsx,ts,tsx}'",
@@ -69,6 +69,7 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
+		"@arethetypeswrong/core": "^0.18.3",
 		"@nestjs/common": "^11.1.26",
 		"@nestjs/core": "^11.1.26",
 		"@nestjs/testing": "^11.1.26",

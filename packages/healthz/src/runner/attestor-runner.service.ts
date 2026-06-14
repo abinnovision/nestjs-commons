@@ -4,7 +4,7 @@ import type {
 	HealthAttestor,
 	HealthAttestorOptions,
 	HealthCheckOutcome,
-} from "../health-attestor";
+} from "../health-attestor.js";
 
 const DEFAULT_TIMEOUT_MS = 2000;
 

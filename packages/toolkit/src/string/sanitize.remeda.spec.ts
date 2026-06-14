@@ -1,7 +1,7 @@
 import { pipe } from "remeda";
 import { describe, expect, it } from "vitest";
 
-import { sanitizeString } from "./sanitize.remeda";
+import { sanitizeString } from "./sanitize.remeda.js";
 
 describe("string/sanitize.remeda.ts", () => {
 	describe("#sanitizeString()", () => {

@@ -1,6 +1,6 @@
-import { slugify as slugifyDirect } from "./slugify";
+import { slugify as slugifyDirect } from "./slugify.js";
 
-import type { SlugifyOptions } from "./slugify";
+import type { SlugifyOptions } from "./slugify.js";
 
 /**
  * Remeda-compatible (data-last) variant of `slugify`.

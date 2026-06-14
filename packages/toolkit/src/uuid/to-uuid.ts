@@ -1,6 +1,6 @@
 import { validate } from "uuid";
 
-import type { UUID } from "./uuid.types";
+import type { UUID } from "./uuid.types.js";
 
 /**
  * Parse a string into a validated {@link UUID}.

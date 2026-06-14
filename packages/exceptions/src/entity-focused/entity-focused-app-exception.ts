@@ -1,13 +1,13 @@
-import { AppException } from "../app-exception";
-import { getEntityDisplayName } from "./entity-name-renderer";
+import { AppException } from "../app-exception.js";
+import { getEntityDisplayName } from "./entity-name-renderer.js";
 
-import type { AppExceptionOptsWithoutMeta } from "../app-exception";
+import type { AppExceptionOptsWithoutMeta } from "../app-exception.js";
 import type {
 	EntityFocusedArgs,
 	EntityFocusedException,
 	EntityFocusedMeta,
 	EntityName,
-} from "./entity-focused.interface";
+} from "./entity-focused.interface.js";
 
 /**
  * Abstract base class for entity-focused exceptions.

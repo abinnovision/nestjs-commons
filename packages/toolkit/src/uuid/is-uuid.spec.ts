@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isUUID } from "./is-uuid";
+import { isUUID } from "./is-uuid.js";
 
 describe("uuid/is-uuid.ts", () => {
 	describe("#isUUID()", () => {

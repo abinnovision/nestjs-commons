@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sanitizeString } from "./sanitize";
+import { sanitizeString } from "./sanitize.js";
 
 describe("string/sanitize.ts", () => {
 	describe("#sanitizeString()", () => {

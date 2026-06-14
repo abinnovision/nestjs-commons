@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { isUUID } from "./is-uuid";
+import { isUUID } from "./is-uuid.js";
 import {
 	UUID_NAMESPACE_DNS,
 	UUID_NAMESPACE_OID,
 	UUID_NAMESPACE_URL,
 	UUID_NAMESPACE_X500,
-} from "./uuid-namespaces";
+} from "./uuid-namespaces.js";
 
 describe("uuid/uuid-namespaces.ts", () => {
 	it("uUID_NAMESPACE_DNS is a valid UUID", () => {

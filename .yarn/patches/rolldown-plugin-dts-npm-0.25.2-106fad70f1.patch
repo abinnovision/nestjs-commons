@@ -1,0 +1,12 @@
+diff --git a/dist/tsc-DBLgyoBn.mjs b/dist/tsc-DBLgyoBn.mjs
+index 4c6a228de0d5b2b60cb1bbdd8349b272d625a9b4..86e94b3abc5dff00115607e56675378c0642aa4d 100644
+--- a/dist/tsc-DBLgyoBn.mjs
++++ b/dist/tsc-DBLgyoBn.mjs
+@@ -69,6 +69,7 @@ const formatHost = {
+ const stripPrivateFields = (ctx) => {
+ 	const visitor = (node) => {
+ 		if (ts.isPropertySignature(node) && ts.isPrivateIdentifier(node.name)) return ctx.factory.updatePropertySignature(node, node.modifiers, ctx.factory.createStringLiteral(node.name.text), node.questionToken, node.type);
++		if (ts.isFunctionLike(node)) return node;
+ 		return ts.visitEachChild(node, visitor, ctx);
+ 	};
+ 	return (sourceFile) => ts.visitNode(sourceFile, visitor, ts.isSourceFile) ?? sourceFile;

@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
 	configureEntityNameRenderer,
 	resetEntityNameRenderer,
-} from "./entity-name-renderer";
-import { EntityNotFoundException } from "./not-found.exception";
+} from "./entity-name-renderer.js";
+import { EntityNotFoundException } from "./not-found.exception.js";
 
 describe("entity-focused/not-found.exception.ts", () => {
 	afterEach(() => {

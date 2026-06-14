@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { HealthzService } from "./healthz.service";
+import { HealthzService } from "./healthz.service.js";
 
-import type { AttestorExplorer } from "./explorer/attestor-explorer.service";
-import type { HealthAttestor, HealthCheckOutcome } from "./health-attestor";
+import type { AttestorExplorer } from "./explorer/attestor-explorer.service.js";
+import type { HealthAttestor, HealthCheckOutcome } from "./health-attestor.js";
 import type {
 	AttestorRunner,
 	RegisteredAttestor,
-} from "./runner/attestor-runner.service";
+} from "./runner/attestor-runner.service.js";
 
 const buildRegistered = (
 	options: RegisteredAttestor["options"],

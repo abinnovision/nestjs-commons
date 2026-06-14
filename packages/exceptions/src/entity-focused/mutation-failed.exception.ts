@@ -1,10 +1,10 @@
-import { EntityFocusedAppException } from "./entity-focused-app-exception";
+import { EntityFocusedAppException } from "./entity-focused-app-exception.js";
 
 import type {
 	AppExceptionOptsWithoutMeta,
 	HttpAwareException,
-} from "../app-exception";
-import type { EntityFocusedArgs } from "./entity-focused.interface";
+} from "../app-exception.js";
+import type { EntityFocusedArgs } from "./entity-focused.interface.js";
 
 /**
  * The type of mutation that failed.

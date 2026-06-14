@@ -1,12 +1,15 @@
 import { Injectable } from "@nestjs/common";
 
-import { AttestorCache } from "./cache/attestor-cache";
-import { AttestorExplorer } from "./explorer/attestor-explorer.service";
-import { AttestorRunner } from "./runner/attestor-runner.service";
+import { AttestorCache } from "./cache/attestor-cache.js";
+import { AttestorExplorer } from "./explorer/attestor-explorer.service.js";
+import { AttestorRunner } from "./runner/attestor-runner.service.js";
 
-import type { HealthCheckOutcome, HealthCheckReport } from "./health-attestor";
-import type { HealthStatus } from "./interfaces/health-status";
-import type { RegisteredAttestor } from "./runner/attestor-runner.service";
+import type {
+	HealthCheckOutcome,
+	HealthCheckReport,
+} from "./health-attestor.js";
+import type { HealthStatus } from "./interfaces/health-status.js";
+import type { RegisteredAttestor } from "./runner/attestor-runner.service.js";
 
 /**
  * The aggregate report served by `/readyz` and `/healthz`.

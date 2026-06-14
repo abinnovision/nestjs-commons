@@ -1,6 +1,6 @@
 import { validate } from "uuid";
 
-import type { UUID } from "./uuid.types";
+import type { UUID } from "./uuid.types.js";
 
 /**
  * Type guard that checks if a value is a valid UUID string.

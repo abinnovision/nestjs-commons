@@ -4,7 +4,7 @@ import {
 	configureEntityNameRenderer,
 	getEntityDisplayName,
 	resetEntityNameRenderer,
-} from "./entity-name-renderer";
+} from "./entity-name-renderer.js";
 
 describe("entity-focused/entity-name-renderer.ts", () => {
 	afterEach(() => {
