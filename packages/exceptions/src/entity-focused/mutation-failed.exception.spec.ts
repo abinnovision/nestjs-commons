@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
 	configureEntityNameRenderer,
 	resetEntityNameRenderer,
-} from "./entity-name-renderer";
-import { EntityMutationFailedException } from "./mutation-failed.exception";
+} from "./entity-name-renderer.js";
+import { EntityMutationFailedException } from "./mutation-failed.exception.js";
 
 describe("entity-focused/mutation-failed.exception.ts", () => {
 	afterEach(() => {

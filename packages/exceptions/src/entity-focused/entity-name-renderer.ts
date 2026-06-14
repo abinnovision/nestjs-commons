@@ -1,4 +1,4 @@
-import type { EntityName } from "./entity-focused.interface";
+import type { EntityName } from "./entity-focused.interface.js";
 
 /**
  * Global display name mapping - set once at app startup.

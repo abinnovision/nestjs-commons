@@ -1,7 +1,7 @@
 import { Catch, HttpException, Logger } from "@nestjs/common";
 
-import { AppException, isHttpAwareException } from "./app-exception";
-import { MultiAppException } from "./multi-app-exception";
+import { AppException, isHttpAwareException } from "./app-exception.js";
+import { MultiAppException } from "./multi-app-exception.js";
 
 import type { ArgumentsHost, ExceptionFilter } from "@nestjs/common";
 

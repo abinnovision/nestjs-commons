@@ -1,10 +1,10 @@
 import { Global, Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 
-import { AttestorExplorer } from "./explorer/attestor-explorer.service";
-import { HealthzController } from "./healthz.controller";
-import { HealthzService } from "./healthz.service";
-import { AttestorRunner } from "./runner/attestor-runner.service";
+import { AttestorExplorer } from "./explorer/attestor-explorer.service.js";
+import { HealthzController } from "./healthz.controller.js";
+import { HealthzService } from "./healthz.service.js";
+import { AttestorRunner } from "./runner/attestor-runner.service.js";
 
 import type { DynamicModule } from "@nestjs/common";
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { AppException, isHttpAwareException } from "./app-exception";
+import { AppException, isHttpAwareException } from "./app-exception.js";
 
-import type { HttpAwareException } from "./app-exception";
+import type { HttpAwareException } from "./app-exception.js";
 
 class TestException extends AppException<{ field: string }> {
 	public code = "TEST__ERROR";

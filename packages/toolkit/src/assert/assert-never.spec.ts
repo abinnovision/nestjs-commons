@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { assertNever } from "./assert-never";
+import { assertNever } from "./assert-never.js";
 
 describe("assert/assert-never.ts", () => {
 	describe("#assertNever()", () => {

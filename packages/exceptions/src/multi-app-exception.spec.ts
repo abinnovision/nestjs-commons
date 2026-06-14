@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { AppException } from "./app-exception";
-import { MultiAppException } from "./multi-app-exception";
+import { AppException } from "./app-exception.js";
+import { MultiAppException } from "./multi-app-exception.js";
 
 class TestException extends AppException {
 	public code = "TEST__ERROR";

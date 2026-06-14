@@ -1,6 +1,6 @@
 import { Controller, Get, HttpStatus, Res } from "@nestjs/common";
 
-import { HealthzService } from "./healthz.service";
+import { HealthzService } from "./healthz.service.js";
 
 /**
  * Minimal structural shape covering both Express' `Response` and

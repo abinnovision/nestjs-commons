@@ -14,7 +14,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/abinnovision/nestjs-commons.git",
+		"url": "git+https://github.com/abinnovision/nestjs-commons.git",
 		"directory": "packages/exceptions"
 	},
 	"license": "Apache-2.0",
@@ -23,25 +23,38 @@
 		"email": "info@abigroup.io",
 		"url": "https://abigroup.io"
 	},
+	"type": "module",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.ts",
-			"require": "./dist/index.js",
-			"default": "./dist/index.js"
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
 		},
 		"./entity": {
-			"types": "./dist/entity.d.ts",
-			"require": "./dist/entity.js",
-			"default": "./dist/entity.js"
+			"import": {
+				"types": "./dist/entity.d.mts",
+				"default": "./dist/entity.mjs"
+			},
+			"require": {
+				"types": "./dist/entity.d.cts",
+				"default": "./dist/entity.cjs"
+			}
 		}
 	},
+	"main": "./dist/index.cjs",
+	"types": "./dist/index.d.cts",
 	"files": [
 		"dist",
 		"LICENSE",
 		"README.md"
 	],
 	"scripts": {
-		"build": "tsc --project tsconfig.build.json",
+		"build": "tsdown",
 		"format:check": "prettier --check 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
 		"format:fix": "prettier --write 'src/**/*.ts' '*.{json{,5},md,y{,a}ml}'",
 		"lint:check": "eslint 'src/**/*.ts'",
@@ -60,6 +73,7 @@
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
+		"@arethetypeswrong/core": "^0.18.3",
 		"@nestjs/common": "^11.1.26",
 		"@nestjs/core": "^11.1.26",
 		"@nestjs/graphql": "^13.4.2",
@@ -68,9 +82,12 @@
 		"eslint": "^10.4.1",
 		"graphql": "^16.10.0",
 		"prettier": "^3.8.4",
+		"publint": "^0.3.21",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
+		"tsdown": "^0.22.2",
 		"typescript": "^6.0.3",
+		"unplugin-swc": "^1.5.9",
 		"vitest": "^4.0.15"
 	},
 	"peerDependencies": {

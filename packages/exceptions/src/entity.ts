@@ -4,4 +4,4 @@
  * Entity-focused exceptions for NestJS applications.
  */
 
-export * from "./entity-focused";
+export * from "./entity-focused/index.js";

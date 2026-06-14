@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { R } from "./remeda";
+import { R } from "./remeda.js";
 
 describe("remeda.ts", () => {
 	describe("r export", () => {

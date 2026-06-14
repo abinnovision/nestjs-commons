@@ -1,9 +1,9 @@
 import * as remeda from "remeda";
 
-import { isNullishOrEmptyString } from "./string/guards";
-import { sanitizeString } from "./string/sanitize.remeda";
-import { slugify } from "./string/slugify.remeda";
-import { isUUID } from "./uuid/is-uuid";
+import { isNullishOrEmptyString } from "./string/guards.js";
+import { sanitizeString } from "./string/sanitize.remeda.js";
+import { slugify } from "./string/slugify.remeda.js";
+import { isUUID } from "./uuid/is-uuid.js";
 
 /**
  * Remeda re-export augmented with toolkit's remeda-compatible utilities.

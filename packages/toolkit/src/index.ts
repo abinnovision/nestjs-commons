@@ -4,8 +4,8 @@
  * NestJS toolkit with remeda utilities and common helpers.
  */
 
-export { R } from "./remeda";
-export * from "./assert";
-export * from "./equality";
-export * from "./string";
-export * from "./uuid";
+export { R } from "./remeda.js";
+export * from "./assert/index.js";
+export * from "./equality/index.js";
+export * from "./string/index.js";
+export * from "./uuid/index.js";

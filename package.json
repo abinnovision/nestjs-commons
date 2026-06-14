@@ -33,6 +33,9 @@
 		"{.github/**/*,*}.{json{,5},md,y{,a}ml}": "prettier --write"
 	},
 	"prettier": "@abinnovision/prettier-config",
+	"resolutions": {
+		"rolldown-plugin-dts@npm:^0.25.2": "patch:rolldown-plugin-dts@npm%3A0.25.2#~/.yarn/patches/rolldown-plugin-dts-npm-0.25.2-106fad70f1.patch"
+	},
 	"devDependencies": {
 		"@abinnovision/commitlint-config": "^2.3.0",
 		"@abinnovision/eslint-config-base": "^3.4.1",

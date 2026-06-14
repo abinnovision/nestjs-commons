@@ -6,7 +6,7 @@
  * `/livez` and `/readyz` endpoints.
  */
 
-export * from "./health-attestor";
-export { type HealthzModuleConfig } from "./healthz.module-config";
-export { HealthzModule } from "./healthz.module";
-export type { HealthStatus } from "./interfaces/health-status";
+export * from "./health-attestor.js";
+export { type HealthzModuleConfig } from "./healthz.module-config.js";
+export { HealthzModule } from "./healthz.module.js";
+export type { HealthStatus } from "./interfaces/health-status.js";

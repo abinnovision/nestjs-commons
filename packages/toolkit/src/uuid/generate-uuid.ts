@@ -1,6 +1,6 @@
 import { v4, v5, v7 } from "uuid";
 
-import type { UUID } from "./uuid.types";
+import type { UUID } from "./uuid.types.js";
 
 /**
  * Options for generating a v5 deterministic UUID.

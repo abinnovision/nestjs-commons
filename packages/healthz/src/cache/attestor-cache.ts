@@ -1,4 +1,4 @@
-import type { HealthCheckOutcome } from "../health-attestor";
+import type { HealthCheckOutcome } from "../health-attestor.js";
 
 interface CachedEntry {
 	outcome: HealthCheckOutcome;

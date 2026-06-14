@@ -1,6 +1,6 @@
 import { v5 } from "uuid";
 
-import { toUUID } from "./to-uuid";
+import { toUUID } from "./to-uuid.js";
 
 /**
  * The DNS namespace UUID for use with v5 deterministic generation.

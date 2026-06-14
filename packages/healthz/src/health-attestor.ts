@@ -1,8 +1,8 @@
 import { applyDecorators, Injectable, SetMetadata } from "@nestjs/common";
 
-import { METADATA_KEY_HEALTH_ATTESTOR } from "./metadata/keys";
+import { METADATA_KEY_HEALTH_ATTESTOR } from "./metadata/keys.js";
 
-import type { HealthStatus } from "./interfaces/health-status";
+import type { HealthStatus } from "./interfaces/health-status.js";
 
 /**
  * The outcome of a single attestor's check.

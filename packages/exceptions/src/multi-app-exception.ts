@@ -1,4 +1,4 @@
-import type { AppException } from "./app-exception";
+import type { AppException } from "./app-exception.js";
 
 /**
  * An exception that wraps multiple {@link AppException} instances.

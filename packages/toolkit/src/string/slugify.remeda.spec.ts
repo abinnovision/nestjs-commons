@@ -1,7 +1,7 @@
 import { pipe } from "remeda";
 import { describe, expect, it } from "vitest";
 
-import { slugify } from "./slugify.remeda";
+import { slugify } from "./slugify.remeda.js";
 
 describe("string/slugify.remeda.ts", () => {
 	describe("#slugify()", () => {
