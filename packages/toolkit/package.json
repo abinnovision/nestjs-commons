@@ -62,7 +62,7 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"remeda": "^2.37.0",
+		"remeda": "^2.39.0",
 		"uuid": "^14.0.0"
 	},
 	"devDependencies": {
