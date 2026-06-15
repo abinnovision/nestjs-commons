@@ -35,7 +35,7 @@ describe("client/client.ts", () => {
 		});
 	});
 
-	describe("emit()", () => {
+	describe("emit() — single input", () => {
 		it("calls SDK events.push with event name", async () => {
 			await client.emit(TestEvent, { id: "123", value: 42 });
 
@@ -82,16 +82,16 @@ describe("client/client.ts", () => {
 		});
 	});
 
-	describe("emitBulk()", () => {
+	describe("emit() — array input", () => {
 		it("returns empty array for empty inputs", async () => {
-			const result = await client.emitBulk(TestEvent, []);
+			const result = await client.emit(TestEvent, []);
 
 			expect(result).toEqual([]);
 			expect(mockHatchetClient.events.bulkPush).not.toHaveBeenCalled();
 		});
 
 		it("calls SDK events.bulkPush with event name", async () => {
-			await client.emitBulk(TestEvent, [
+			await client.emit(TestEvent, [
 				{ id: "1", value: 10 },
 				{ id: "2", value: 20 },
 			]);
@@ -104,7 +104,7 @@ describe("client/client.ts", () => {
 		});
 
 		it("injects event marker into all payloads", async () => {
-			await client.emitBulk(TestEvent, [
+			await client.emit(TestEvent, [
 				{ id: "1", value: 10 },
 				{ id: "2", value: 20 },
 			]);
@@ -122,7 +122,7 @@ describe("client/client.ts", () => {
 		it("passes options to SDK", async () => {
 			const options = { additionalMetadata: { key: "value" } };
 
-			await client.emitBulk(TestEvent, [{ id: "1", value: 10 }], options);
+			await client.emit(TestEvent, [{ id: "1", value: 10 }], options);
 
 			expect(mockHatchetClient.events.bulkPush).toHaveBeenCalledWith(
 				"test:event",
@@ -138,7 +138,7 @@ describe("client/client.ts", () => {
 				scope: "tenant-acme",
 			};
 
-			await client.emitBulk(
+			await client.emit(
 				TestEvent,
 				[
 					{ id: "1", value: 10 },
@@ -173,12 +173,39 @@ describe("client/client.ts", () => {
 				events: mockEvents as any,
 			});
 
-			const result = await client.emitBulk(TestEvent, [
+			const result = await client.emit(TestEvent, [
 				{ id: "1", value: 10 },
 				{ id: "2", value: 20 },
 			]);
 
 			expect(result).toEqual(mockEvents);
+		});
+	});
+
+	describe("emitBulk() — deprecated alias", () => {
+		it("forwards array inputs to SDK events.bulkPush", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- intentionally exercises the deprecated alias
+			await client.emitBulk(TestEvent, [
+				{ id: "1", value: 10 },
+				{ id: "2", value: 20 },
+			]);
+
+			expect(mockHatchetClient.events.bulkPush).toHaveBeenCalledWith(
+				"test:event",
+				[
+					{ payload: { id: "1", value: 10, [EVENT_MARKER]: "test:event" } },
+					{ payload: { id: "2", value: 20, [EVENT_MARKER]: "test:event" } },
+				],
+				undefined,
+			);
+		});
+
+		it("returns empty array for empty inputs without calling the SDK", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- intentionally exercises the deprecated alias
+			const result = await client.emitBulk(TestEvent, []);
+
+			expect(result).toEqual([]);
+			expect(mockHatchetClient.events.bulkPush).not.toHaveBeenCalled();
 		});
 	});
 

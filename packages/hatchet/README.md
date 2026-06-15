@@ -176,11 +176,11 @@ await client.emit(UserCreatedEvent, {
 
 ### Client
 
-| Method                             | Description           |
-| ---------------------------------- | --------------------- |
-| `client.run(ref, input, opts?)`    | Execute task/workflow |
-| `client.emit(event, payload)`      | Emit single event     |
-| `client.emitBulk(event, payloads)` | Emit multiple events  |
+| Method                                    | Description                                    |
+| ----------------------------------------- | ---------------------------------------------- |
+| `client.run(ref, input, opts?)`           | Execute task/workflow                          |
+| `client.emit(event, payload \| payloads)` | Emit one or many events                        |
+| `client.emitBulk(event, payloads)`        | Emit multiple events (deprecated — use `emit`) |
 
 ### Context Types
 
@@ -212,7 +212,7 @@ const result = await runRef.output; // Await when needed
 ### Bulk Event Emission
 
 ```typescript
-await client.emitBulk(OrderEvent, [
+await client.emit(OrderEvent, [
   { orderId: "1", total: 100 },
   { orderId: "2", total: 200 },
 ]);
