@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-toolkit-v0.2.0...nestjs-toolkit-v0.3.0) (2026-06-15)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+
+
+### Bug Fixes
+
+* **deps:** bump remeda from 2.34.0 to 2.37.0 ([ab02fd9](https://github.com/abinnovision/nestjs-commons/commit/ab02fd96db5be99419be32654da42c024260ceba))
+* **deps:** bump remeda from 2.37.0 to 2.39.0 ([0fc3e30](https://github.com/abinnovision/nestjs-commons/commit/0fc3e30bba19a54f2b82b455886fda156b30542f))
+* **deps:** bump uuid from 11.1.1 to 14.0.0 ([ef4bebf](https://github.com/abinnovision/nestjs-commons/commit/ef4bebfacc3eccf3a415c7b48d189159fd4a47b8))
+
 ## [0.2.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-toolkit-v0.1.0...nestjs-toolkit-v0.2.0) (2026-05-13)
 
 
