@@ -79,7 +79,7 @@ export class DomainController {
 			}[];
 		},
 	) {
-		const events = await this.client.emitBulk(OrderPlacedEvent, body.orders);
+		const events = await this.client.emit(OrderPlacedEvent, body.orders);
 
 		return {
 			message: `${String(events.length)} order events emitted`,
