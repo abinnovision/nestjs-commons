@@ -5,6 +5,7 @@
  */
 
 export { R } from "./remeda.js";
+export * from "./async/index.js";
 export * from "./assert/index.js";
 export * from "./equality/index.js";
 export * from "./string/index.js";
