@@ -14,8 +14,8 @@ yarn add @abinnovision/nestjs-toolkit
 
 The package exposes two surfaces:
 
-- **Direct, data-first helpers** — `slugify(data, opts?)`, `sanitizeString(data, opts?)`, `generateUUID(...)`, `isUUID(...)`, `toUUID(...)`, `isNullishOrEmptyString(...)`, `withRetry(fn, options)`, plus UUID namespace constants and types.
-- **`R` namespace** — every function from `remeda` plus data-last / pipe-friendly variants of the helpers above: `R.slugify(opts?)`, `R.sanitizeString(opts?)`, `R.isUUID`, `R.isNullishOrEmptyString`.
+- **Direct helpers** — string, UUID, async, equality, and assertion helpers, imported and called directly.
+- **`R` namespace** — every function from `remeda`, plus pipe-friendly variants of selected helpers for use in `R.pipe(...)`.
 
 ```typescript
 import { R, slugify, generateUUID, isUUID } from "@abinnovision/nestjs-toolkit";
@@ -29,7 +29,7 @@ const id = generateUUID();
 isUUID(id); // true
 ```
 
-See the [remeda documentation](https://remedajs.com/docs/) for the full `R.*` surface, and the inline TSDoc for option shapes and UUID version overloads.
+See the [remeda documentation](https://remedajs.com/docs/) for the full `R.*` surface, and the inline TSDoc for the complete helper catalog, option shapes, and UUID version overloads.
 
 ## License
 
