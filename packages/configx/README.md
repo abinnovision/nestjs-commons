@@ -4,6 +4,12 @@
 
 Type-safe configuration for NestJS using [Standard Schema](https://standardschema.dev/).
 
+## Installation
+
+```bash
+yarn add @abinnovision/nestjs-configx
+```
+
 ## Goals
 
 - Type-safe configuration from `process.env`
@@ -18,13 +24,7 @@ Type-safe configuration for NestJS using [Standard Schema](https://standardschem
 - Runtime config reloading
 - Secret management / encryption
 
-## Installation
-
-```bash
-yarn add @abinnovision/nestjs-configx
-```
-
-## Usage
+## Quick Start
 
 ### 1. Define your config
 

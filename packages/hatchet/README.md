@@ -2,9 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet)
 
-NestJS integration for [Hatchet](https://hatchet.run) - a distributed workflow
-orchestration engine. Provides type-safe decorators, services, and event
-handling for building robust workflows.
+NestJS integration for [Hatchet](https://hatchet.run) - a distributed workflow orchestration engine. Provides type-safe decorators, services, and event handling for building robust workflows.
 
 ## Installation
 
@@ -142,6 +140,41 @@ await client.emit(UserCreatedEvent, {
 });
 ```
 
+## Advanced Usage
+
+### Non-Blocking Execution
+
+```typescript
+const runRef = await ctx.run(taskRef(SomeTask), input, { wait: false });
+// Continue without waiting...
+const result = await runRef.output; // Await when needed
+```
+
+### Bulk Event Emission
+
+```typescript
+await client.emit(OrderEvent, [
+  { orderId: "1", total: 100 },
+  { orderId: "2", total: 200 },
+]);
+```
+
+### Helper Methods
+
+```typescript
+@Host({ name: "my-task" })
+export class MyTask extends taskHost(schema) {
+  @Task({})
+  public async task(ctx: TaskCtx<typeof this>) {
+    return this.helper(ctx);
+  }
+
+  private async helper(ctx: HelperCtx<typeof this>) {
+    return { result: ctx.input.value };
+  }
+}
+```
+
 ## API Reference
 
 ### Module
@@ -197,41 +230,6 @@ ctx.input       // Validated input data
 ctx.fromSDK     // Underlying Hatchet SDK context
 ctx.run(ref, input, opts ?)  // Invoke other tasks/workflows
 ctx.parent(method)          // Get parent task output (WorkflowCtx only)
-```
-
-## Advanced Usage
-
-### Non-Blocking Execution
-
-```typescript
-const runRef = await ctx.run(taskRef(SomeTask), input, { wait: false });
-// Continue without waiting...
-const result = await runRef.output; // Await when needed
-```
-
-### Bulk Event Emission
-
-```typescript
-await client.emit(OrderEvent, [
-  { orderId: "1", total: 100 },
-  { orderId: "2", total: 200 },
-]);
-```
-
-### Helper Methods
-
-```typescript
-@Host({ name: "my-task" })
-export class MyTask extends taskHost(schema) {
-  @Task({})
-  public async task(ctx: TaskCtx<typeof this>) {
-    return this.helper(ctx);
-  }
-
-  private async helper(ctx: HelperCtx<typeof this>) {
-    return { result: ctx.input.value };
-  }
-}
 ```
 
 ## License

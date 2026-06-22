@@ -2,13 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-flydrive?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-flydrive)
 
-NestJS integration for [flydrive](https://flydrive.dev). Drivers for the
-local filesystem, AWS S3 (incl. R2, Spaces, Supabase), and Google Cloud
-Storage.
+NestJS integration for [flydrive](https://flydrive.dev). Drivers for the local filesystem, AWS S3 (incl. R2, Spaces, Supabase), and Google Cloud Storage.
 
-Disks are identified by classes, not strings. Each disk is a class
-produced by `defineDisk()` used both as the DI token and as the type at
-injection sites.
+Disks are identified by classes, not strings. Each disk is a class produced by `defineDisk()` used both as the DI token and as the type at injection sites.
 
 ## Installation
 
@@ -187,7 +183,7 @@ await Test.createTestingModule({ imports: [AppModule] })
   .compile();
 ```
 
-## Public API
+## API Reference
 
 | Export                      | Role                                                                            |
 | --------------------------- | ------------------------------------------------------------------------------- |
