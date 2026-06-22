@@ -2,10 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-healthz?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-healthz)
 
-Self-mounting health check module for NestJS. Mounts Kubernetes-style
-`/livez`, `/readyz`, and `/healthz` endpoints, and discovers health
-attestors decorated across the application — no central registry,
-no per-module wiring.
+Self-mounting health check module for NestJS. Mounts Kubernetes-style `/livez`, `/readyz`, and `/healthz` endpoints, and discovers health attestors decorated across the application — no central registry, no per-module wiring.
 
 ## Installation
 
@@ -157,7 +154,7 @@ text to whoever curls `/readyz`.
 The HTTP status code is `503` when the aggregate status is `"down"`
 and `200` otherwise.
 
-## API
+## API Reference
 
 ### `HealthzModule.forRoot()`
 

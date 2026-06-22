@@ -7,8 +7,6 @@ NestJS exception handling with entity-focused exceptions and GraphQL support.
 ## Installation
 
 ```bash
-npm install @abinnovision/nestjs-exceptions
-# or
 yarn add @abinnovision/nestjs-exceptions
 ```
 
@@ -132,7 +130,7 @@ throw new EntityNotFoundException({ entity: "user", entityId: id }); // OK
 throw new EntityNotFoundException({ entity: "invalid", entityId: id }); // Type error!
 ```
 
-## API
+## API Reference
 
 ### Core Classes
 
