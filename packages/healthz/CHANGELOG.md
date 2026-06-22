@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-healthz-v0.1.1...nestjs-healthz-v0.2.0) (2026-06-22)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+
 ## [0.1.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-healthz-v0.1.0...nestjs-healthz-v0.1.1) (2026-05-13)
 
 
