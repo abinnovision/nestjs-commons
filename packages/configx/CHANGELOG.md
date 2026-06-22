@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.4...nestjs-configx-v2.1.0) (2026-06-22)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+
 ## [2.0.4](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.3...nestjs-configx-v2.0.4) (2026-05-12)
 
 
