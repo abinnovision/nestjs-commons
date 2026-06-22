@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.8.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.1...nestjs-hatchet-v0.8.0) (2026-06-22)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+* **hatchet:** merge emit and emitBulk on Client ([#180](https://github.com/abinnovision/nestjs-commons/issues/180)) ([fb3d270](https://github.com/abinnovision/nestjs-commons/commit/fb3d270b4367e273aa187ebc75685488c0420b7f))
+* **hatchet:** replace stringified validation errors with typed exceptions ([#163](https://github.com/abinnovision/nestjs-commons/issues/163)) ([c9e4e4b](https://github.com/abinnovision/nestjs-commons/commit/c9e4e4be1e379df27eaf0bd45ec6271ecfcff7d1))
+
+
+### Bug Fixes
+
+* **deps:** bump @hatchet-dev/typescript-sdk from 1.22.1 to 1.23.0 ([92e92a5](https://github.com/abinnovision/nestjs-commons/commit/92e92a54718d745663785ebb7144312100220118))
+* **hatchet:** parallelize array run outputs and memoize accessor.methods ([#142](https://github.com/abinnovision/nestjs-commons/issues/142)) ([3eb23f0](https://github.com/abinnovision/nestjs-commons/commit/3eb23f0fae36e148b53ffd6758e711d24ac9cd0c))
+
 ## [0.7.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.0...nestjs-hatchet-v0.7.1) (2026-05-17)
 
 
