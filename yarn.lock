@@ -68,7 +68,7 @@ __metadata:
     "@swc/core": "npm:^1.15.41"
     "@types/node": "npm:^25.9.1"
     eslint: "npm:^10.4.1"
-    graphql: "npm:^16.10.0"
+    graphql: "npm:^17.0.1"
     prettier: "npm:^3.8.4"
     publint: "npm:^0.3.21"
     reflect-metadata: "npm:^0.2.2"
@@ -7831,10 +7831,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:^16.10.0":
-  version: 16.14.0
-  resolution: "graphql@npm:16.14.0"
-  checksum: 10c0/baaa368fcfeb7bf2cdf94b9f31bf916e97eaa9e7e82148a7046f31cbd49b760b38190f22393b024cbdd9ca0f4f46287515de0136b6a0cc164074b36ad7b50618
+"graphql@npm:^17.0.1":
+  version: 17.0.1
+  resolution: "graphql@npm:17.0.1"
+  checksum: 10c0/95e4766eefa97bbc37cb4452527d24e12068f170e03c564611a3911f30a77361dfcfbdbfeea00f643c82585c02312c1f41ba6a6263049996d279c49951454980
   languageName: node
   linkType: hard
 
