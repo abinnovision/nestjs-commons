@@ -68,7 +68,7 @@
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@arethetypeswrong/core": "^0.18.3",
 		"@swc/core": "^1.15.41",
-		"@types/node": "^25.9.1",
+		"@types/node": "^26.0.1",
 		"arktype": "^2.2.0",
 		"eslint": "^10.4.1",
 		"prettier": "^3.8.4",
