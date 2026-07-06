@@ -78,7 +78,7 @@
 		"@nestjs/core": "^11.1.26",
 		"@nestjs/graphql": "^13.4.2",
 		"@swc/core": "^1.15.41",
-		"@types/node": "^26.0.1",
+		"@types/node": "^26.1.0",
 		"eslint": "^10.4.1",
 		"graphql": "^17.0.1",
 		"prettier": "^3.8.4",
