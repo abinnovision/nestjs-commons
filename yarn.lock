@@ -1711,7 +1711,7 @@ __metadata:
     "@types/node": "npm:^26.1.0"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
-    fumadocs-core: "npm:^16.9.3"
+    fumadocs-core: "npm:^16.10.7"
     fumadocs-mdx: "npm:^15.0.4"
     fumadocs-ui: "npm:^16.10.7"
     next: "npm:^16.0.0"
@@ -7270,24 +7270,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fumadocs-core@npm:^16.9.3":
-  version: 16.9.3
-  resolution: "fumadocs-core@npm:16.9.3"
+"fumadocs-core@npm:^16.10.7":
+  version: 16.10.7
+  resolution: "fumadocs-core@npm:16.10.7"
   dependencies:
     "@orama/orama": "npm:^3.1.18"
     estree-util-value-to-estree: "npm:^3.5.0"
     github-slugger: "npm:^2.0.0"
     hast-util-to-estree: "npm:^3.1.3"
     hast-util-to-jsx-runtime: "npm:^2.3.6"
-    js-yaml: "npm:^4.1.1"
+    js-yaml: "npm:^5.1.0"
     mdast-util-mdx: "npm:^3.0.0"
     mdast-util-to-markdown: "npm:^2.1.2"
     remark: "npm:^15.0.1"
     remark-gfm: "npm:^4.0.1"
     remark-rehype: "npm:^11.1.2"
     scroll-into-view-if-needed: "npm:^3.1.0"
-    shiki: "npm:^4.1.0"
-    tinyglobby: "npm:^0.2.16"
+    shiki: "npm:^4.2.0"
+    tinyglobby: "npm:^0.2.17"
     unified: "npm:^11.0.5"
     unist-util-visit: "npm:^5.1.0"
     vfile: "npm:^6.0.3"
@@ -7307,7 +7307,7 @@ __metadata:
     next: 16.x.x
     react: ^19.2.0
     react-dom: ^19.2.0
-    react-router: 7.x.x
+    react-router: 7.x.x || 8.x.x
     waku: "*"
     zod: 4.x.x
   peerDependenciesMeta:
@@ -7347,7 +7347,7 @@ __metadata:
       optional: true
     zod:
       optional: true
-  checksum: 10c0/0bae7b17e7d4cffbf11361ec38b8f5a72a2bd7dd40c0e78f01e9141aef5017d92ebe3f6164456f72e2d56c09f9f547f31504e6fbe8d57393885bbf87d752b9fe
+  checksum: 10c0/a2762acb6d7c20f6330294df096d51ca08db368e543c807a2e0e05c32282e0c667fecb01684d214cf428cf4b10f4238f61493fa694b46b00d3c3b16279dc42cd
   languageName: node
   linkType: hard
 
@@ -8311,6 +8311,17 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: 10c0/561c7d7088c40a9bb53cc75becbfb1df6ae49b34b5e6e5a81744b14ae8667ec564ad2527709d1a6e7d5e5fa6d483aa0f373a50ad98d42fde368ec4a190d4fae7
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:^5.1.0":
+  version: 5.2.1
+  resolution: "js-yaml@npm:5.2.1"
+  dependencies:
+    argparse: "npm:^2.0.1"
+  bin:
+    js-yaml: bin/js-yaml.mjs
+  checksum: 10c0/8eadf08efc738a656c2838f6617b0cc508944f66f568eb4d435e858261b889a6806d98f44fb6ffdba21a0c68e4bdff1ac35516724882e1dab8fc2cc59150c881
   languageName: node
   linkType: hard
 
@@ -11118,7 +11129,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^4.1.0, shiki@npm:^4.2.0":
+"shiki@npm:^4.2.0":
   version: 4.3.0
   resolution: "shiki@npm:4.3.0"
   dependencies:
