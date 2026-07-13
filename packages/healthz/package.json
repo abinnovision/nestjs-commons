@@ -69,7 +69,7 @@
 		"@swc/core": "^1.15.41",
 		"@types/node": "^26.1.0",
 		"eslint": "^10.4.1",
-		"prettier": "^3.8.4",
+		"prettier": "^3.9.5",
 		"publint": "^0.3.21",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
