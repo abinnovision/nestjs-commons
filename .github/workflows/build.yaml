@@ -20,5 +20,3 @@ jobs:
       run-build-before-check: true
       test-types: unit
       prerelease-channel: beta
-    secrets:
-      GH_APP_IDENTIFICATION_RELEASER: ${{ secrets.GH_APP_IDENTIFICATION_RELEASER }}
