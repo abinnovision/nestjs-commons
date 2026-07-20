@@ -125,7 +125,7 @@ __metadata:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
-    "@hatchet-dev/typescript-sdk": "npm:^1.24.3"
+    "@hatchet-dev/typescript-sdk": "npm:^1.26.0"
     "@standard-schema/spec": "npm:^1.1.0"
     "@swc/core": "npm:^1.15.41"
     "@types/node": "npm:^26.1.0"
@@ -1112,9 +1112,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hatchet-dev/typescript-sdk@npm:^1.24.3":
-  version: 1.24.3
-  resolution: "@hatchet-dev/typescript-sdk@npm:1.24.3"
+"@hatchet-dev/typescript-sdk@npm:^1.26.0":
+  version: 1.26.0
+  resolution: "@hatchet-dev/typescript-sdk@npm:1.26.0"
   dependencies:
     "@bufbuild/protobuf": "npm:^2.11.0"
     "@types/qs": "npm:^6.15.0"
@@ -1132,11 +1132,11 @@ __metadata:
     "@anthropic-ai/claude-agent-sdk": ^0.3.148
     "@grpc/grpc-js": ^1.14.3
     "@modelcontextprotocol/sdk": ^1.29.0
-    "@openai/agents": 0.11.6
+    "@openai/agents": 0.12.1
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/core": ^2.0.0
-    "@opentelemetry/exporter-trace-otlp-grpc": ^0.218.0
-    "@opentelemetry/instrumentation": ^0.218.0
+    "@opentelemetry/exporter-trace-otlp-grpc": ^0.220.0
+    "@opentelemetry/instrumentation": ^0.220.0
     "@opentelemetry/sdk-trace-base": ^2.0.0
     prom-client: ^15.1.3
     zod: ^3.25.0 || ^4.0.0
@@ -1163,7 +1163,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/a0a8fc410e626b78f1c4e637e1c9ccbe2970384c807b4520424a434c20246b1c692cc385cf30165d556b6fc45e94d2d4da9ed4337e098d4b35e09dd429fa4734
+  checksum: 10c0/f1dd2609f27a9b92b28bd6e7f4309b56207aae672a7e07439c976dbdd3fe54a57b93fb57fbf23c7e0bc783513d79a1550d454e6c701e6745dd04cf4756c56516
   languageName: node
   linkType: hard
 
