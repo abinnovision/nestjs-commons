@@ -1715,7 +1715,7 @@ __metadata:
     "@types/node": "npm:^26.1.0"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
-    fumadocs-core: "npm:^16.11.5"
+    fumadocs-core: "npm:^16.14.0"
     fumadocs-mdx: "npm:^15.2.0"
     fumadocs-ui: "npm:^16.11.5"
     next: "npm:^16.2.11"
@@ -2454,13 +2454,6 @@ __metadata:
     "@nodelib/fs.scandir": "npm:2.1.5"
     fastq: "npm:^1.6.0"
   checksum: 10c0/db9de047c3bb9b51f9335a7bb46f4fcfb6829fb628318c12115fbaf7d369bfce71c15b103d1fc3b464812d936220ee9bc1c8f762d032c9f6be9acc99249095b1
-  languageName: node
-  linkType: hard
-
-"@orama/orama@npm:^3.1.18":
-  version: 3.1.18
-  resolution: "@orama/orama@npm:3.1.18"
-  checksum: 10c0/868be5143eb4a27e700d9cc866763d1cc04405ef0af6a6b6b6987dcf33ee5d4ba90d3a32cd134006d46d34d64e32500e13cd31436c718eadc396a940e793e7cd
   languageName: node
   linkType: hard
 
@@ -7415,17 +7408,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fumadocs-core@npm:^16.11.5":
-  version: 16.11.5
-  resolution: "fumadocs-core@npm:16.11.5"
+"fumadocs-core@npm:^16.14.0":
+  version: 16.14.0
+  resolution: "fumadocs-core@npm:16.14.0"
   dependencies:
-    "@orama/orama": "npm:^3.1.18"
     estree-util-value-to-estree: "npm:^3.5.0"
     github-slugger: "npm:^2.0.0"
     hast-util-to-estree: "npm:^3.1.3"
     hast-util-to-jsx-runtime: "npm:^2.3.6"
     mdast-util-mdx: "npm:^3.0.0"
     mdast-util-to-markdown: "npm:^2.1.2"
+    npm-to-yarn: "npm:3.2.0"
     remark: "npm:^15.0.1"
     remark-gfm: "npm:^4.0.1"
     remark-rehype: "npm:^11.1.2"
@@ -7436,6 +7429,7 @@ __metadata:
     unist-util-visit: "npm:^5.1.0"
     vfile: "npm:^6.0.3"
     yaml: "npm:^2.9.0"
+    zbsearch: "npm:^3.3.4"
   peerDependencies:
     "@mdx-js/mdx": "*"
     "@mixedbread/sdk": 0.x.x
@@ -7492,7 +7486,7 @@ __metadata:
       optional: true
     zod:
       optional: true
-  checksum: 10c0/5378c4b11538e393cbc4ea1b616cdffa32f773f348492a4e30f07b2a29f58f7e61aa8abcf08065f8533b46942790bf9025bc383283cdebf9d569d9f6e6804192
+  checksum: 10c0/03ec46060f03eabc668365e8bffe1d8d5dedfea4282f7370d64344681c5a2b74a89229e7f6c8ee5d9e0196733ffc679e7d491d33675e77a9d0ff29f85c7c18da
   languageName: node
   linkType: hard
 
@@ -10010,6 +10004,13 @@ __metadata:
     path-key: "npm:^4.0.0"
     unicorn-magic: "npm:^0.3.0"
   checksum: 10c0/b223c8a0dcd608abf95363ea5c3c0ccc3cd877daf0102eaf1b0f2390d6858d8337fbb7c443af2403b067a7d2c116d10691ecd22ab3c5273c44da1ff8d07753bd
+  languageName: node
+  linkType: hard
+
+"npm-to-yarn@npm:3.2.0":
+  version: 3.2.0
+  resolution: "npm-to-yarn@npm:3.2.0"
+  checksum: 10c0/b8e8a2bffa25ca436bbed202bbe13f05c2be85e72a15199f84923c2438e549f112c0da64071ce5be120859e798c3a2f5af80dac9ba636b772b980b783fdd5bdf
   languageName: node
   linkType: hard
 
@@ -13046,6 +13047,13 @@ __metadata:
     "@yuku-analyzer/binding-win32-x64":
       optional: true
   checksum: 10c0/dce957a06a355e2e6deef29b3614d04c164ed0d27008c1e38bd9e8e62914d614e1c770a4314d19d99fa8b8336c66886946658ad2523565aa7bc7a9be51c00b78
+  languageName: node
+  linkType: hard
+
+"zbsearch@npm:^3.3.4":
+  version: 3.3.4
+  resolution: "zbsearch@npm:3.3.4"
+  checksum: 10c0/a084a66cff006a963834d26cc13dfa8ae04d35dd506d82b37194892f4c5ed6c324c1b62cfd9390c1bad27cdfa888b9033ca8361f652a74ce2ddca601e74d6ea5
   languageName: node
   linkType: hard
 
