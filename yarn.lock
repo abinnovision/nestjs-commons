@@ -99,7 +99,7 @@ __metadata:
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.1.26"
     "@nestjs/core": "npm:^11.1.26"
-    "@nestjs/testing": "npm:^11.1.26"
+    "@nestjs/testing": "npm:^11.2.1"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.2.0"
     eslint: "npm:^10.7.0"
@@ -1766,7 +1766,7 @@ __metadata:
     "@nestjs/platform-express": "npm:^11.2.1"
     "@nestjs/schematics": "npm:^11.1.0"
     "@nestjs/swagger": "npm:^11.4.4"
-    "@nestjs/testing": "npm:^11.1.26"
+    "@nestjs/testing": "npm:^11.2.1"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.16.1"
     "@types/express": "npm:^5.0.6"
@@ -1796,7 +1796,7 @@ __metadata:
     "@nestjs/platform-express": "npm:^11.2.1"
     "@nestjs/schematics": "npm:^11.1.0"
     "@nestjs/swagger": "npm:^11.4.4"
-    "@nestjs/testing": "npm:^11.1.26"
+    "@nestjs/testing": "npm:^11.2.1"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.16.1"
     "@types/eslint": "npm:^9.6.1"
@@ -2375,9 +2375,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:^11.1.26":
-  version: 11.1.26
-  resolution: "@nestjs/testing@npm:11.1.26"
+"@nestjs/testing@npm:^11.2.1":
+  version: 11.2.1
+  resolution: "@nestjs/testing@npm:11.2.1"
   dependencies:
     tslib: "npm:2.8.1"
   peerDependencies:
@@ -2390,7 +2390,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 10c0/d02d06d9ed2d4041b55a9dd47b7ddf628c9c624240464d41e8d2384ca2a395fa0f3837f97a59eb84fbc2f44dd42d1f9929fc0285d8df69d0a01ee4726fb80727
+  checksum: 10c0/82b51534de1b3e8f2121bbd324e16774502b95a708837a06a038a7c0085d2e547df70d75afa641bebca71b575824c38d9e8491f56515ba813e1115b3d0b342d4
   languageName: node
   linkType: hard
 
