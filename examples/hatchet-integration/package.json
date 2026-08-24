@@ -31,7 +31,7 @@
 		"@abinnovision/nestjs-hatchet": "workspace:^",
 		"@nestjs/common": "^11.1.26",
 		"@nestjs/core": "^11.1.26",
-		"@nestjs/platform-express": "^11.1.26",
+		"@nestjs/platform-express": "^11.2.1",
 		"@nestjs/swagger": "^11.4.4",
 		"arktype": "^2.2.0",
 		"dotenv": "^17.4.2",
