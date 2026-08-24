@@ -73,7 +73,7 @@
 		"@nestjs/common": "^11.1.26",
 		"@nestjs/core": "^11.1.26",
 		"@nestjs/testing": "^11.1.26",
-		"@swc/core": "^1.15.41",
+		"@swc/core": "^1.16.1",
 		"@types/node": "^26.2.0",
 		"eslint": "^10.7.0",
 		"prettier": "^3.8.4",
