@@ -63,7 +63,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.1.26"
+    "@nestjs/core": "npm:^11.2.1"
     "@nestjs/graphql": "npm:^13.4.2"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.2.0"
@@ -98,7 +98,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.1.26"
+    "@nestjs/core": "npm:^11.2.1"
     "@nestjs/testing": "npm:^11.2.1"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.2.0"
@@ -156,7 +156,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.1.26"
+    "@nestjs/core": "npm:^11.2.1"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.2.0"
     eslint: "npm:^10.7.0"
@@ -1762,7 +1762,7 @@ __metadata:
     "@abinnovision/nestjs-configx": "workspace:^"
     "@nestjs/cli": "npm:^11.0.23"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.1.26"
+    "@nestjs/core": "npm:^11.2.1"
     "@nestjs/platform-express": "npm:^11.2.1"
     "@nestjs/schematics": "npm:^11.1.0"
     "@nestjs/swagger": "npm:^11.4.4"
@@ -1792,7 +1792,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@nestjs/cli": "npm:^11.0.23"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.1.26"
+    "@nestjs/core": "npm:^11.2.1"
     "@nestjs/platform-express": "npm:^11.2.1"
     "@nestjs/schematics": "npm:^11.1.0"
     "@nestjs/swagger": "npm:^11.4.4"
@@ -2229,9 +2229,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:^11.1.26":
-  version: 11.1.26
-  resolution: "@nestjs/core@npm:11.1.26"
+"@nestjs/core@npm:^11.2.1":
+  version: 11.2.1
+  resolution: "@nestjs/core@npm:11.2.1"
   dependencies:
     fast-safe-stringify: "npm:2.1.1"
     iterare: "npm:1.2.1"
@@ -2252,7 +2252,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10c0/2d8882de6e94fae7aca6bc29b4778ccdce20bfb901e5bb845fb6d439fea339fb5f817a7b9469659aa4e2b8405d7a1ff0dcd7a696992f8c0699be5dc1213d42e1
+  checksum: 10c0/f38952f931c71347b6658f2718639451567291c22ebea25a4b232a244a5e36b2457dc5bd37eab277dd98df1c0e120d9e9d21589c94294e666532687d85472e57
   languageName: node
   linkType: hard
 
