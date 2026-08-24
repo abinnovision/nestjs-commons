@@ -70,7 +70,7 @@
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@arethetypeswrong/core": "^0.18.3",
-		"@nestjs/common": "^11.1.26",
+		"@nestjs/common": "^11.2.1",
 		"@nestjs/core": "^11.1.26",
 		"@nestjs/testing": "^11.1.26",
 		"@swc/core": "^1.16.1",
