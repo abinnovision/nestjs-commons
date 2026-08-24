@@ -27,7 +27,7 @@
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
 		"@abinnovision/nestjs-configx": "workspace:^",
-		"@nestjs/common": "^11.1.26",
+		"@nestjs/common": "^11.2.1",
 		"@nestjs/core": "^11.1.26",
 		"@nestjs/platform-express": "^11.1.26",
 		"@nestjs/swagger": "^11.4.4",
