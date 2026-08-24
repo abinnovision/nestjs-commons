@@ -69,7 +69,7 @@
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@arethetypeswrong/core": "^0.18.3",
-		"@swc/core": "^1.15.41",
+		"@swc/core": "^1.16.1",
 		"@types/node": "^26.2.0",
 		"@types/uuid": "^11.0.0",
 		"eslint": "^10.7.0",
