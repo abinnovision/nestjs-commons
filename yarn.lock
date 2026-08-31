@@ -99,7 +99,7 @@ __metadata:
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
     "@nestjs/core": "npm:^11.2.1"
-    "@nestjs/testing": "npm:^11.2.1"
+    "@nestjs/testing": "npm:^12.0.1"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.4.0"
     eslint: "npm:^10.7.0"
@@ -1732,7 +1732,7 @@ __metadata:
     "@nestjs/platform-express": "npm:^12.0.1"
     "@nestjs/schematics": "npm:^12.0.0"
     "@nestjs/swagger": "npm:^12.0.1"
-    "@nestjs/testing": "npm:^11.2.1"
+    "@nestjs/testing": "npm:^12.0.1"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.16.1"
     "@types/express": "npm:^5.0.6"
@@ -1762,7 +1762,7 @@ __metadata:
     "@nestjs/platform-express": "npm:^12.0.1"
     "@nestjs/schematics": "npm:^12.0.0"
     "@nestjs/swagger": "npm:^12.0.1"
-    "@nestjs/testing": "npm:^11.2.1"
+    "@nestjs/testing": "npm:^12.0.1"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.16.1"
     "@types/eslint": "npm:^9.6.1"
@@ -2363,22 +2363,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:^11.2.1":
-  version: 11.2.1
-  resolution: "@nestjs/testing@npm:11.2.1"
+"@nestjs/testing@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@nestjs/testing@npm:12.0.1"
   dependencies:
     tslib: "npm:2.8.1"
   peerDependencies:
-    "@nestjs/common": ^11.0.0
-    "@nestjs/core": ^11.0.0
-    "@nestjs/microservices": ^11.0.0
-    "@nestjs/platform-express": ^11.0.0
+    "@nestjs/common": ^12.0.0
+    "@nestjs/core": ^12.0.0
+    "@nestjs/microservices": ^12.0.0
+    "@nestjs/platform-express": ^12.0.0
   peerDependenciesMeta:
     "@nestjs/microservices":
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 10c0/82b51534de1b3e8f2121bbd324e16774502b95a708837a06a038a7c0085d2e547df70d75afa641bebca71b575824c38d9e8491f56515ba813e1115b3d0b342d4
+  checksum: 10c0/79efea430bd359b4d98ad20b81d9f2b589a3dbcb680dbe6e105622395ef953574e2ec6d92b4ce02e64ee45b5873efa1f16d94a27b03da72e5051accf16837711
   languageName: node
   linkType: hard
 
