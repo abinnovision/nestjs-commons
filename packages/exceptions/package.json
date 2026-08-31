@@ -76,7 +76,7 @@
 		"@arethetypeswrong/core": "^0.18.3",
 		"@nestjs/common": "^11.2.1",
 		"@nestjs/core": "^11.2.1",
-		"@nestjs/graphql": "^13.4.2",
+		"@nestjs/graphql": "^14.0.0",
 		"@swc/core": "^1.16.1",
 		"@types/node": "^26.4.0",
 		"eslint": "^10.7.0",
