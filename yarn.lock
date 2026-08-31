@@ -187,7 +187,7 @@ __metadata:
     eslint: "npm:^10.7.0"
     prettier: "npm:^3.8.4"
     publint: "npm:^0.3.21"
-    remeda: "npm:^2.42.0"
+    remeda: "npm:^2.45.0"
     tsdown: "npm:^0.22.2"
     typescript: "npm:^6.0.3"
     unplugin-swc: "npm:^1.5.9"
@@ -10926,10 +10926,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remeda@npm:^2.42.0":
-  version: 2.42.0
-  resolution: "remeda@npm:2.42.0"
-  checksum: 10c0/d4762b2ca17533ebe321ee8cd73cff7bfff503b21a3208ad3bd1866ac2824e671be92d9542d452a39cd1d77c62591dbcaabeca5a64e1ce7a1c9602592832f2ad
+"remeda@npm:^2.45.0":
+  version: 2.45.0
+  resolution: "remeda@npm:2.45.0"
+  checksum: 10c0/34acd7745450451293e715bcaf7408b0412510e5d6c91459179525cdde35e3d352e5c3c76f5f687950c9090c27c2024281017338b7d89d904a735a41e4c9cf22
   languageName: node
   linkType: hard
 
