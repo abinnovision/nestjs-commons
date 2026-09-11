@@ -83,7 +83,7 @@
 		"tsdown": "^0.22.2",
 		"typescript": "^6.0.3",
 		"unplugin-swc": "^1.5.9",
-		"vitest": "^4.1.6"
+		"vitest": "^4.1.11"
 	},
 	"peerDependencies": {
 		"@nestjs/common": "^11.0.0",
