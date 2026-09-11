@@ -93,7 +93,7 @@
 		"tsdown": "^0.22.2",
 		"typescript": "^6.0.3",
 		"unplugin-swc": "^1.5.9",
-		"vitest": "^4.1.6",
+		"vitest": "^4.1.11",
 		"vitest-mock-extended": "^5.1.1",
 		"zod": "^4.3.6"
 	},
