@@ -44,7 +44,7 @@
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@nestjs/cli": "^12.0.0",
 		"@nestjs/schematics": "^12.0.0",
-		"@nestjs/testing": "^11.2.1",
+		"@nestjs/testing": "^12.0.1",
 		"@swc/cli": "^0.8.1",
 		"@swc/core": "^1.16.1",
 		"@types/eslint": "^9.6.1",
