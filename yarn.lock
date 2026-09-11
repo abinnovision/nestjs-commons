@@ -63,7 +63,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.2.1"
+    "@nestjs/core": "npm:^12.0.1"
     "@nestjs/graphql": "npm:^14.0.0"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.4.0"
@@ -98,7 +98,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.2.1"
+    "@nestjs/core": "npm:^12.0.1"
     "@nestjs/testing": "npm:^11.2.1"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.4.0"
@@ -156,7 +156,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.2.1"
+    "@nestjs/core": "npm:^12.0.1"
     "@swc/core": "npm:^1.16.1"
     "@types/node": "npm:^26.4.0"
     eslint: "npm:^10.7.0"
@@ -1731,7 +1731,7 @@ __metadata:
     "@abinnovision/nestjs-configx": "workspace:^"
     "@nestjs/cli": "npm:^12.0.0"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.2.1"
+    "@nestjs/core": "npm:^12.0.1"
     "@nestjs/platform-express": "npm:^12.0.1"
     "@nestjs/schematics": "npm:^12.0.0"
     "@nestjs/swagger": "npm:^12.0.1"
@@ -1761,7 +1761,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@nestjs/cli": "npm:^12.0.0"
     "@nestjs/common": "npm:^11.2.1"
-    "@nestjs/core": "npm:^11.2.1"
+    "@nestjs/core": "npm:^12.0.1"
     "@nestjs/platform-express": "npm:^12.0.1"
     "@nestjs/schematics": "npm:^12.0.0"
     "@nestjs/swagger": "npm:^12.0.1"
@@ -2202,9 +2202,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:^11.2.1":
-  version: 11.2.1
-  resolution: "@nestjs/core@npm:11.2.1"
+"@nestjs/core@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@nestjs/core@npm:12.0.1"
   dependencies:
     fast-safe-stringify: "npm:2.1.1"
     iterare: "npm:1.2.1"
@@ -2212,10 +2212,10 @@ __metadata:
     tslib: "npm:2.8.1"
     uid: "npm:2.0.2"
   peerDependencies:
-    "@nestjs/common": ^11.0.0
-    "@nestjs/microservices": ^11.0.0
-    "@nestjs/platform-express": ^11.0.0
-    "@nestjs/websockets": ^11.0.0
+    "@nestjs/common": ^12.0.0
+    "@nestjs/microservices": ^12.0.0
+    "@nestjs/platform-express": ^12.0.0
+    "@nestjs/websockets": ^12.0.0
     reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.1.0
   peerDependenciesMeta:
@@ -2225,7 +2225,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10c0/f38952f931c71347b6658f2718639451567291c22ebea25a4b232a244a5e36b2457dc5bd37eab277dd98df1c0e120d9e9d21589c94294e666532687d85472e57
+  checksum: 10c0/ccf18a31ce5d1409466f722805cc8bd1f1525ce13ea4a19dfad83a930a35c9de602b9e8e55a6837a46856ee107966763db2bb79b4e2e691bc29f22d2728fd897
   languageName: node
   linkType: hard
 
