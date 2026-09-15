@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-toolkit-v0.3.0...nestjs-toolkit-v0.4.0) (2026-07-20)
+
+
+### Features
+
+* **toolkit:** add withRetry helper with backoff, jitter and cancellation ([#189](https://github.com/abinnovision/nestjs-commons/issues/189)) ([f95e85a](https://github.com/abinnovision/nestjs-commons/commit/f95e85a05d346c8ed420e31542e2115a7d4f1769))
+
 ## [0.3.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-toolkit-v0.2.0...nestjs-toolkit-v0.3.0) (2026-06-15)
 
 
