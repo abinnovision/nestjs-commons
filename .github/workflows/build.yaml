@@ -1,22 +1,41 @@
-name: Build
+name: CI
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
-  pull_request_target:
-    branches:
-      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number || github.event.merge_group.id || 'main' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
+
+permissions: {}
 
 jobs:
-  polyglot-monorepo-stack:
-    name: CI/CD
-    uses: abinnovision/actions/.github/workflows/workflow.yaml@polyglot-monorepo-stack-v1
+  ci:
+    name: CI
+    uses: abinnovision/actions/.github/workflows/workflow.yaml@app-stack-v1
+    permissions:
+      contents: read
+      packages: read
+      actions: write
+      id-token: write
     with:
-      enable-package-publishing: true
-      enable-packages-registry-npm: true
-      enable-packages-registry-ghpr: true
-      enable-gh-pages: true
-      run-build-before-check: true
-      test-types: unit
-      prerelease-channel: beta
+      prerelease-channel: "beta"
+      test-types: "unit"
+
+  publish-npm:
+    name: Publish npm
+    needs: ci
+    uses: abinnovision/actions/.github/workflows/workflow.yaml@publish-npm-v1
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    with:
+      releases: ${{ needs.ci.outputs.releases }}
+      npm: true
+      ghpr: true
