@@ -1,3 +1,4 @@
+# $schema: https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/schemas/json/dependabot-2.0.json
 version: 2
 updates:
   - package-ecosystem: npm
@@ -5,38 +6,25 @@ updates:
     versioning-strategy: increase
     open-pull-requests-limit: 15
     schedule:
-      interval: weekly
-      day: monday
-      time: "13:00"
-      timezone: Europe/Berlin
+      interval: daily
     labels:
       - dependencies
-    # Dependabot limits the commit messages to 15 characters.
-    # Those messages fit exactly in this requirement :)
     commit-message:
       prefix: "fix(deps)"
       prefix-development: "build(deps)"
+    cooldown:
+      default-days: 5
     ignore:
-      # Only create updates for Major and Minor versions for now.
-      # Security updates are handled by Dependabot's security updates (even for patch versions).
-      - dependency-name: "*"
-        update-types: ["version-update:semver-patch"]
-
-    # We're bundling together some related packages into groups.
-    # This allows us to update all packages in a group at once.
-    # See https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
+      - dependency-name: "typescript"
+        versions: ["7.0.x"]
     groups:
-      formatting-linting-related:
-        patterns:
-          - "eslint"
-          - "prettier"
-          - "@commitlint/cli"
-          - "sort-package-json"
-          - "husky"
-          - "lint-staged"
-          - "@abinnovision/eslint*"
-          - "@abinnovision/prettier*"
-      vitest:
-        patterns:
-          - "vitest"
-          - "@vitest/*"
+      # NestJS packages span production and development deps but must move
+      # together: @nestjs/testing peer-requires a matching @nestjs/core.
+      nestjs:
+        patterns: ["@nestjs/*"]
+      production-dependencies:
+        dependency-type: production
+        patterns: ["*"]
+      development-dependencies:
+        dependency-type: development
+        patterns: ["*"]
