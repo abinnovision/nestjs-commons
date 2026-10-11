@@ -90,7 +90,9 @@ export class WorkerManagementService
 		 * Start the worker. This is intentionally not awaited as the Promise resolves
 		 * only when it's stopped.
 		 */
-		void this.worker.start();
+		this.worker.start().catch((err: unknown) => {
+			WorkerManagementService.LOGGER.error(`Worker '${name}' failed`, err);
+		});
 	}
 
 	/**

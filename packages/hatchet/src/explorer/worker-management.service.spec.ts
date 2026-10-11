@@ -140,6 +140,7 @@ describe("worker-management.service.ts", () => {
 				registrations: [new HatchetFeatureRegistration([TestTask])],
 			});
 			const worker = mockDeep<Awaited<ReturnType<HatchetClient["worker"]>>>();
+			worker.start.mockResolvedValue(undefined);
 
 			mockClient.worker.mockResolvedValue(worker);
 			await service.onApplicationBootstrap();
@@ -169,6 +170,29 @@ describe("worker-management.service.ts", () => {
 				"test-worker",
 				expect.objectContaining({ handleKill: true }),
 			);
+		});
+
+		it("logs when the worker fails", async () => {
+			const errorSpy = vi
+				.spyOn(Logger.prototype, "error")
+				.mockImplementation(() => {});
+			const { service, mockClient } = createService({
+				config: { ...workerConfig, enableOrphanDetection: false },
+				registrations: [new HatchetFeatureRegistration([TestTask])],
+			});
+			const worker = mockDeep<Awaited<ReturnType<HatchetClient["worker"]>>>();
+			const error = new Error("start failed");
+			worker.start.mockRejectedValue(error);
+			mockClient.worker.mockResolvedValue(worker);
+
+			await service.onApplicationBootstrap();
+
+			await vi.waitFor(() => {
+				expect(errorSpy).toHaveBeenCalledWith(
+					"Worker 'test-worker' failed",
+					error,
+				);
+			});
 		});
 
 		it("does nothing when no worker was started", async () => {
