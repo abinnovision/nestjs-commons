@@ -222,15 +222,18 @@ export class DeclarationBuilderService implements OnModuleInit {
 
 		// Special metadata key to load the design:paramtypes.
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const params: any[] = Reflect.getMetadata(
+		const params: any[] | undefined = Reflect.getMetadata(
 			"design:paramtypes",
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			proto,
 			targetMethod,
 		);
 
-		// Validate that there is exactly one parameter.
-		if (params.length !== 1) {
+		/*
+		 * Validate that there is exactly one parameter.
+		 * Skipped when the compiler does not emit decorator metadata (e.g. esbuild).
+		 */
+		if (params !== undefined && params.length !== 1) {
 			throw new Error(
 				`TaskHost '${input.constructor.name}' method '${targetMethod}' must have exactly one parameter of type 'TaskCtx<typeof this>'`,
 			);

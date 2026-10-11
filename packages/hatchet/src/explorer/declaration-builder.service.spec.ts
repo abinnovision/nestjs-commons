@@ -143,6 +143,39 @@ describe("declaration-builder.service.ts", () => {
 				/must have exactly one decorated method/,
 			);
 		});
+
+		it("throws when the task method does not take exactly one parameter", () => {
+			@Host({ name: "two-params-task" })
+			class TwoParamsTask extends taskHost() {
+				@Task({})
+				public execute(_ctx: TaskCtx<typeof this>, _other: unknown) {
+					return {};
+				}
+			}
+
+			expect(() => service.createDeclaration(new TwoParamsTask())).toThrow(
+				/must have exactly one parameter/,
+			);
+		});
+
+		it("skips the parameter check without design:paramtypes metadata", () => {
+			@Host({ name: "no-metadata-task" })
+			class NoMetadataTask extends taskHost() {
+				@Task({})
+				public execute(_ctx: TaskCtx<typeof this>) {
+					return {};
+				}
+			}
+			Reflect.deleteMetadata(
+				"design:paramtypes",
+				NoMetadataTask.prototype,
+				"execute",
+			);
+
+			expect(() =>
+				service.createDeclaration(new NoMetadataTask()),
+			).not.toThrow();
+		});
 	});
 
 	describe("workflowHost validation", () => {
