@@ -27,7 +27,7 @@ export interface HatchetModuleConfig {
 	 * Configuration for the Hatchet worker.
 	 * If undefined, the worker will not be started.
 	 */
-	worker: HatchetModuleWorkerConfig | undefined;
+	worker?: HatchetModuleWorkerConfig | undefined;
 
 	/**
 	 * Whether to enable orphan workflow detection on application startup.

@@ -85,7 +85,6 @@ const workerConfig: HatchetModuleConfig = {
 
 const noWorkerConfig: HatchetModuleConfig = {
 	config: {},
-	worker: undefined,
 };
 
 describe("worker-management.service.ts", () => {
