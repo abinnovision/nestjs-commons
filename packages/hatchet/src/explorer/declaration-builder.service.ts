@@ -3,7 +3,7 @@ import {
 	TaskWorkflowDeclaration,
 	WorkflowDeclaration,
 } from "@hatchet-dev/typescript-sdk";
-import { Inject, Injectable, Optional } from "@nestjs/common";
+import { Inject, Injectable, OnModuleInit, Optional } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { DirectedGraph } from "directed-graph-typed";
 
@@ -27,16 +27,21 @@ import type {
 type CreateWorkflowTaskOpts = ReturnType<WorkflowDeclaration["task"]>;
 
 @Injectable()
-export class DeclarationBuilderService {
-	private readonly interceptors: Interceptor[];
+export class DeclarationBuilderService implements OnModuleInit {
+	private interceptors: Interceptor[] = [];
 
 	public constructor(
 		private readonly moduleRef: ModuleRef,
 		@Optional()
 		@Inject(InterceptorRegistration)
 		private readonly interceptorRegistration?: InterceptorRegistration,
-	) {
-		// Try to resolve the refs to the instances.
+	) {}
+
+	/**
+	 * Resolves the interceptor instances. This is deferred until all providers
+	 * are instantiated, as an interceptor resolved earlier may not be constructed yet.
+	 */
+	public onModuleInit() {
 		const resolvedRefs = this.interceptorRegistration?.refs.map((token) =>
 			this.moduleRef.get(token, { strict: false }),
 		);
