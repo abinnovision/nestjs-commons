@@ -5,8 +5,8 @@ import {
 	createHostRunForAdmin,
 	createHostRunForContext,
 } from "./adapter-factory.js";
-import { TestTask } from "../../__fixtures__/test-hosts.js";
-import { taskRef } from "../../references/index.js";
+import { TestTask, TestWorkflow } from "../../__fixtures__/test-hosts.js";
+import { taskRef, workflowRef } from "../../references/index.js";
 
 import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 
@@ -99,6 +99,24 @@ describe("createHostRunForContext()", () => {
 
 		expect(result).toEqual([mockRunRef1, mockRunRef2]);
 	});
+
+	it("sets the standalone task name on task run refs", async () => {
+		const mockRunRef = createMockRunRef({ result: "test" });
+		sdkCtx.runNoWaitChild.mockResolvedValueOnce(mockRunRef);
+
+		await runFn(taskRef(TestTask), { data: "test" });
+
+		expect(mockRunRef._standaloneTaskName).toBe("test-task");
+	});
+
+	it("does not set the standalone task name on workflow run refs", async () => {
+		const mockRunRef = createMockRunRef({ step1: {}, step2: {} });
+		sdkCtx.runNoWaitChild.mockResolvedValueOnce(mockRunRef);
+
+		await runFn(workflowRef(TestWorkflow), { id: "1" });
+
+		expect(mockRunRef._standaloneTaskName).toBeUndefined();
+	});
 });
 
 describe("createHostRunForAdmin()", () => {
@@ -157,5 +175,18 @@ describe("createHostRunForAdmin()", () => {
 
 		expect(mockClient.runNoWait).toHaveBeenCalledTimes(2);
 		expect(result).toEqual([{ result: "a" }, { result: "b" }]);
+	});
+
+	it("sets the standalone task name on task run refs for array inputs", async () => {
+		const mockRunRef1 = createMockRunRef({ result: "a" });
+		const mockRunRef2 = createMockRunRef({ result: "b" });
+		mockClient.runNoWait
+			.mockResolvedValueOnce(mockRunRef1)
+			.mockResolvedValueOnce(mockRunRef2);
+
+		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
+
+		expect(mockRunRef1._standaloneTaskName).toBe("test-task");
+		expect(mockRunRef2._standaloneTaskName).toBe("test-task");
 	});
 });
