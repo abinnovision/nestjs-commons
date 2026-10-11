@@ -25,6 +25,7 @@ import { HatchetClient, Context } from "@abinnovision/nestjs-hatchet/sdk";
 
 ```typescript
 import { HatchetModule } from "@abinnovision/nestjs-hatchet";
+import { Module } from "@nestjs/common";
 
 @Module({
   imports: [
@@ -63,19 +64,30 @@ export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 ### 3. Register and Invoke
 
 ```typescript
-// Register in module
-HatchetModule.forFeature(taskRef(ProcessDataTask));
+import { Client, HatchetModule, taskRef } from "@abinnovision/nestjs-hatchet";
+import { Injectable, Module } from "@nestjs/common";
 
-// Invoke from service/controller
+import { ProcessDataTask } from "./process-data.task";
+
 @Injectable()
 export class MyService {
-  constructor(private client: Client) {}
+  constructor(private readonly client: Client) {}
 
   async process(data: string) {
     return this.client.run(taskRef(ProcessDataTask), { data });
   }
 }
+
+@Module({
+  imports: [HatchetModule.forFeature(taskRef(ProcessDataTask))],
+  providers: [ProcessDataTask, MyService],
+})
+export class ProcessDataModule {}
 ```
+
+`forFeature()` only registers the hosts with the worker. Each host must also be listed
+in the `providers` of a module, otherwise the worker cannot resolve it and the
+application fails to start.
 
 ## Core Concepts
 
