@@ -76,7 +76,10 @@ const createServiceWithInterceptors = (
 	const mockModuleRef = createMockModuleRef(interceptorMap);
 	const registration = new InterceptorRegistration(tokens);
 
-	return new DeclarationBuilderService(mockModuleRef, registration);
+	const service = new DeclarationBuilderService(mockModuleRef, registration);
+	service.onModuleInit();
+
+	return service;
 };
 
 // Helper to create mock SDK context with additionalMetadata support
@@ -264,6 +267,28 @@ describe("declaration-builder.service.ts", () => {
 				expect.objectContaining({ input: { data: "test" } }),
 				expect.any(Function),
 			);
+		});
+
+		it("resolves interceptors on module init", async () => {
+			const token = Symbol("InterceptorToken") as any;
+			const interceptorMap = new Map<any, Interceptor>();
+			const serviceWithInterceptors = new DeclarationBuilderService(
+				createMockModuleRef(interceptorMap),
+				new InterceptorRegistration([token]),
+			);
+
+			// The interceptor instance only becomes available after construction.
+			const mockInterceptor = mock<Interceptor>();
+			interceptorMap.set(token, mockInterceptor);
+			serviceWithInterceptors.onModuleInit();
+
+			const declaration = serviceWithInterceptors.createDeclaration(
+				new TestTask(),
+			);
+			const fn = (declaration.definition as any).fn;
+			await fn(undefined, createMockSdkContext());
+
+			expect(mockInterceptor.intercept).toHaveBeenCalledTimes(1);
 		});
 
 		it("passes correct BaseCtx to interceptor", async () => {

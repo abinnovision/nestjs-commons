@@ -175,6 +175,43 @@ await client.emit(OrderEvent, [
 ]);
 ```
 
+### Interceptors
+
+Interceptors wrap every task and workflow execution, e.g. for logging or tracing. Pass
+them to `forRoot()`/`forRootAsync()` and list them as providers, since they are
+resolved from the application rather than instantiated by the module.
+
+```typescript
+import {
+  BaseCtx,
+  HatchetModule,
+  Interceptor,
+} from "@abinnovision/nestjs-hatchet";
+import { Injectable, Logger, Module } from "@nestjs/common";
+
+@Injectable()
+export class LoggingInterceptor extends Interceptor {
+  private readonly logger = new Logger(LoggingInterceptor.name);
+
+  public async intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
+    this.logger.log(`Running ${ctx.fromSDK.taskName()}`);
+    return next();
+  }
+}
+
+@Module({
+  imports: [
+    HatchetModule.forRoot({
+      config: {},
+      worker: { name: "my-worker" },
+      interceptors: [LoggingInterceptor],
+    }),
+  ],
+  providers: [LoggingInterceptor],
+})
+export class AppModule {}
+```
+
 ### Helper Methods
 
 ```typescript
