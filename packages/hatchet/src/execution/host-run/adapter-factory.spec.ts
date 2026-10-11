@@ -51,6 +51,20 @@ describe("createHostRunForContext()", () => {
 		);
 	});
 
+	it("passes childKey to the SDK as key", async () => {
+		sdkCtx.runNoWaitChild.mockResolvedValueOnce(
+			createMockRunRef({ result: "test" }),
+		);
+
+		await runFn(taskRef(TestTask), { data: "test" }, { childKey: "child-1" });
+
+		expect(sdkCtx.runNoWaitChild).toHaveBeenCalledWith(
+			"test-task",
+			{ data: "test" },
+			{ childKey: "child-1", key: "child-1" },
+		);
+	});
+
 	it("waits for output by default", async () => {
 		const ref = taskRef(TestTask);
 		const expectedOutput = { result: "test" };
