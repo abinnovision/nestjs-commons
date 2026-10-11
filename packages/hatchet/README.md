@@ -12,9 +12,8 @@ yarn add @abinnovision/nestjs-hatchet
 
 ### Hatchet SDK Re-export
 
-This package includes a patched version of `@hatchet-dev/typescript-sdk` that properly
-exports the `v1` subdirectory. You can import SDK types and classes directly without
-adding the Hatchet SDK as a separate dependency:
+This package re-exports `@hatchet-dev/typescript-sdk`, so you can import SDK types and
+classes directly without adding the Hatchet SDK as a separate dependency:
 
 ```typescript
 import { HatchetClient, Context } from "@abinnovision/nestjs-hatchet/sdk";
