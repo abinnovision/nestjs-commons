@@ -1,5 +1,6 @@
 import { HatchetClient } from "@hatchet-dev/typescript-sdk";
 import {
+	BeforeApplicationShutdown,
 	Inject,
 	Injectable,
 	Logger,
@@ -15,8 +16,12 @@ import { fromCtor } from "../metadata/accessor.js";
 import type { HatchetModuleConfig } from "../hatchet.module-config.js";
 
 @Injectable()
-export class WorkerManagementService implements OnApplicationBootstrap {
+export class WorkerManagementService
+	implements OnApplicationBootstrap, BeforeApplicationShutdown
+{
 	private static LOGGER = new Logger(WorkerManagementService.name);
+
+	private worker: Awaited<ReturnType<HatchetClient["worker"]>> | undefined;
 
 	// eslint-disable-next-line max-params
 	public constructor(
@@ -38,6 +43,13 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 			// Fire-and-forget: detect orphan workflows without blocking startup.
 			void this.detectOrphanWorkflows();
 		}
+	}
+
+	/**
+	 * Stops the worker, waiting for running tasks to finish.
+	 */
+	public async beforeApplicationShutdown() {
+		await this.worker?.stop();
 	}
 
 	private async initWorker() {
@@ -62,8 +74,12 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 		const { name, ...otherWorkerOptions } = workerConfiguration;
 		const declarations = this.buildDeclarations(registrations);
 
-		// Initialize and start the worker
-		const worker = await this.client.worker(name, {
+		/*
+		 * Initialize and start the worker. Signal handling is left to Nest by
+		 * default, so the worker is stopped via the application shutdown hooks.
+		 */
+		this.worker = await this.client.worker(name, {
+			handleKill: false,
 			...otherWorkerOptions,
 			workflows: declarations,
 		});
@@ -74,7 +90,7 @@ export class WorkerManagementService implements OnApplicationBootstrap {
 		 * Start the worker. This is intentionally not awaited as the Promise resolves
 		 * only when it's stopped.
 		 */
-		void worker.start();
+		void this.worker.start();
 	}
 
 	/**

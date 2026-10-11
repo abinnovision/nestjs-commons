@@ -125,7 +125,7 @@ __metadata:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
-    "@hatchet-dev/typescript-sdk": "npm:^1.29.2"
+    "@hatchet-dev/typescript-sdk": "npm:^1.36.0"
     "@nestjs/common": "npm:^12.1.2"
     "@nestjs/core": "npm:^12.1.2"
     "@standard-schema/spec": "npm:^1.1.0"
@@ -416,10 +416,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/protobuf@npm:^2.11.0":
-  version: 2.11.0
-  resolution: "@bufbuild/protobuf@npm:2.11.0"
-  checksum: 10c0/d54fffd414660b823999cc321d26bd6c5f18a6e75343fc7d2588bda5be540ec542b557ac1f03d6d4b6e9d3e5596b2016e58cda173cd1858c043f0e846ece453f
+"@bufbuild/protobuf@npm:^2.15.0":
+  version: 2.16.0
+  resolution: "@bufbuild/protobuf@npm:2.16.0"
+  checksum: 10c0/ba3bc677e801a71d9cf0bdc138174144e493706efec3a47865eb07e956423315a80ff12301f6835d352202ae4d6599f2946a7c67338cf0079ed2a06af1a18097
   languageName: node
   linkType: hard
 
@@ -632,6 +632,35 @@ __metadata:
     conventional-commits-parser: "npm:^7.0.0"
     picocolors: "npm:^1.1.1"
   checksum: 10c0/676312e3234183da8fae1e54d225c4cead3c3661852329fce6f4e2e5fdc5f4604d22805a1816e4f7896b6e9e246a836b85e57665d7ab4fc53f24d86d20f6659b
+  languageName: node
+  linkType: hard
+
+"@connectrpc/connect-node@npm:~2.1.2":
+  version: 2.1.2
+  resolution: "@connectrpc/connect-node@npm:2.1.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^2.7.0
+    "@connectrpc/connect": 2.1.2
+  checksum: 10c0/ba8b0c9384c3829b377aa7a826dc0cd50a6093527d2ec7014604912836336ea9604a2b5acea42b10477f8be4569e49dded66ca0fc77f5f5b027035e029e13ea9
+  languageName: node
+  linkType: hard
+
+"@connectrpc/connect-web@npm:~2.1.2":
+  version: 2.1.2
+  resolution: "@connectrpc/connect-web@npm:2.1.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^2.7.0
+    "@connectrpc/connect": 2.1.2
+  checksum: 10c0/304667186990d79e61ace8af03a39c5474e6ecb21282eeaa9e216a0e214524003891005ff3cfbda33230c21b779cfece530bf8cfdd48550b7861621513d18e0e
+  languageName: node
+  linkType: hard
+
+"@connectrpc/connect@npm:~2.1.2":
+  version: 2.1.2
+  resolution: "@connectrpc/connect@npm:2.1.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^2.7.0
+  checksum: 10c0/4e1500089023b752efd44fa940a5ae1e1fa00e1bebc4ba0ced272bb935920d8c3b85b77450e644ad442bb8ca9a275b0c17136f896ba8eff036178131db01d615
   languageName: node
   linkType: hard
 
@@ -1099,11 +1128,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hatchet-dev/typescript-sdk@npm:^1.29.2":
-  version: 1.29.2
-  resolution: "@hatchet-dev/typescript-sdk@npm:1.29.2"
+"@hatchet-dev/typescript-sdk@npm:^1.36.0":
+  version: 1.36.0
+  resolution: "@hatchet-dev/typescript-sdk@npm:1.36.0"
   dependencies:
-    "@bufbuild/protobuf": "npm:^2.11.0"
+    "@bufbuild/protobuf": "npm:^2.15.0"
+    "@connectrpc/connect": "npm:~2.1.2"
+    "@connectrpc/connect-node": "npm:~2.1.2"
+    "@connectrpc/connect-web": "npm:~2.1.2"
     "@types/qs": "npm:^6.15.0"
     abort-controller-x: "npm:^0.5.0"
     axios: "npm:^1.15.2"
@@ -1111,7 +1143,7 @@ __metadata:
     nice-grpc: "npm:^2.1.14"
     nice-grpc-common: "npm:^2.0.2"
     protobufjs: "npm:^7.5.5"
-    qs: "npm:^6.14.2"
+    qs: "npm:^6.16.0"
     semver: "npm:^7.7.4"
     yaml: "npm:^2.8.3"
     zod-to-json-schema: "npm:^3.24.2"
@@ -1150,7 +1182,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/a12bf8e00b211b1dcd4f756cbe78c8fe1796d6b133848f0be243945a0cb3c46bc17df25ec65068df078d5b543e6895457b78185629594183a0d698fb5c842548
+  checksum: 10c0/7197ade7c354c08c0f82c0180efbc8171f57ae139dcabc2cb64c105d7f54b432f720e27dbe78995d234e00edf057af08162b68cb80c7db200e6f2f0507b58b09
   languageName: node
   linkType: hard
 
@@ -9882,7 +9914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.14.0, qs@npm:^6.14.2, qs@npm:^6.15.2":
+"qs@npm:^6.14.0, qs@npm:^6.15.2, qs@npm:^6.16.0":
   version: 6.16.0
   resolution: "qs@npm:6.16.0"
   dependencies:

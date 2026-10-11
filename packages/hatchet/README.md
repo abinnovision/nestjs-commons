@@ -12,9 +12,8 @@ yarn add @abinnovision/nestjs-hatchet
 
 ### Hatchet SDK Re-export
 
-This package includes a patched version of `@hatchet-dev/typescript-sdk` that properly
-exports the `v1` subdirectory. You can import SDK types and classes directly without
-adding the Hatchet SDK as a separate dependency:
+This package re-exports `@hatchet-dev/typescript-sdk`, so you can import SDK types and
+classes directly without adding the Hatchet SDK as a separate dependency:
 
 ```typescript
 import { HatchetClient, Context } from "@abinnovision/nestjs-hatchet/sdk";
@@ -34,12 +33,17 @@ import { HatchetModule } from "@abinnovision/nestjs-hatchet";
         token: process.env.HATCHET_CLIENT_TOKEN,
         tls_config: { tls_strategy: "none" },
       },
-      workerName: "my-worker",
+      worker: { name: "my-worker" },
     }),
   ],
 })
 export class AppModule {}
 ```
+
+The worker is stopped through Nest's shutdown hooks, waiting for running tasks to
+finish. Call `app.enableShutdownHooks()` so this also happens on `SIGTERM`/`SIGINT`.
+To let the Hatchet SDK handle these signals itself instead, set `handleKill: true` in
+the worker options.
 
 ### 2. Define a Task
 
