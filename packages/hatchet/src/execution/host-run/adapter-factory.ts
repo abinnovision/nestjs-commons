@@ -6,13 +6,20 @@ import type { WorkflowRunRef } from "../../sdk/types.js";
 import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 
 /**
+ * Run ref including the SDK's internal standalone task name.
+ */
+type SdkWorkflowRunRef = WorkflowRunRef<unknown> & {
+	_standaloneTaskName?: string | undefined;
+};
+
+/**
  * Strategy function for running a workflow.
  */
 type RunnerFn = (
 	workflowName: string,
 	input: unknown,
 	options: HostRunOpts<boolean> | undefined,
-) => Promise<WorkflowRunRef<unknown>>;
+) => Promise<SdkWorkflowRunRef>;
 
 /**
  * Creates a HostRunFn using the provided runner strategy.
@@ -28,13 +35,22 @@ function createHostRunFn(runner: RunnerFn): HostRunFn {
 		input: I,
 		options?: HostRunOpts<W>,
 	): Promise<HostRunReturn<I, R, W>> => {
-		const workflowName = getRefAccessor(ref).name;
+		const accessor = getRefAccessor(ref);
+		const workflowName = accessor.name;
 		const wait = options?.wait ?? true;
 
+		// The SDK only unwraps a standalone task's output if the run ref has its name.
+		const run = async (i: unknown) => {
+			const runRef = await runner(workflowName, i, options);
+			if (accessor.isTask) {
+				runRef._standaloneTaskName = workflowName;
+			}
+
+			return runRef;
+		};
+
 		if (Array.isArray(input)) {
-			const runs = (input as InputOfRef<R>[]).map((i) =>
-				runner(workflowName, i, options),
-			);
+			const runs = (input as InputOfRef<R>[]).map((i) => run(i));
 
 			if (wait) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -47,7 +63,7 @@ function createHostRunFn(runner: RunnerFn): HostRunFn {
 			return (await Promise.all(runs)) as any;
 		}
 
-		const runRef = await runner(workflowName, input, options);
+		const runRef = await run(input);
 
 		if (wait) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
