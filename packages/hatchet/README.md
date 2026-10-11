@@ -33,12 +33,17 @@ import { HatchetModule } from "@abinnovision/nestjs-hatchet";
         token: process.env.HATCHET_CLIENT_TOKEN,
         tls_config: { tls_strategy: "none" },
       },
-      workerName: "my-worker",
+      worker: { name: "my-worker" },
     }),
   ],
 })
 export class AppModule {}
 ```
+
+The worker is stopped through Nest's shutdown hooks, waiting for running tasks to
+finish. Call `app.enableShutdownHooks()` so this also happens on `SIGTERM`/`SIGINT`.
+To let the Hatchet SDK handle these signals itself instead, set `handleKill: true` in
+the worker options.
 
 ### 2. Define a Task
 

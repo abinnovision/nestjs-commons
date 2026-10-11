@@ -129,6 +129,55 @@ describe("worker-management.service.ts", () => {
 		});
 	});
 
+	describe("beforeApplicationShutdown", () => {
+		const startWorker = async (config: HatchetModuleConfig) => {
+			const { service, mockClient } = createService({
+				config: { ...config, enableOrphanDetection: false },
+				registrations: [new HatchetFeatureRegistration([TestTask])],
+			});
+			const worker = mockDeep<Awaited<ReturnType<HatchetClient["worker"]>>>();
+
+			mockClient.worker.mockResolvedValue(worker);
+			await service.onApplicationBootstrap();
+
+			return { service, mockClient, worker };
+		};
+
+		it("stops the started worker", async () => {
+			const { service, mockClient, worker } = await startWorker(workerConfig);
+
+			await service.beforeApplicationShutdown();
+
+			expect(mockClient.worker).toHaveBeenCalledWith(
+				"test-worker",
+				expect.objectContaining({ handleKill: false }),
+			);
+			expect(worker.stop).toHaveBeenCalledOnce();
+		});
+
+		it("respects an explicit handleKill option", async () => {
+			const { mockClient } = await startWorker({
+				config: {},
+				worker: { name: "test-worker", handleKill: true },
+			});
+
+			expect(mockClient.worker).toHaveBeenCalledWith(
+				"test-worker",
+				expect.objectContaining({ handleKill: true }),
+			);
+		});
+
+		it("does nothing when no worker was started", async () => {
+			const { service } = createService({ config: noWorkerConfig });
+
+			await service.onApplicationBootstrap();
+
+			await expect(
+				service.beforeApplicationShutdown(),
+			).resolves.toBeUndefined();
+		});
+	});
+
 	describe("detectOrphanWorkflows", () => {
 		it("warns about orphan workflows", async () => {
 			const { service } = createService({
