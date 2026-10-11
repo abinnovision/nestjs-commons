@@ -4,7 +4,9 @@ import { mockDeep } from "vitest-mock-extended";
 
 import { WorkerManagementService } from "./worker-management.service.js";
 import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts.js";
+import { taskHost } from "../abstracts/index.js";
 import { HatchetFeatureRegistration } from "../internal/registrations.js";
+import { Host } from "../metadata/index.js";
 
 import type { HatchetModuleConfig } from "../hatchet.module-config.js";
 import type { DeclarationBuilderService } from "./declaration-builder.service.js";
@@ -23,8 +25,10 @@ const createService = (opts: {
 	serverWorkflows?: Array<{ name: string }>;
 	serverWorkflowPages?: Array<Array<{ name: string }>>;
 	listShouldReject?: boolean;
+	namespace?: string;
 }) => {
 	const mockClient = mockDeep<HatchetClient>();
+	mockClient.config.namespace = opts.namespace ?? "";
 	const mockModuleRef = mockDeep<ModuleRef>();
 	const mockDeclarationBuilder = mockDeep<DeclarationBuilderService>();
 
@@ -296,6 +300,70 @@ describe("worker-management.service.ts", () => {
 			// The orphan from page 2 should be reported.
 			expect(warnSpy).toHaveBeenCalledWith(
 				expect.stringContaining("orphan-on-page-2"),
+			);
+		});
+
+		it("fetches all pages without a page limit", async () => {
+			const fullPages = Array.from({ length: 12 }, (_, page) =>
+				Array.from({ length: 50 }, (_, i) => ({
+					name: `test-task-${String(page)}-${String(i)}`,
+				})),
+			);
+
+			const { service, mockClient } = createService({
+				config: workerConfig,
+				registrations: [new HatchetFeatureRegistration([TestTask])],
+				serverWorkflowPages: [...fullPages, [{ name: "orphan-on-last-page" }]],
+			});
+
+			await detectOrphans(service);
+
+			expect(mockClient.workflows.list).toHaveBeenCalledTimes(13);
+			expect(warnSpy).toHaveBeenCalledWith(
+				expect.stringContaining("orphan-on-last-page"),
+			);
+		});
+
+		it("matches local names against lowercased server names", async () => {
+			@Host({ name: "Mixed-Case-Task" })
+			class MixedCaseTask extends taskHost() {}
+
+			const { service } = createService({
+				config: workerConfig,
+				registrations: [new HatchetFeatureRegistration([MixedCaseTask])],
+				serverWorkflows: [{ name: "mixed-case-task" }],
+			});
+
+			await detectOrphans(service);
+
+			expect(warnSpy).not.toHaveBeenCalledWith(
+				expect.stringContaining("orphan"),
+			);
+		});
+
+		it("only considers workflows in the configured namespace", async () => {
+			const { service } = createService({
+				config: workerConfig,
+				namespace: "ns_",
+				registrations: [
+					new HatchetFeatureRegistration([TestTask, TestWorkflow]),
+				],
+				serverWorkflows: [
+					{ name: "ns_test-task" },
+					{ name: "ns_test-workflow" },
+					{ name: "ns_orphan-task" },
+					{ name: "other_test-task" },
+					{ name: "test-task" },
+				],
+			});
+
+			await detectOrphans(service);
+
+			expect(warnSpy).toHaveBeenCalledWith(
+				expect.stringContaining("'ns_orphan-task'"),
+			);
+			expect(warnSpy).toHaveBeenCalledWith(
+				expect.stringContaining("1 orphan workflow(s)"),
 			);
 		});
 	});

@@ -136,10 +136,23 @@ export class WorkerManagementService
 				return;
 			}
 
+			/*
+			 * The SDK registers workflows under the namespaced, lowercased name.
+			 * The configured namespace is already lowercased by the SDK.
+			 */
+			const namespace = this.client.config.namespace ?? "";
+			const toServerName = (name: string) =>
+				(name.startsWith(namespace)
+					? name
+					: `${namespace}${name}`
+				).toLowerCase();
+
 			// Collect locally declared workflow/task names.
 			const registrations = this.discoverFeatureRegistrations();
 			const localNames = new Set(
-				registrations.flatMap((r) => r.refs).map((ctor) => fromCtor(ctor).name),
+				registrations
+					.flatMap((r) => r.refs)
+					.map((ctor) => toServerName(fromCtor(ctor).name)),
 			);
 
 			if (localNames.size === 0) {
@@ -149,8 +162,10 @@ export class WorkerManagementService
 			// Fetch all server-side workflows (paginated).
 			const serverWorkflows = await this.fetchAllServerWorkflows();
 
-			// Find orphans: on server but not locally declared.
-			const orphans = serverWorkflows.filter((wf) => !localNames.has(wf));
+			// Find orphans: in this namespace on the server but not locally declared.
+			const orphans = serverWorkflows.filter(
+				(wf) => wf.startsWith(namespace) && !localNames.has(wf),
+			);
 			if (orphans.length === 0) {
 				return;
 			}
@@ -180,13 +195,11 @@ export class WorkerManagementService
 	 */
 	private async fetchAllServerWorkflows(): Promise<string[]> {
 		const pageSize = 50;
-
-		// Safety limit: max 500 workflows
-		const maxPages = 10;
 		const allWorkflows: string[] = [];
 		let offset = 0;
+		let rowCount: number;
 
-		for (let page = 0; page < maxPages; page++) {
+		do {
 			const result = await this.client.workflows.list({
 				offset,
 				limit: pageSize,
@@ -197,12 +210,9 @@ export class WorkerManagementService
 			// Extract workflow names and accumulate.
 			allWorkflows.push(...rows.map((it) => it.name));
 
-			if (rows.length < pageSize) {
-				break;
-			}
-
+			rowCount = rows.length;
 			offset += pageSize;
-		}
+		} while (rowCount === pageSize);
 
 		return allWorkflows;
 	}
