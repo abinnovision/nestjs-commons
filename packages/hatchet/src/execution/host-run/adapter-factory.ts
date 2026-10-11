@@ -81,7 +81,14 @@ function createHostRunFn(runner: RunnerFn): HostRunFn {
  */
 export function createHostRunForContext(ctx: Context<any, any>): HostRunFn {
 	return createHostRunFn((workflowName, input, options) =>
-		ctx.runNoWaitChild(workflowName, input as any, options),
+		ctx.runNoWaitChild(
+			workflowName,
+			input as any,
+			// The SDK takes the child key from `key` and overwrites `childKey`.
+			options?.childKey === undefined
+				? options
+				: { ...options, key: options.childKey },
+		),
 	);
 }
 

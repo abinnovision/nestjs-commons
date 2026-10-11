@@ -25,7 +25,14 @@ export type HostRunReturn<
 		? OutputOfRef<R>
 		: WorkflowRunRef<OutputOfRef<R>>;
 
-export interface HostRunOpts<W extends boolean> extends RunOpts {
+/**
+ * Options for {@link HostRunFn}.
+ * `returnExceptions` is omitted, as array runs always reject on the first failure.
+ */
+export interface HostRunOpts<W extends boolean> extends Omit<
+	RunOpts,
+	"returnExceptions"
+> {
 	/**
 	 * Whether to wait for the task to complete before returning.
 	 *
