@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.8.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.1...nestjs-hatchet-v0.8.0) (2026-10-12)
+
+
+### Features
+
+* **deps:** migrate to typescript 6 ([#140](https://github.com/abinnovision/nestjs-commons/issues/140)) ([907fc0f](https://github.com/abinnovision/nestjs-commons/commit/907fc0f745f58ab1567e96350f7778ae745fb567))
+* **hatchet:** merge emit and emitBulk on Client ([#180](https://github.com/abinnovision/nestjs-commons/issues/180)) ([fb3d270](https://github.com/abinnovision/nestjs-commons/commit/fb3d270b4367e273aa187ebc75685488c0420b7f))
+* **hatchet:** replace stringified validation errors with typed exceptions ([#163](https://github.com/abinnovision/nestjs-commons/issues/163)) ([c9e4e4b](https://github.com/abinnovision/nestjs-commons/commit/c9e4e4be1e379df27eaf0bd45ec6271ecfcff7d1))
+* support nestjs 12 ([#276](https://github.com/abinnovision/nestjs-commons/issues/276)) ([228e479](https://github.com/abinnovision/nestjs-commons/commit/228e479248b5d5f69c3627e470815a8c5b6ba328))
+
+
+### Bug Fixes
+
+* **deps:** bump @hatchet-dev/typescript-sdk from 1.22.1 to 1.23.0 ([92e92a5](https://github.com/abinnovision/nestjs-commons/commit/92e92a54718d745663785ebb7144312100220118))
+* **deps:** bump @hatchet-dev/typescript-sdk from 1.23.0 to 1.24.3 ([30f87b5](https://github.com/abinnovision/nestjs-commons/commit/30f87b50ada464d8e3aacd06810f91d5e444aef0))
+* **deps:** bump @hatchet-dev/typescript-sdk from 1.24.3 to 1.26.0 ([980a74a](https://github.com/abinnovision/nestjs-commons/commit/980a74a64ca42083d04f046590647e6afee38063))
+* **deps:** bump @hatchet-dev/typescript-sdk from 1.26.0 to 1.28.0 ([935b4ba](https://github.com/abinnovision/nestjs-commons/commit/935b4ba91a1022fd4f193721e0fd0fbc6b9500c4))
+* **deps:** bump @hatchet-dev/typescript-sdk from 1.28.0 to 1.29.2 ([369ac80](https://github.com/abinnovision/nestjs-commons/commit/369ac8013fdf7b51c4890ddec051a9ff283f8ffb))
+* **hatchet:** bump Hatchet SDK to 1.36.0 and stop worker on shutdown ([#277](https://github.com/abinnovision/nestjs-commons/issues/277)) ([fbe9307](https://github.com/abinnovision/nestjs-commons/commit/fbe9307dcb48094352e1a90001e6a4b48909d99f))
+* **hatchet:** honor childKey and drop returnExceptions from run options ([#281](https://github.com/abinnovision/nestjs-commons/issues/281)) ([449fa65](https://github.com/abinnovision/nestjs-commons/commit/449fa65982e49a05fbd30939c3e66a6eae979362))
+* **hatchet:** log worker start failures ([#283](https://github.com/abinnovision/nestjs-commons/issues/283)) ([dcf7c4b](https://github.com/abinnovision/nestjs-commons/commit/dcf7c4bfba186a66137881d64a149183ba7eb950))
+* **hatchet:** make worker config optional and drop unused token ([#285](https://github.com/abinnovision/nestjs-commons/issues/285)) ([531685a](https://github.com/abinnovision/nestjs-commons/commit/531685a93d7edf32c34b1ae232448c3da404160d))
+* **hatchet:** match namespaced names in orphan detection ([#279](https://github.com/abinnovision/nestjs-commons/issues/279)) ([a6d6434](https://github.com/abinnovision/nestjs-commons/commit/a6d643464bec9b8a06d2b5b9de9f86eed55ff9c7))
+* **hatchet:** parallelize array run outputs and memoize accessor.methods ([#142](https://github.com/abinnovision/nestjs-commons/issues/142)) ([3eb23f0](https://github.com/abinnovision/nestjs-commons/commit/3eb23f0fae36e148b53ffd6758e711d24ac9cd0c))
+* **hatchet:** resolve interceptors on module init ([#282](https://github.com/abinnovision/nestjs-commons/issues/282)) ([f54e6fb](https://github.com/abinnovision/nestjs-commons/commit/f54e6fb4ad3f2f9391736ebbbaa061e0157598a9))
+* **hatchet:** skip task parameter check without decorator metadata ([#284](https://github.com/abinnovision/nestjs-commons/issues/284)) ([8605265](https://github.com/abinnovision/nestjs-commons/commit/86052653611f663e4e3e67680114365a3a507634))
+* **hatchet:** unwrap standalone task output when running task refs ([#278](https://github.com/abinnovision/nestjs-commons/issues/278)) ([b25740d](https://github.com/abinnovision/nestjs-commons/commit/b25740d81f2656fb17d8f4ce4a5a69533773849e))
+
 ## [0.7.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.0...nestjs-hatchet-v0.7.1) (2026-05-17)
 
 
