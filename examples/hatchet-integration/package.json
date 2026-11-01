@@ -37,7 +37,7 @@
 		"dotenv": "^17.4.2",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.2",
-		"zod": "^4.3.6"
+		"zod": "^4.6.6"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.1",
