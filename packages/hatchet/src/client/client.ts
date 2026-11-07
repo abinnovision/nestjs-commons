@@ -14,10 +14,13 @@ import { ClientInterceptorRegistration } from "../internal/registrations.js";
 
 import type { AnyEventDefinition, EventInput } from "../events/index.js";
 import type { HostRunFn } from "../execution/index.js";
-import type { ClientInterceptor, EmitCtx } from "../interceptor/index.js";
+import type {
+	ClientInterceptor,
+	EmitCtx,
+	EmitOptions,
+} from "../interceptor/index.js";
 
 type EventClient = HatchetClient["events"];
-type EventEmitOptions = Parameters<EventClient["push"]>[2];
 type Event = Awaited<ReturnType<EventClient["push"]>>;
 
 /**
@@ -98,14 +101,14 @@ export class Client implements OnApplicationBootstrap {
 	public async emit<E extends AnyEventDefinition, I extends EventEmitInput<E>>(
 		event: E,
 		input: I,
-		options?: EventEmitOptions,
+		options?: EmitOptions,
 	): Promise<EventEmitReturn<E, I>> {
 		if (Array.isArray(input) && input.length === 0) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return [] as any;
 		}
 
-		const terminal = async (finalOptions: EventEmitOptions | undefined) => {
+		const terminal = async (finalOptions: EmitOptions | undefined) => {
 			if (Array.isArray(input)) {
 				const result = await this.client.events.bulkPush(
 					event.name,
@@ -160,7 +163,7 @@ export class Client implements OnApplicationBootstrap {
 	public async emitBulk<E extends AnyEventDefinition>(
 		event: E,
 		inputs: EventInput<E>[],
-		options?: EventEmitOptions,
+		options?: EmitOptions,
 	): Promise<Event[]> {
 		return await this.emit(event, inputs, options);
 	}
