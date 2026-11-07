@@ -1,15 +1,24 @@
 import { HatchetModule, taskRef } from "@abinnovision/nestjs-hatchet";
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import "dotenv/config";
 
 import { AdminModule } from "./admin/admin.module";
 import { AppConfigx } from "./app.configx";
 import { CleanupTask } from "./cleanup.task";
+import { CorrelationClientInterceptor } from "./correlation/correlation-client.interceptor";
+import { CorrelationInterceptor } from "./correlation/correlation.interceptor";
+import { CorrelationMiddleware } from "./correlation/correlation.middleware";
 import { DomainModule } from "./domain/domain.module";
 import { LoggingInterceptor } from "./logging-interceptor";
 
 @Module({
-	providers: [AppConfigx, CleanupTask, LoggingInterceptor],
+	providers: [
+		AppConfigx,
+		CleanupTask,
+		LoggingInterceptor,
+		CorrelationInterceptor,
+		CorrelationClientInterceptor,
+	],
 	imports: [
 		HatchetModule.forRootAsync({
 			inject: [AppConfigx],
@@ -22,12 +31,22 @@ import { LoggingInterceptor } from "./logging-interceptor";
 				worker: { name: "common-worker" },
 			}),
 
-			// Interceptor classes
-			interceptors: [LoggingInterceptor],
+			/*
+			 * Worker-side interceptors. CorrelationInterceptor is outermost, so the
+			 * LoggingInterceptor already sees the restored correlation id.
+			 */
+			interceptors: [CorrelationInterceptor, LoggingInterceptor],
+
+			// Producer-side interceptors for Client.emit and Client.run.
+			clientInterceptors: [CorrelationClientInterceptor],
 		}),
 		HatchetModule.forFeature(taskRef(CleanupTask)),
 		DomainModule,
 		AdminModule,
 	],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+	public configure(consumer: MiddlewareConsumer) {
+		consumer.apply(CorrelationMiddleware).forRoutes("*");
+	}
+}
