@@ -1,6 +1,8 @@
 import { BaseCtx, Interceptor } from "@abinnovision/nestjs-hatchet";
 import { Injectable, Logger } from "@nestjs/common";
 
+import { currentCorrelationId } from "./correlation/correlation.context";
+
 /**
  * Example Interceptor that logs task execution with timing.
  * Demonstrates how to intercept all task/workflow executions with cross-cutting concerns.
@@ -14,7 +16,7 @@ export class LoggingInterceptor extends Interceptor {
 		next: () => Promise<T>,
 	): Promise<T> {
 		const taskName = ctx.fromSDK.taskName();
-		const workflowRunId = ctx.fromSDK.workflowRunId();
+		const workflowRunId = `${ctx.fromSDK.workflowRunId()} corr=${currentCorrelationId() ?? "-"}`;
 		const startTime = Date.now();
 
 		this.logger.log(`[${workflowRunId}] Starting task: ${taskName}`);

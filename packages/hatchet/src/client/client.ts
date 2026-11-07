@@ -1,14 +1,26 @@
 import { HatchetClient } from "@hatchet-dev/typescript-sdk";
-import { Injectable } from "@nestjs/common";
+import {
+	Inject,
+	Injectable,
+	OnApplicationBootstrap,
+	Optional,
+} from "@nestjs/common";
+import { ModuleRef } from "@nestjs/core";
 
 import { EVENT_MARKER } from "../events/event-definition.js";
 import { createHostRunForAdmin } from "../execution/host-run/index.js";
+import { chainWithOptions } from "../interceptor/chain.js";
+import { ClientInterceptorRegistration } from "../internal/registrations.js";
 
 import type { AnyEventDefinition, EventInput } from "../events/index.js";
 import type { HostRunFn } from "../execution/index.js";
+import type {
+	ClientInterceptor,
+	EmitCtx,
+	EmitOptions,
+} from "../interceptor/index.js";
 
 type EventClient = HatchetClient["events"];
-type EventEmitOptions = Parameters<EventClient["push"]>[2];
 type Event = Awaited<ReturnType<EventClient["push"]>>;
 
 /**
@@ -28,11 +40,26 @@ type EventEmitReturn<
 > = I extends EventInput<E>[] ? Event[] : Event;
 
 @Injectable()
-export class Client {
+export class Client implements OnApplicationBootstrap {
 	public readonly run: HostRunFn;
 
-	public constructor(private readonly client: HatchetClient) {
-		this.run = createHostRunForAdmin(client);
+	private interceptors: ClientInterceptor[] | undefined;
+
+	public constructor(
+		private readonly client: HatchetClient,
+		@Optional() private readonly moduleRef?: ModuleRef,
+		@Optional()
+		@Inject(ClientInterceptorRegistration)
+		private readonly registration?: ClientInterceptorRegistration,
+	) {
+		this.run = createHostRunForAdmin(client, () => this.resolveInterceptors());
+	}
+
+	/**
+	 * Resolves the client interceptors eagerly, so a missing provider fails at boot.
+	 */
+	public onApplicationBootstrap(): void {
+		this.resolveInterceptors();
 	}
 
 	/**
@@ -74,38 +101,51 @@ export class Client {
 	public async emit<E extends AnyEventDefinition, I extends EventEmitInput<E>>(
 		event: E,
 		input: I,
-		options?: EventEmitOptions,
+		options?: EmitOptions,
 	): Promise<EventEmitReturn<E, I>> {
-		if (Array.isArray(input)) {
-			if (input.length === 0) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-				return [] as any;
-			}
-
-			const result = await this.client.events.bulkPush(
-				event.name,
-				input.map((single) => ({
-					payload: { ...(single as object), [EVENT_MARKER]: event.name },
-					...(options?.additionalMetadata !== undefined && {
-						additionalMetadata: options.additionalMetadata,
-					}),
-					...(options?.priority !== undefined && {
-						priority: options.priority,
-					}),
-					...(options?.scope !== undefined && { scope: options.scope }),
-				})),
-				options,
-			);
-
+		if (Array.isArray(input) && input.length === 0) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return result.events as any;
+			return [] as any;
 		}
 
+		const terminal = async (finalOptions: EmitOptions | undefined) => {
+			if (Array.isArray(input)) {
+				const result = await this.client.events.bulkPush(
+					event.name,
+					input.map((single) => ({
+						payload: { ...(single as object), [EVENT_MARKER]: event.name },
+						...(finalOptions?.additionalMetadata !== undefined && {
+							additionalMetadata: finalOptions.additionalMetadata,
+						}),
+						...(finalOptions?.priority !== undefined && {
+							priority: finalOptions.priority,
+						}),
+						...(finalOptions?.scope !== undefined && {
+							scope: finalOptions.scope,
+						}),
+					})),
+					finalOptions,
+				);
+
+				return result.events;
+			}
+
+			return await this.client.events.push(
+				event.name,
+				{ ...(input as object), [EVENT_MARKER]: event.name },
+				finalOptions,
+			);
+		};
+
+		const layers = this.resolveInterceptors().flatMap((i) =>
+			i.interceptEmit ? [i.interceptEmit.bind(i)] : [],
+		);
+
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-		return (await this.client.events.push(
-			event.name,
-			{ ...(input as object), [EVENT_MARKER]: event.name },
-			options,
+		return (await chainWithOptions<EmitCtx>(
+			{ event, input, options },
+			layers,
+			terminal,
 		)) as any;
 	}
 
@@ -123,8 +163,22 @@ export class Client {
 	public async emitBulk<E extends AnyEventDefinition>(
 		event: E,
 		inputs: EventInput<E>[],
-		options?: EventEmitOptions,
+		options?: EmitOptions,
 	): Promise<Event[]> {
 		return await this.emit(event, inputs, options);
+	}
+
+	/**
+	 * Resolves the registered interceptors via ModuleRef at most once.
+	 */
+	private resolveInterceptors(): ClientInterceptor[] {
+		const { moduleRef, registration } = this;
+
+		this.interceptors ??=
+			moduleRef && registration
+				? registration.refs.map((ref) => moduleRef.get(ref, { strict: false }))
+				: [];
+
+		return this.interceptors;
 	}
 }

@@ -10,8 +10,9 @@ import { Client } from "./client/index.js";
 import { DeclarationBuilderService } from "./explorer/declaration-builder.service.js";
 import { WorkerManagementService } from "./explorer/worker-management.service.js";
 import { hatchetModuleConfigToken } from "./hatchet.module-config.js";
-import { Interceptor } from "./interceptor/index.js";
+import { ClientInterceptor, Interceptor } from "./interceptor/index.js";
 import {
+	ClientInterceptorRegistration,
 	HatchetFeatureRegistration,
 	InterceptorRegistration,
 } from "./internal/registrations.js";
@@ -30,6 +31,12 @@ interface HatchetModuleExtras {
 	 * Interceptors execute in array order (first = outermost).
 	 */
 	interceptors?: Type<Interceptor>[] | undefined;
+
+	/**
+	 * Optional client interceptor classes to intercept `Client.emit` and `Client.run`.
+	 * Interceptors execute in array order (first = outermost).
+	 */
+	clientInterceptors?: Type<ClientInterceptor>[] | undefined;
 }
 
 const { ConfigurableModuleClass } =
@@ -39,7 +46,7 @@ const { ConfigurableModuleClass } =
 	})
 		.setClassMethodName("forRoot")
 		.setExtras<HatchetModuleExtras>(
-			{ interceptors: undefined },
+			{ interceptors: undefined, clientInterceptors: undefined },
 			(definition, extras) => ({
 				...definition,
 				global: true,
@@ -52,6 +59,17 @@ const { ConfigurableModuleClass } =
 								{
 									provide: InterceptorRegistration,
 									useValue: new InterceptorRegistration(extras.interceptors),
+								},
+							]
+						: []),
+
+					...(extras.clientInterceptors?.length
+						? [
+								{
+									provide: ClientInterceptorRegistration,
+									useValue: new ClientInterceptorRegistration(
+										extras.clientInterceptors,
+									),
 								},
 							]
 						: []),

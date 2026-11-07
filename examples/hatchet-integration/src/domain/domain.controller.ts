@@ -1,5 +1,5 @@
 import { Client, workflowRef } from "@abinnovision/nestjs-hatchet";
-import { Controller, Get, Post, Body } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 
 import { OrderPlacedEvent, UserCreatedEvent } from "./events";
 import { ProcessDataWorkflow } from "./process-data.task";
@@ -9,7 +9,7 @@ export class DomainController {
 	public constructor(private readonly client: Client) {}
 
 	@Get("process-data")
-	public async processData(data: string) {
+	public async processData(@Query("data") data: string) {
 		return await this.client.run(
 			workflowRef(ProcessDataWorkflow),
 			{ data },

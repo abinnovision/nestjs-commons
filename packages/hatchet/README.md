@@ -175,11 +175,12 @@ await client.emit(OrderEvent, [
 ]);
 ```
 
-### Interceptors
+### Execution interceptors
 
-Interceptors wrap every task and workflow execution, e.g. for logging or tracing. Pass
-them to `forRoot()`/`forRootAsync()` and list them as providers, since they are
-resolved from the application rather than instantiated by the module.
+Execution interceptors wrap every task and workflow execution on the worker, e.g. for
+logging or tracing. Pass them to `forRoot()`/`forRootAsync()` and list them as providers, since they are
+resolved from the application rather than instantiated by the module. For producer-side
+calls, see [Client interceptors](#client-interceptors).
 
 ```typescript
 import {
@@ -212,6 +213,118 @@ export class LoggingInterceptor extends Interceptor {
 export class AppModule {}
 ```
 
+### Client interceptors
+
+Client interceptors wrap producer-side calls on `Client`: `client.emit` (and the
+deprecated `emitBulk`) and `client.run`. Extend `ClientInterceptor` and implement
+`interceptEmit`, `interceptRun`, or both. Register the class with the
+`clientInterceptors` option of `forRoot()`/`forRootAsync()` and list it in `providers`.
+
+The example below propagates a correlation id. The client interceptor writes it into
+`additionalMetadata`, and an execution interceptor on the worker restores it from the
+metadata of the running task.
+
+```typescript
+import { AsyncLocalStorage } from "node:async_hooks";
+import { randomUUID } from "node:crypto";
+
+import {
+  BaseCtx,
+  ClientInterceptor,
+  EmitCtx,
+  EmitOptions,
+  HatchetModule,
+  Interceptor,
+  RunCtx,
+  RunOptions,
+} from "@abinnovision/nestjs-hatchet";
+import { Injectable, Module } from "@nestjs/common";
+
+export const correlation = new AsyncLocalStorage<{ id: string }>();
+
+@Injectable()
+export class CorrelationClientInterceptor extends ClientInterceptor {
+  public override async interceptEmit(
+    ctx: EmitCtx,
+    next: (options?: EmitOptions) => Promise<unknown>,
+  ) {
+    const id = correlation.getStore()?.id;
+    if (!id) return next();
+
+    return next({
+      ...ctx.options,
+      additionalMetadata: {
+        correlationId: id,
+        ...ctx.options?.additionalMetadata,
+      },
+    });
+  }
+
+  public override async interceptRun(
+    ctx: RunCtx,
+    next: (options?: RunOptions) => Promise<unknown>,
+  ) {
+    const id = correlation.getStore()?.id;
+    if (!id) return next();
+
+    return next({
+      ...ctx.options,
+      additionalMetadata: {
+        correlationId: id,
+        ...ctx.options?.additionalMetadata,
+      },
+    });
+  }
+}
+
+@Injectable()
+export class CorrelationInterceptor extends Interceptor {
+  public async intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
+    const id = ctx.fromSDK.additionalMetadata()?.correlationId ?? randomUUID();
+    return correlation.run({ id }, next);
+  }
+}
+
+@Module({
+  imports: [
+    HatchetModule.forRootAsync({
+      useFactory: () => ({ config: {}, worker: { name: "my-worker" } }),
+      clientInterceptors: [CorrelationClientInterceptor],
+      interceptors: [CorrelationInterceptor],
+    }),
+  ],
+  providers: [CorrelationClientInterceptor, CorrelationInterceptor],
+})
+export class AppModule {}
+```
+
+Behavior:
+
+- Each interceptor runs once per call. A bulk emit (array payload) and a `run` with
+  array input each count as one call.
+- Interceptors change options only. The payload or input is not modifiable.
+- `next()` keeps the current options. `next(options)` replaces them for the following
+  interceptors and the SDK call, so spread `ctx.options` to keep caller values.
+- `next(undefined)` behaves like `next()`. To drop all options, pass `{}`.
+- `wait` and the return shape of `client.run` cannot be overridden. `RunOptions`
+  excludes `wait`.
+- With `wait: true` (the default), `interceptRun` wraps the full run, including
+  awaiting the output. With `wait: false` it wraps only the enqueue.
+- `childKey` has no effect on `Client.run`.
+- Interceptors run in array order, the first being the outermost. An interceptor may
+  skip `next()` to short-circuit the call.
+- Interceptor classes must be listed in `providers`. A missing provider fails
+  application bootstrap.
+- Child runs started with `ctx.run` inherit the parent's `additionalMetadata` on
+  Hatchet engine `>= v0.104.0`, so they need no client interceptor.
+
+Caveats:
+
+- Calling `client.emit` or `client.run` inside an interceptor re-enters the chain.
+  Guard against the recursion yourself.
+- Request-scoped interceptor providers are not supported, same as execution
+  interceptors.
+
 ### Helper Methods
 
 ```typescript
@@ -237,6 +350,13 @@ export class MyTask extends taskHost(schema) {
 | `HatchetModule.forRoot(config)`       | Initialize with synchronous config          |
 | `HatchetModule.forRootAsync(options)` | Initialize with async config factory        |
 | `HatchetModule.forFeature(...refs)`   | Register tasks/workflows in feature modules |
+
+Module options (extras to `forRoot`/`forRootAsync`):
+
+| Option               | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `interceptors`       | `Interceptor` classes wrapping task/workflow execution |
+| `clientInterceptors` | `ClientInterceptor` classes wrapping `emit` and `run`  |
 
 ### Decorators
 
@@ -267,6 +387,8 @@ export class MyTask extends taskHost(schema) {
 | `client.run(ref, input, opts?)`           | Execute task/workflow                          |
 | `client.emit(event, payload \| payloads)` | Emit one or many events                        |
 | `client.emitBulk(event, payloads)`        | Emit multiple events (deprecated — use `emit`) |
+
+Calls to `emit`, `emitBulk` and `run` pass through registered [client interceptors](#client-interceptors).
 
 ### Context Types
 
