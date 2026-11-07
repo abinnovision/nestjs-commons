@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.8.0...nestjs-hatchet-v0.9.0) (2026-11-07)
+
+
+### Features
+
+* **hatchet:** add client interceptors for emit and run ([#297](https://github.com/abinnovision/nestjs-commons/issues/297)) ([6746b85](https://github.com/abinnovision/nestjs-commons/commit/6746b85b2faaabfa59bb630d77dfe60f94aa0028))
+
+
+### Bug Fixes
+
+* **deps:** bump zod from 4.4.3 to 4.6.6 ([#292](https://github.com/abinnovision/nestjs-commons/issues/292)) ([2c49dff](https://github.com/abinnovision/nestjs-commons/commit/2c49dff1a6e4a466c66f80e5383174047b816551))
+
 ## [0.8.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.1...nestjs-hatchet-v0.8.0) (2026-10-12)
 
 
