@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://cdn.jsdelivr.net/npm/@tallyrelease/cli@0/dist/tallyrelease.schema.json
+plugins:
+  node: {}
+
+defaults:
+  # Matches the existing tags.
+  tagFormat: "nestjs-{id}-v{version}"
+  # One release PR per package.
+  releasePr: separate
+
+branches:
+  - name: main
+    line: default
+    channel: beta
+
+units:
+  "packages/*": { release: true, tags: [dist] }
+
+# Changes here rebuild every unit (added to the node plugin defaults).
+globalInputs:
+  - .tool-versions
+
+ignore:
+  - "*.md"
+  - .github/**
+  - .husky/**
+  - .idea/**
+  - .editorconfig
+  - .gitattributes
