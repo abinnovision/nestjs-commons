@@ -22,7 +22,7 @@ services:
   # Email: admin@example.com
   # Password: Admin123!!
   hatchet-lite:
-    image: ghcr.io/hatchet-dev/hatchet/hatchet-lite:v0.70.6
+    image: ghcr.io/hatchet-dev/hatchet/hatchet-lite:v0.114.2
     depends_on:
       postgres:
         condition: service_healthy
