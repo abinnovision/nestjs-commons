@@ -40,9 +40,14 @@ Runnable Nest apps under [`examples/`](./examples):
 - [`configuration`](./examples/configuration) — `@abinnovision/nestjs-configx` end-to-end.
 - [`hatchet-integration`](./examples/hatchet-integration) — `@abinnovision/nestjs-hatchet` workflows + events.
 
-## Versioning
+## Releasing
 
-Each package is versioned independently via [release-please](https://github.com/googleapis/release-please) — versions in the table above are not aligned.
+Each package is versioned independently with [tallyrelease](https://github.com/abinnovision/tallyrelease); versions in the table above are not aligned.
+
+- Every merge to `main` publishes the changed packages as prereleases to the npm `beta` dist-tag.
+- tallyrelease keeps one release PR per package open. Merging it tags `nestjs-<package>-v<version>` and publishes the stable release to `latest`.
+- While a package is below 1.0, breaking changes and features give a minor bump. Use a `Release-As: <package>@1.0.0` commit footer to release 1.0.
+- New packages under `packages/` are picked up by the `packages/*` unit in [`tallyrelease.yaml`](./tallyrelease.yaml).
 
 ## Development
 
