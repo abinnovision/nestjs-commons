@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.1.0...nestjs-configx-v2.1.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **deps:** bump zod from 4.4.3 to 4.6.6 ([#292](https://github.com/abinnovision/nestjs-commons/issues/292)) ([2c49dff](https://github.com/abinnovision/nestjs-commons/commit/2c49dff1a6e4a466c66f80e5383174047b816551))
+
 ## [2.1.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-configx-v2.0.4...nestjs-configx-v2.1.0) (2026-10-11)
 
 
