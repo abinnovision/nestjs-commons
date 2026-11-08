@@ -1,4 +1,7 @@
-import type { ClientInterceptor, Interceptor } from "../interceptor/index.js";
+import type {
+	ClientInterceptor,
+	TaskInterceptor,
+} from "../interceptor/index.js";
 import type { AnyHostCtor } from "../references/shared.js";
 import type { Type } from "@nestjs/common";
 
@@ -15,7 +18,7 @@ export class HatchetFeatureRegistration {
  * Stores interceptor class references for later resolution via ModuleRef.
  */
 export class InterceptorRegistration {
-	public constructor(public readonly refs: Type<Interceptor>[]) {}
+	public constructor(public readonly refs: Type<TaskInterceptor>[]) {}
 }
 
 /**

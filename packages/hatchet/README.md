@@ -175,9 +175,9 @@ await client.emit(OrderEvent, [
 ]);
 ```
 
-### Execution interceptors
+### Task interceptors
 
-Execution interceptors wrap every task and workflow execution on the worker, e.g. for
+Task interceptors wrap every task execution on the worker, including each task of a workflow, e.g. for
 logging or tracing. Pass them to `forRoot()`/`forRootAsync()` and list them as providers, since they are
 resolved from the application rather than instantiated by the module. For producer-side
 calls, see [Client interceptors](#client-interceptors).
@@ -186,12 +186,12 @@ calls, see [Client interceptors](#client-interceptors).
 import {
   BaseCtx,
   HatchetModule,
-  Interceptor,
+  TaskInterceptor,
 } from "@abinnovision/nestjs-hatchet";
 import { Injectable, Logger, Module } from "@nestjs/common";
 
 @Injectable()
-export class LoggingInterceptor extends Interceptor {
+export class LoggingInterceptor extends TaskInterceptor {
   private readonly logger = new Logger(LoggingInterceptor.name);
 
   public async intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
@@ -205,7 +205,7 @@ export class LoggingInterceptor extends Interceptor {
     HatchetModule.forRoot({
       config: {},
       worker: { name: "my-worker" },
-      interceptors: [LoggingInterceptor],
+      taskInterceptors: [LoggingInterceptor],
     }),
   ],
   providers: [LoggingInterceptor],
@@ -221,7 +221,7 @@ deprecated `emitBulk`) and `client.run`. Extend `ClientInterceptor` and implemen
 `clientInterceptors` option of `forRoot()`/`forRootAsync()` and list it in `providers`.
 
 The example below propagates a correlation id. The client interceptor writes it into
-`additionalMetadata`, and an execution interceptor on the worker restores it from the
+`additionalMetadata`, and a task interceptor on the worker restores it from the
 metadata of the running task.
 
 ```typescript
@@ -234,7 +234,7 @@ import {
   EmitCtx,
   EmitOptions,
   HatchetModule,
-  Interceptor,
+  TaskInterceptor,
   RunCtx,
   RunOptions,
 } from "@abinnovision/nestjs-hatchet";
@@ -278,7 +278,7 @@ export class CorrelationClientInterceptor extends ClientInterceptor {
 }
 
 @Injectable()
-export class CorrelationInterceptor extends Interceptor {
+export class CorrelationInterceptor extends TaskInterceptor {
   public async intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
     const id = ctx.fromSDK.additionalMetadata()?.correlationId ?? randomUUID();
     return correlation.run({ id }, next);
@@ -290,7 +290,7 @@ export class CorrelationInterceptor extends Interceptor {
     HatchetModule.forRootAsync({
       useFactory: () => ({ config: {}, worker: { name: "my-worker" } }),
       clientInterceptors: [CorrelationClientInterceptor],
-      interceptors: [CorrelationInterceptor],
+      taskInterceptors: [CorrelationInterceptor],
     }),
   ],
   providers: [CorrelationClientInterceptor, CorrelationInterceptor],
@@ -313,7 +313,7 @@ Behavior:
 - `childKey` has no effect on `Client.run`.
 - Interceptors run in array order, the first being the outermost. An interceptor may
   skip `next()` to short-circuit the call.
-- Interceptor classes must be listed in `providers`. A missing provider fails
+- Client interceptor classes must be listed in `providers`. A missing provider fails
   application bootstrap.
 - Child runs started with `ctx.run` inherit the parent's `additionalMetadata` on
   Hatchet engine `>= v0.104.0`, so they need no client interceptor.
@@ -322,7 +322,7 @@ Caveats:
 
 - Calling `client.emit` or `client.run` inside an interceptor re-enters the chain.
   Guard against the recursion yourself.
-- Request-scoped interceptor providers are not supported, same as execution
+- Request-scoped interceptor providers are not supported, same as task
   interceptors.
 
 ### Helper Methods
@@ -355,7 +355,8 @@ Module options (extras to `forRoot`/`forRootAsync`):
 
 | Option               | Description                                            |
 | -------------------- | ------------------------------------------------------ |
-| `interceptors`       | `Interceptor` classes wrapping task/workflow execution |
+| `taskInterceptors`   | `TaskInterceptor` classes wrapping each task execution |
+| `interceptors`       | Deprecated, use `taskInterceptors`                     |
 | `clientInterceptors` | `ClientInterceptor` classes wrapping `emit` and `run`  |
 
 ### Decorators

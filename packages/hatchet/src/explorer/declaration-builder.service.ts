@@ -13,7 +13,7 @@ import {
 	createTaskCtx,
 	createWorkflowCtx,
 } from "../execution/context/index.js";
-import { Interceptor } from "../interceptor/index.js";
+import { TaskInterceptor } from "../interceptor/index.js";
 import { InterceptorRegistration } from "../internal/registrations.js";
 import { fromInstance } from "../metadata/accessor.js";
 import { AnyHost } from "../references/shared.js";
@@ -28,7 +28,7 @@ type CreateWorkflowTaskOpts = ReturnType<WorkflowDeclaration["task"]>;
 
 @Injectable()
 export class DeclarationBuilderService implements OnModuleInit {
-	private interceptors: Interceptor[] = [];
+	private interceptors: TaskInterceptor[] = [];
 
 	public constructor(
 		private readonly moduleRef: ModuleRef,

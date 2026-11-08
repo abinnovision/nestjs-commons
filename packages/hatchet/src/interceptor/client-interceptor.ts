@@ -1,4 +1,4 @@
-import type { Interceptor } from "./interceptor.js";
+import type { TaskInterceptor } from "./interceptor.js";
 import type { AnyEventDefinition } from "../events/index.js";
 import type { HostRunOpts } from "../execution/host-run/function-type.js";
 import type { AnyCallableRef } from "../references/index.js";
@@ -43,7 +43,7 @@ export interface RunCtx {
  * order (first = outermost), and may only replace options through `next(options)`.
  * `next()` and `next(undefined)` keep the current options.
  *
- * For worker-side execution, see {@link Interceptor}.
+ * For worker-side execution, see {@link TaskInterceptor}.
  */
 export abstract class ClientInterceptor {
 	/**

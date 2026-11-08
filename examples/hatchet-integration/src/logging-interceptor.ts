@@ -1,14 +1,14 @@
-import { BaseCtx, Interceptor } from "@abinnovision/nestjs-hatchet";
+import { BaseCtx, TaskInterceptor } from "@abinnovision/nestjs-hatchet";
 import { Injectable, Logger } from "@nestjs/common";
 
 import { currentCorrelationId } from "./correlation/correlation.context";
 
 /**
- * Example Interceptor that logs task execution with timing.
+ * Example TaskInterceptor that logs task execution with timing.
  * Demonstrates how to intercept all task/workflow executions with cross-cutting concerns.
  */
 @Injectable()
-export class LoggingInterceptor extends Interceptor {
+export class LoggingInterceptor extends TaskInterceptor {
 	private readonly logger = new Logger("HatchetTask");
 
 	public async intercept<T>(
