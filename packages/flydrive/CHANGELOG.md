@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-flydrive-v0.3.0...nestjs-flydrive-v0.3.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* declare node engines required for nestjs 12 esm interop ([#303](https://github.com/abinnovision/nestjs-commons/issues/303)) ([fbeca8f](https://github.com/abinnovision/nestjs-commons/commit/fbeca8f08a4e31e11be13e37ab9d9c108c2a8ba6))
+
 ## [0.3.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-flydrive-v0.2.0...nestjs-flydrive-v0.3.0) (2026-10-11)
 
 
