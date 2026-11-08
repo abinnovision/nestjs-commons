@@ -17,7 +17,7 @@ import {
 	InputValidationFailedException,
 } from "../exceptions/index.js";
 import { BaseCtx } from "../execution/index.js";
-import { Interceptor } from "../interceptor/index.js";
+import { TaskInterceptor } from "../interceptor/index.js";
 import { InterceptorRegistration } from "../internal/registrations.js";
 import { Host, Task, WorkflowTask } from "../metadata/index.js";
 
@@ -55,10 +55,12 @@ class CircularWorkflow extends workflowHost() {
 	}
 }
 
-const noopInterceptor = mock<Interceptor>();
+const noopInterceptor = mock<TaskInterceptor>();
 
 // Helper to create a mock ModuleRef that returns interceptors
-function createMockModuleRef(interceptorMap: Map<any, Interceptor>): ModuleRef {
+function createMockModuleRef(
+	interceptorMap: Map<any, TaskInterceptor>,
+): ModuleRef {
 	return {
 		get: (token: any) => interceptorMap.get(token),
 	} as unknown as ModuleRef;
@@ -66,11 +68,11 @@ function createMockModuleRef(interceptorMap: Map<any, Interceptor>): ModuleRef {
 
 // Helper to create service with interceptors
 const createServiceWithInterceptors = (
-	interceptors: Interceptor[],
+	interceptors: TaskInterceptor[],
 ): DeclarationBuilderService => {
 	// Use Symbol as unique tokens for each interceptor
 	const tokens = interceptors.map(() => Symbol("InterceptorToken") as any);
-	const interceptorMap = new Map<any, Interceptor>();
+	const interceptorMap = new Map<any, TaskInterceptor>();
 	tokens.forEach((token, i) => interceptorMap.set(token, interceptors[i]!));
 
 	const mockModuleRef = createMockModuleRef(interceptorMap);
@@ -304,14 +306,14 @@ describe("declaration-builder.service.ts", () => {
 
 		it("resolves interceptors on module init", async () => {
 			const token = Symbol("InterceptorToken") as any;
-			const interceptorMap = new Map<any, Interceptor>();
+			const interceptorMap = new Map<any, TaskInterceptor>();
 			const serviceWithInterceptors = new DeclarationBuilderService(
 				createMockModuleRef(interceptorMap),
 				new InterceptorRegistration([token]),
 			);
 
 			// The interceptor instance only becomes available after construction.
-			const mockInterceptor = mock<Interceptor>();
+			const mockInterceptor = mock<TaskInterceptor>();
 			interceptorMap.set(token, mockInterceptor);
 			serviceWithInterceptors.onModuleInit();
 
@@ -326,7 +328,7 @@ describe("declaration-builder.service.ts", () => {
 
 		it("passes correct BaseCtx to interceptor", async () => {
 			const contextCaptor = captor<BaseCtx<any>>();
-			const mockInterceptor = mock<Interceptor>();
+			const mockInterceptor = mock<TaskInterceptor>();
 
 			const serviceWithInterceptors = createServiceWithInterceptors([
 				mockInterceptor,
@@ -353,7 +355,7 @@ describe("declaration-builder.service.ts", () => {
 		});
 
 		it("propagates errors from interceptor", async () => {
-			const mockInterceptor: Interceptor = {
+			const mockInterceptor: TaskInterceptor = {
 				intercept: () => {
 					throw new Error("Interceptor error");
 				},
@@ -378,7 +380,7 @@ describe("declaration-builder.service.ts", () => {
 		it("chains multiple interceptors in array order (first = outermost)", async () => {
 			const executionOrder: string[] = [];
 
-			const interceptor1: Interceptor = {
+			const interceptor1: TaskInterceptor = {
 				intercept: async (_ctx, next) => {
 					executionOrder.push("interceptor1-start");
 					const result = await next();
@@ -388,7 +390,7 @@ describe("declaration-builder.service.ts", () => {
 				},
 			};
 
-			const interceptor2: Interceptor = {
+			const interceptor2: TaskInterceptor = {
 				intercept: async (_ctx, next) => {
 					executionOrder.push("interceptor2-start");
 					const result = await next();

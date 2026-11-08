@@ -10,7 +10,7 @@ import { Client } from "./client/index.js";
 import { DeclarationBuilderService } from "./explorer/declaration-builder.service.js";
 import { WorkerManagementService } from "./explorer/worker-management.service.js";
 import { hatchetModuleConfigToken } from "./hatchet.module-config.js";
-import { ClientInterceptor, Interceptor } from "./interceptor/index.js";
+import { ClientInterceptor, TaskInterceptor } from "./interceptor/index.js";
 import {
 	ClientInterceptorRegistration,
 	HatchetFeatureRegistration,
@@ -27,10 +27,17 @@ import type { AnyHostCtor } from "./references/shared.js";
  */
 interface HatchetModuleExtras {
 	/**
-	 * Optional interceptor classes to intercept all task/workflow executions.
+	 * @deprecated Use `taskInterceptors`. If both are set, they are concatenated
+	 * with `interceptors` first; a class listed in both runs twice.
+	 */
+	interceptors?: Type<TaskInterceptor>[] | undefined;
+
+	/**
+	 * Optional task interceptor classes wrapping every task execution on the
+	 * worker, including each task of a workflow.
 	 * Interceptors execute in array order (first = outermost).
 	 */
-	interceptors?: Type<Interceptor>[] | undefined;
+	taskInterceptors?: Type<TaskInterceptor>[] | undefined;
 
 	/**
 	 * Optional client interceptor classes to intercept `Client.emit` and `Client.run`.
@@ -46,35 +53,47 @@ const { ConfigurableModuleClass } =
 	})
 		.setClassMethodName("forRoot")
 		.setExtras<HatchetModuleExtras>(
-			{ interceptors: undefined, clientInterceptors: undefined },
-			(definition, extras) => ({
-				...definition,
-				global: true,
-				providers: [
-					...(definition.providers ?? []),
+			{
+				interceptors: undefined,
+				taskInterceptors: undefined,
+				clientInterceptors: undefined,
+			},
+			(definition, extras) => {
+				const taskInterceptors = [
+					// eslint-disable-next-line @typescript-eslint/no-deprecated
+					...(extras.interceptors ?? []),
+					...(extras.taskInterceptors ?? []),
+				];
 
-					// Store interceptor class references for later resolution via ModuleRef
-					...(extras.interceptors?.length
-						? [
-								{
-									provide: InterceptorRegistration,
-									useValue: new InterceptorRegistration(extras.interceptors),
-								},
-							]
-						: []),
+				return {
+					...definition,
+					global: true,
+					providers: [
+						...(definition.providers ?? []),
 
-					...(extras.clientInterceptors?.length
-						? [
-								{
-									provide: ClientInterceptorRegistration,
-									useValue: new ClientInterceptorRegistration(
-										extras.clientInterceptors,
-									),
-								},
-							]
-						: []),
-				],
-			}),
+						// Store interceptor class references for later resolution via ModuleRef
+						...(taskInterceptors.length
+							? [
+									{
+										provide: InterceptorRegistration,
+										useValue: new InterceptorRegistration(taskInterceptors),
+									},
+								]
+							: []),
+
+						...(extras.clientInterceptors?.length
+							? [
+									{
+										provide: ClientInterceptorRegistration,
+										useValue: new ClientInterceptorRegistration(
+											extras.clientInterceptors,
+										),
+									},
+								]
+							: []),
+					],
+				};
+			},
 		)
 		.build();
 

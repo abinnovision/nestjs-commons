@@ -32,10 +32,10 @@ import { LoggingInterceptor } from "./logging-interceptor";
 			}),
 
 			/*
-			 * Worker-side interceptors. CorrelationInterceptor is outermost, so the
+			 * Worker-side task interceptors. CorrelationInterceptor is outermost, so the
 			 * LoggingInterceptor already sees the restored correlation id.
 			 */
-			interceptors: [CorrelationInterceptor, LoggingInterceptor],
+			taskInterceptors: [CorrelationInterceptor, LoggingInterceptor],
 
 			// Producer-side interceptors for Client.emit and Client.run.
 			clientInterceptors: [CorrelationClientInterceptor],
