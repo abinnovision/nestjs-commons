@@ -7,13 +7,16 @@ NestJS integration for [Hatchet](https://hatchet.run) - a distributed workflow o
 ## Installation
 
 ```bash
-yarn add @abinnovision/nestjs-hatchet
+yarn add @abinnovision/nestjs-hatchet @hatchet-dev/typescript-sdk
 ```
+
+`@hatchet-dev/typescript-sdk` is a peer dependency, so your application controls the SDK
+version. Import SDK types such as `Context` directly from it.
 
 ### Hatchet SDK Re-export
 
 This package re-exports `@hatchet-dev/typescript-sdk`, so you can import SDK types and
-classes directly without adding the Hatchet SDK as a separate dependency:
+classes from it:
 
 ```typescript
 import { HatchetClient, Context } from "@abinnovision/nestjs-hatchet/sdk";

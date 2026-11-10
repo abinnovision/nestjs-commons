@@ -145,6 +145,7 @@ __metadata:
     vitest-mock-extended: "npm:^5.1.1"
     zod: "npm:^4.6.6"
   peerDependencies:
+    "@hatchet-dev/typescript-sdk": ^1.45.0
     "@nestjs/common": ^11.0.0 || ^12.0.0
     "@nestjs/core": ^11.0.0 || ^12.0.0
   languageName: unknown
@@ -1793,6 +1794,7 @@ __metadata:
     "@abinnovision/nestjs-configx": "workspace:^"
     "@abinnovision/nestjs-hatchet": "workspace:^"
     "@abinnovision/prettier-config": "npm:^2.2.0"
+    "@hatchet-dev/typescript-sdk": "npm:^1.46.1"
     "@nestjs/cli": "npm:^12.0.0"
     "@nestjs/common": "npm:^12.3.3"
     "@nestjs/core": "npm:^12.3.3"
