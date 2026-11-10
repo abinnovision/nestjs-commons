@@ -74,6 +74,8 @@ export class DeclarationBuilderService implements OnModuleInit {
 		// Get the SDK-compatible host options.
 		const hostOpts = accessor.sdkOpts;
 
+		const hostConfig = this.createHostConfig(host);
+
 		// Get the single decorated method name.
 		const methodName = accessor.methods[0];
 		if (!methodName) {
@@ -91,7 +93,7 @@ export class DeclarationBuilderService implements OnModuleInit {
 			...hostOpts,
 			...taskOpts,
 			fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-				const partial = await this.preProcessContext(host, ctx);
+				const partial = await this.preProcessContext(host, ctx, hostConfig);
 
 				// Create the task context from the SDK context and the partial.
 				const taskCtx = createTaskCtx({ fromSDK: ctx, ...partial });
@@ -116,6 +118,8 @@ export class DeclarationBuilderService implements OnModuleInit {
 
 		const accessor = fromInstance(host);
 		const graph = this.buildWorkflowHostGraph(host);
+
+		const hostConfig = this.createHostConfig(host);
 
 		// Construct an unbound declaration for it.
 		const workflowDec = new WorkflowDeclaration(accessor.sdkOpts);
@@ -153,7 +157,7 @@ export class DeclarationBuilderService implements OnModuleInit {
 				name: method,
 				parents: parentsResolved,
 				fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-					const partial = await this.preProcessContext(host, ctx);
+					const partial = await this.preProcessContext(host, ctx, hostConfig);
 
 					// Create the workflow context from the SDK context and the partial
 					const workflowCtx = createWorkflowCtx({
@@ -288,6 +292,18 @@ export class DeclarationBuilderService implements OnModuleInit {
 	}
 
 	/**
+	 * Builds the host trigger config once per declaration, shared by every invocation.
+	 */
+	private createHostConfig(host: AnyHost): HostTriggerConfig {
+		const accessor = fromInstance(host);
+
+		return {
+			onEvents: accessor.sdkOpts.onEvents ?? [],
+			onCrons: accessor.metadata.onCrons ?? [],
+		};
+	}
+
+	/**
 	 * Pre-processes the context by inferring the trigger source and
 	 * validating the input (if applicable).
 	 *
@@ -296,6 +312,7 @@ export class DeclarationBuilderService implements OnModuleInit {
 	private async preProcessContext(
 		host: AnyHost,
 		context: Context<any>,
+		hostConfig: HostTriggerConfig,
 	): Promise<Pick<BaseCtx<unknown>, "input" | "triggerSource" | "hostConfig">> {
 		// Infer the trigger source.
 		const triggerSource = this.inferTriggerSource(context);
@@ -306,15 +323,6 @@ export class DeclarationBuilderService implements OnModuleInit {
 		 */
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const input = context.input ?? {};
-
-		// Build the host trigger config for introspection.
-		const accessor = fromInstance(host);
-
-		// Construct the host trigger config (uses translated SDK opts for onEvents).
-		const hostConfig: HostTriggerConfig = {
-			onEvents: accessor.sdkOpts.onEvents ?? [],
-			onCrons: accessor.metadata.onCrons ?? [],
-		};
 
 		/*
 		 * Only run validation for "run" triggers.
