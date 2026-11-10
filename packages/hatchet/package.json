@@ -74,7 +74,6 @@
 	},
 	"prettier": "@abinnovision/prettier-config",
 	"dependencies": {
-		"@hatchet-dev/typescript-sdk": "^1.46.1",
 		"@standard-schema/spec": "^1.1.0",
 		"directed-graph-typed": "^2.6.0"
 	},
@@ -82,6 +81,7 @@
 		"@abinnovision/eslint-config-base": "^3.4.1",
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@arethetypeswrong/core": "^0.18.3",
+		"@hatchet-dev/typescript-sdk": "^1.46.1",
 		"@nestjs/common": "^12.3.3",
 		"@nestjs/core": "^12.3.3",
 		"@swc/core": "^1.16.1",
@@ -100,6 +100,7 @@
 		"zod": "^4.6.6"
 	},
 	"peerDependencies": {
+		"@hatchet-dev/typescript-sdk": "^1.45.0",
 		"@nestjs/common": "^11.0.0 || ^12.0.0",
 		"@nestjs/core": "^11.0.0 || ^12.0.0"
 	},
