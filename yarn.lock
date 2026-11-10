@@ -125,7 +125,7 @@ __metadata:
     "@abinnovision/eslint-config-base": "npm:^3.4.1"
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@arethetypeswrong/core": "npm:^0.18.3"
-    "@hatchet-dev/typescript-sdk": "npm:^1.36.0"
+    "@hatchet-dev/typescript-sdk": "npm:^1.46.1"
     "@nestjs/common": "npm:^12.3.3"
     "@nestjs/core": "npm:^12.3.3"
     "@standard-schema/spec": "npm:^1.1.0"
@@ -635,32 +635,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@connectrpc/connect-node@npm:~2.1.2":
-  version: 2.1.2
-  resolution: "@connectrpc/connect-node@npm:2.1.2"
+"@connectrpc/connect-node@npm:~2.3.0":
+  version: 2.3.0
+  resolution: "@connectrpc/connect-node@npm:2.3.0"
   peerDependencies:
     "@bufbuild/protobuf": ^2.7.0
-    "@connectrpc/connect": 2.1.2
-  checksum: 10c0/ba8b0c9384c3829b377aa7a826dc0cd50a6093527d2ec7014604912836336ea9604a2b5acea42b10477f8be4569e49dded66ca0fc77f5f5b027035e029e13ea9
+    "@connectrpc/connect": 2.3.0
+  checksum: 10c0/02aa588e8dc7e89c3e8ac81b8cce591d6b1135e14d9fba8a8a60ed4aaf9ba10a524b1deea08c8abd6c8d8a4c6818f5b7d51922822aa46dc5b9fb72139a2b31f9
   languageName: node
   linkType: hard
 
-"@connectrpc/connect-web@npm:~2.1.2":
-  version: 2.1.2
-  resolution: "@connectrpc/connect-web@npm:2.1.2"
+"@connectrpc/connect-web@npm:~2.3.0":
+  version: 2.3.0
+  resolution: "@connectrpc/connect-web@npm:2.3.0"
   peerDependencies:
     "@bufbuild/protobuf": ^2.7.0
-    "@connectrpc/connect": 2.1.2
-  checksum: 10c0/304667186990d79e61ace8af03a39c5474e6ecb21282eeaa9e216a0e214524003891005ff3cfbda33230c21b779cfece530bf8cfdd48550b7861621513d18e0e
+    "@connectrpc/connect": 2.3.0
+  checksum: 10c0/43c3bb86cda1b293cc4ad93bd4fa0ec109ab10db916db16f9e1676eda518060e9527bd5a22d43a24930aea76f96cada5778008865e2d32c18be6ec61daadedc8
   languageName: node
   linkType: hard
 
-"@connectrpc/connect@npm:~2.1.2":
-  version: 2.1.2
-  resolution: "@connectrpc/connect@npm:2.1.2"
+"@connectrpc/connect@npm:~2.3.0":
+  version: 2.3.0
+  resolution: "@connectrpc/connect@npm:2.3.0"
   peerDependencies:
     "@bufbuild/protobuf": ^2.7.0
-  checksum: 10c0/4e1500089023b752efd44fa940a5ae1e1fa00e1bebc4ba0ced272bb935920d8c3b85b77450e644ad442bb8ca9a275b0c17136f896ba8eff036178131db01d615
+  checksum: 10c0/53884a6729e3b6132445484d22af7d7cb261cfdbc5f5173101eec62014adea0cb955384ab0a4ee234548d857c5dab5006bb644223e87adcd0604987416568533
   languageName: node
   linkType: hard
 
@@ -1128,14 +1128,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hatchet-dev/typescript-sdk@npm:^1.36.0":
-  version: 1.36.0
-  resolution: "@hatchet-dev/typescript-sdk@npm:1.36.0"
+"@hatchet-dev/typescript-sdk@npm:^1.46.1":
+  version: 1.46.1
+  resolution: "@hatchet-dev/typescript-sdk@npm:1.46.1"
   dependencies:
     "@bufbuild/protobuf": "npm:^2.15.0"
-    "@connectrpc/connect": "npm:~2.1.2"
-    "@connectrpc/connect-node": "npm:~2.1.2"
-    "@connectrpc/connect-web": "npm:~2.1.2"
+    "@connectrpc/connect": "npm:~2.3.0"
+    "@connectrpc/connect-node": "npm:~2.3.0"
+    "@connectrpc/connect-web": "npm:~2.3.0"
     "@types/qs": "npm:^6.15.0"
     abort-controller-x: "npm:^0.5.0"
     axios: "npm:^1.15.2"
@@ -1182,7 +1182,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/7197ade7c354c08c0f82c0180efbc8171f57ae139dcabc2cb64c105d7f54b432f720e27dbe78995d234e00edf057af08162b68cb80c7db200e6f2f0507b58b09
+  checksum: 10c0/7e198264de3215d5626e53a6bc808a4254c040354b685e2e34127f046c460401945bfcb72e6a3ed325bffa65fb15c4d022deac5af51757d55936c544de6dcab5
   languageName: node
   linkType: hard
 
