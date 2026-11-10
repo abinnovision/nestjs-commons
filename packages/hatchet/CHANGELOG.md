@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.9.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.8.0...nestjs-hatchet-v0.9.0) (2026-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **hatchet:** remove the ./sdk re-export ([#309](https://github.com/abinnovision/nestjs-commons/issues/309))
+* **hatchet:** declare Hatchet SDK as a peer dependency ([#308](https://github.com/abinnovision/nestjs-commons/issues/308))
+* **hatchet:** bump Hatchet SDK to 1.46.1 and require Node.js 22.12 ([#307](https://github.com/abinnovision/nestjs-commons/issues/307))
+
+### Features
+
+* **hatchet:** add client interceptors for emit and run ([#297](https://github.com/abinnovision/nestjs-commons/issues/297)) ([6746b85](https://github.com/abinnovision/nestjs-commons/commit/6746b85b2faaabfa59bb630d77dfe60f94aa0028))
+* **hatchet:** declare Hatchet SDK as a peer dependency ([#308](https://github.com/abinnovision/nestjs-commons/issues/308)) ([8f858f7](https://github.com/abinnovision/nestjs-commons/commit/8f858f71c305e409652951c2966b6d630d11c737))
+* **hatchet:** remove the ./sdk re-export ([#309](https://github.com/abinnovision/nestjs-commons/issues/309)) ([f03f3a4](https://github.com/abinnovision/nestjs-commons/commit/f03f3a4dbaaace199cc02a31586cf68ab13c087a))
+* **hatchet:** rename Interceptor to TaskInterceptor and add taskInterceptors option ([#302](https://github.com/abinnovision/nestjs-commons/issues/302)) ([10db5d4](https://github.com/abinnovision/nestjs-commons/commit/10db5d42921925a55a3443d36d6a158ec973da03))
+
+
+### Bug Fixes
+
+* declare node engines required for nestjs 12 esm interop ([#303](https://github.com/abinnovision/nestjs-commons/issues/303)) ([fbeca8f](https://github.com/abinnovision/nestjs-commons/commit/fbeca8f08a4e31e11be13e37ab9d9c108c2a8ba6))
+* **deps:** bump zod from 4.4.3 to 4.6.6 ([#292](https://github.com/abinnovision/nestjs-commons/issues/292)) ([2c49dff](https://github.com/abinnovision/nestjs-commons/commit/2c49dff1a6e4a466c66f80e5383174047b816551))
+* **hatchet:** bump Hatchet SDK to 1.46.1 and require Node.js 22.12 ([#307](https://github.com/abinnovision/nestjs-commons/issues/307)) ([69a48cf](https://github.com/abinnovision/nestjs-commons/commit/69a48cf57c8ffc217cd688517478c97225010450))
+
 ## [0.8.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.7.1...nestjs-hatchet-v0.8.0) (2026-10-12)
 
 
