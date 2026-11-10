@@ -13,15 +13,6 @@ yarn add @abinnovision/nestjs-hatchet @hatchet-dev/typescript-sdk
 `@hatchet-dev/typescript-sdk` is a peer dependency, so your application controls the SDK
 version. Import SDK types such as `Context` directly from it.
 
-### Hatchet SDK Re-export
-
-This package re-exports `@hatchet-dev/typescript-sdk`, so you can import SDK types and
-classes from it:
-
-```typescript
-import { HatchetClient, Context } from "@abinnovision/nestjs-hatchet/sdk";
-```
-
 ## Quick Start
 
 ### 1. Configure Module
