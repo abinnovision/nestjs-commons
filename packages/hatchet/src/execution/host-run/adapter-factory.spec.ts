@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDeep } from "vitest-mock-extended";
 
 import {
@@ -8,6 +8,7 @@ import {
 import { TestTask, TestWorkflow } from "../../__fixtures__/test-hosts.js";
 import { taskRef, workflowRef } from "../../references/index.js";
 
+import type { ClientInterceptor } from "../../interceptor/index.js";
 import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
 
 const createMockHatchetClient = () => mockDeep<HatchetClient>();
@@ -25,6 +26,15 @@ const createMockSdkContext = <I>(input?: I) => {
 
 const createMockRunRef = (output: unknown): any => ({
 	output: Promise.resolve(output),
+});
+
+/**
+ * Builds the rejecting output lazily so no unhandled rejection fires early.
+ */
+const rejectingRunRef = (error: Error): any => ({
+	get output() {
+		return Promise.reject(error);
+	},
 });
 
 describe("createHostRunForContext()", () => {
@@ -89,13 +99,19 @@ describe("createHostRunForContext()", () => {
 
 	it("handles array inputs", async () => {
 		const ref = taskRef(TestTask);
-		sdkCtx.runNoWaitChild
-			.mockResolvedValueOnce(createMockRunRef({ result: "a" }))
-			.mockResolvedValueOnce(createMockRunRef({ result: "b" }));
+		sdkCtx.bulkRunNoWaitChildren.mockResolvedValueOnce([
+			createMockRunRef({ result: "a" }),
+			createMockRunRef({ result: "b" }),
+		]);
 
 		const result = await runFn(ref, [{ data: "a" }, { data: "b" }]);
 
-		expect(sdkCtx.runNoWaitChild).toHaveBeenCalledTimes(2);
+		expect(sdkCtx.bulkRunNoWaitChildren).toHaveBeenCalledTimes(1);
+		expect(sdkCtx.bulkRunNoWaitChildren).toHaveBeenCalledWith([
+			{ workflow: "test-task", input: { data: "a" }, options: {} },
+			{ workflow: "test-task", input: { data: "b" }, options: {} },
+		]);
+		expect(sdkCtx.runNoWaitChild).not.toHaveBeenCalled();
 		expect(result).toEqual([{ result: "a" }, { result: "b" }]);
 	});
 
@@ -103,15 +119,60 @@ describe("createHostRunForContext()", () => {
 		const ref = taskRef(TestTask);
 		const mockRunRef1 = createMockRunRef({ result: "a" });
 		const mockRunRef2 = createMockRunRef({ result: "b" });
-		sdkCtx.runNoWaitChild
-			.mockResolvedValueOnce(mockRunRef1)
-			.mockResolvedValueOnce(mockRunRef2);
+		sdkCtx.bulkRunNoWaitChildren.mockResolvedValueOnce([
+			mockRunRef1,
+			mockRunRef2,
+		]);
 
 		const result = await runFn(ref, [{ data: "a" }, { data: "b" }], {
 			wait: false,
 		});
 
 		expect(result).toEqual([mockRunRef1, mockRunRef2]);
+		expect((result as any[])[0]).toBe(mockRunRef1);
+		expect((result as any[])[1]).toBe(mockRunRef2);
+	});
+
+	it("maps childKey to key for every child in array input", async () => {
+		sdkCtx.bulkRunNoWaitChildren.mockResolvedValueOnce([
+			createMockRunRef({ result: "a" }),
+			createMockRunRef({ result: "b" }),
+		]);
+
+		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }], {
+			childKey: "child-1",
+		});
+
+		const children = sdkCtx.bulkRunNoWaitChildren.mock.calls[0]![0];
+		expect(children).toHaveLength(2);
+		for (const child of children) {
+			expect(child.options).toMatchObject({
+				childKey: "child-1",
+				key: "child-1",
+			});
+		}
+	});
+
+	it("sets the standalone task name on task run refs for array inputs", async () => {
+		const mockRunRef1 = createMockRunRef({ result: "a" });
+		const mockRunRef2 = createMockRunRef({ result: "b" });
+		sdkCtx.bulkRunNoWaitChildren.mockResolvedValueOnce([
+			mockRunRef1,
+			mockRunRef2,
+		]);
+
+		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
+
+		expect(mockRunRef1._standaloneTaskName).toBe("test-task");
+		expect(mockRunRef2._standaloneTaskName).toBe("test-task");
+	});
+
+	it("returns an empty array without calling the SDK for empty input", async () => {
+		const result = await runFn(taskRef(TestTask), []);
+
+		expect(result).toEqual([]);
+		expect(sdkCtx.bulkRunNoWaitChildren).not.toHaveBeenCalled();
+		expect(sdkCtx.runNoWaitChild).not.toHaveBeenCalled();
 	});
 
 	it("sets the standalone task name on task run refs", async () => {
@@ -181,26 +242,105 @@ describe("createHostRunForAdmin()", () => {
 
 	it("handles array inputs", async () => {
 		const ref = taskRef(TestTask);
-		mockClient.runNoWait
-			.mockResolvedValueOnce(createMockRunRef({ result: "a" }))
-			.mockResolvedValueOnce(createMockRunRef({ result: "b" }));
+		mockClient.admin.runWorkflows.mockResolvedValueOnce([
+			createMockRunRef({ result: "a" }),
+			createMockRunRef({ result: "b" }),
+		]);
 
 		const result = await runFn(ref, [{ data: "a" }, { data: "b" }]);
 
-		expect(mockClient.runNoWait).toHaveBeenCalledTimes(2);
+		expect(mockClient.admin.runWorkflows).toHaveBeenCalledTimes(1);
+		expect(mockClient.admin.runWorkflows).toHaveBeenCalledWith([
+			{ workflowName: "test-task", input: { data: "a" }, options: {} },
+			{ workflowName: "test-task", input: { data: "b" }, options: {} },
+		]);
+		expect(mockClient.runNoWait).not.toHaveBeenCalled();
 		expect(result).toEqual([{ result: "a" }, { result: "b" }]);
+	});
+
+	it("returns run refs for array inputs when wait is false", async () => {
+		const mockRunRef1 = createMockRunRef({ result: "a" });
+		const mockRunRef2 = createMockRunRef({ result: "b" });
+		mockClient.admin.runWorkflows.mockResolvedValueOnce([
+			mockRunRef1,
+			mockRunRef2,
+		]);
+
+		const result = await runFn(
+			taskRef(TestTask),
+			[{ data: "a" }, { data: "b" }],
+			{ wait: false },
+		);
+
+		expect((result as any[])[0]).toBe(mockRunRef1);
+		expect((result as any[])[1]).toBe(mockRunRef2);
 	});
 
 	it("sets the standalone task name on task run refs for array inputs", async () => {
 		const mockRunRef1 = createMockRunRef({ result: "a" });
 		const mockRunRef2 = createMockRunRef({ result: "b" });
-		mockClient.runNoWait
-			.mockResolvedValueOnce(mockRunRef1)
-			.mockResolvedValueOnce(mockRunRef2);
+		mockClient.admin.runWorkflows.mockResolvedValueOnce([
+			mockRunRef1,
+			mockRunRef2,
+		]);
 
 		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
 
 		expect(mockRunRef1._standaloneTaskName).toBe("test-task");
 		expect(mockRunRef2._standaloneTaskName).toBe("test-task");
+	});
+
+	it("rejects when one output rejects", async () => {
+		const error = new Error("output failed");
+		mockClient.admin.runWorkflows.mockResolvedValueOnce([
+			createMockRunRef({ result: "a" }),
+			rejectingRunRef(error),
+		]);
+
+		await expect(
+			runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]),
+		).rejects.toBe(error);
+	});
+
+	it("propagates a runWorkflows rejection", async () => {
+		const error = new Error("trigger failed");
+		mockClient.admin.runWorkflows.mockRejectedValueOnce(error);
+
+		await expect(
+			runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]),
+		).rejects.toBe(error);
+	});
+
+	it("applies interceptor-replaced options to every bulk entry", async () => {
+		const replacement = { additionalMetadata: { key: "changed" } };
+		const interceptRun = vi.fn(
+			(_ctx: unknown, next: (options?: any) => Promise<unknown>) =>
+				next(replacement),
+		);
+		const interceptor = { interceptRun } as unknown as ClientInterceptor;
+		const interceptedRunFn = createHostRunForAdmin(mockClient, () => [
+			interceptor,
+		]);
+		mockClient.admin.runWorkflows.mockResolvedValueOnce([
+			createMockRunRef({ result: "a" }),
+			createMockRunRef({ result: "b" }),
+		]);
+
+		await interceptedRunFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
+
+		expect(interceptRun).toHaveBeenCalledTimes(1);
+		const entries = mockClient.admin.runWorkflows.mock.calls[0]![0];
+		expect(entries).toHaveLength(2);
+		for (const entry of entries) {
+			expect(entry.options).toBe(replacement);
+		}
+	});
+
+	it("returns an empty array without calling the SDK for empty input", async () => {
+		const result = await runFn(taskRef(TestTask), []);
+
+		expect(result).toEqual([]);
+		expect(mockClient.admin.runWorkflows).not.toHaveBeenCalled();
+		expect(mockClient.runNoWait).not.toHaveBeenCalled();
 	});
 });

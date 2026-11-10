@@ -15,20 +15,27 @@ type SdkWorkflowRunRef = WorkflowRunRef<unknown> & {
 };
 
 /**
- * Strategy function for running a workflow.
+ * Strategy for running a workflow, with a bulk variant for array input.
  */
-type RunnerFn = (
-	workflowName: string,
-	input: unknown,
-	options: HostRunOpts<boolean> | undefined,
-) => Promise<SdkWorkflowRunRef>;
+interface Runner {
+	one: (
+		workflowName: string,
+		input: unknown,
+		options: HostRunOpts<boolean> | undefined,
+	) => Promise<SdkWorkflowRunRef>;
+	many: (
+		workflowName: string,
+		inputs: unknown[],
+		options: HostRunOpts<boolean> | undefined,
+	) => Promise<SdkWorkflowRunRef[]>;
+}
 
 /**
  * Creates a HostRunFn using the provided runner strategy.
  * This is the shared implementation for both context and admin runners.
  */
 function createHostRunFn(
-	runner: RunnerFn,
+	runner: Runner,
 	getInterceptors?: () => ClientInterceptor[],
 ): HostRunFn {
 	return async <
@@ -46,8 +53,7 @@ function createHostRunFn(
 
 		const execute = async (finalOptions: HostRunOpts<boolean> | undefined) => {
 			// The SDK only unwraps a standalone task's output if the run ref has its name.
-			const run = async (i: unknown) => {
-				const runRef = await runner(workflowName, i, finalOptions);
+			const tag = (runRef: SdkWorkflowRunRef) => {
 				if (accessor.isTask) {
 					runRef._standaloneTaskName = workflowName;
 				}
@@ -56,16 +62,19 @@ function createHostRunFn(
 			};
 
 			if (Array.isArray(input)) {
-				const runs = (input as InputOfRef<R>[]).map((i) => run(i));
-
-				if (wait) {
-					return await Promise.all(runs.map((p) => p.then((r) => r.output)));
+				const inputs: unknown[] = input;
+				if (inputs.length === 0) {
+					return [];
 				}
 
-				return await Promise.all(runs);
+				const runRefs = (
+					await runner.many(workflowName, inputs, finalOptions)
+				).map(tag);
+
+				return wait ? await Promise.all(runRefs.map((r) => r.output)) : runRefs;
 			}
 
-			const runRef = await run(input);
+			const runRef = tag(await runner.one(workflowName, input, finalOptions));
 
 			return wait ? await runRef.output : runRef;
 		};
@@ -85,16 +94,25 @@ function createHostRunFn(
  * Used within task execution contexts.
  */
 export function createHostRunForContext(ctx: Context<any, any>): HostRunFn {
-	return createHostRunFn((workflowName, input, options) =>
-		ctx.runNoWaitChild(
-			workflowName,
-			input as any,
-			// The SDK takes the child key from `key` and overwrites `childKey`.
-			options?.childKey === undefined
-				? options
-				: { ...options, key: options.childKey },
-		),
-	);
+	// The SDK takes the child key from `key` and overwrites `childKey`.
+	const toChildOpts = (options: HostRunOpts<boolean> | undefined) =>
+		options?.childKey === undefined
+			? options
+			: { ...options, key: options.childKey };
+
+	return createHostRunFn({
+		one: (workflowName, input, options) =>
+			ctx.runNoWaitChild(workflowName, input as any, toChildOpts(options)),
+		many: (workflowName, inputs, options) =>
+			ctx.bulkRunNoWaitChildren(
+				inputs.map((input) => ({
+					workflow: workflowName,
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					input: input as any,
+					options: toChildOpts(options) ?? {},
+				})),
+			),
+	});
 }
 
 /**
@@ -106,8 +124,19 @@ export function createHostRunForAdmin(
 	getInterceptors?: () => ClientInterceptor[],
 ): HostRunFn {
 	return createHostRunFn(
-		(workflowName, input, options) =>
-			client.runNoWait(workflowName, input as any, options ?? {}),
+		{
+			one: (workflowName, input, options) =>
+				client.runNoWait(workflowName, input as any, options ?? {}),
+			// The SDK's own bulk trigger path, batched by count and message size.
+			many: (workflowName, inputs, options) =>
+				client.admin.runWorkflows(
+					inputs.map((input) => ({
+						workflowName,
+						input,
+						options: options ?? {},
+					})),
+				),
+		},
 		getInterceptors,
 	);
 }
