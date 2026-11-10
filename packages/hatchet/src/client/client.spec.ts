@@ -472,14 +472,16 @@ describe("client/client.ts", () => {
 		it("invokes interceptRun once for array input", async () => {
 			const interceptor = new RecordingInterceptor();
 			const client = createClient(interceptor);
-			mockHatchetClient.runNoWait.mockResolvedValue(
+			mockHatchetClient.admin.runWorkflows.mockResolvedValue([
 				runRefWith(Promise.resolve("out")),
-			);
+				runRefWith(Promise.resolve("out")),
+			]);
 
 			await client.run(ref, [input, input]);
 
 			expect(interceptor.seen).toHaveLength(1);
-			expect(mockHatchetClient.runNoWait).toHaveBeenCalledTimes(2);
+			expect(mockHatchetClient.admin.runWorkflows).toHaveBeenCalledTimes(1);
+			expect(mockHatchetClient.runNoWait).not.toHaveBeenCalled();
 		});
 
 		it("forwards options passed to next() to runNoWait", async () => {
