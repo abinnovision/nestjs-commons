@@ -326,6 +326,25 @@ describe("declaration-builder.service.ts", () => {
 			expect(mockInterceptor.intercept).toHaveBeenCalledTimes(1);
 		});
 
+		it("reuses the same hostConfig across invocations", async () => {
+			const mockInterceptor = mock<TaskInterceptor>();
+			const serviceWithInterceptors = createServiceWithInterceptors([
+				mockInterceptor,
+			]);
+			const declaration = serviceWithInterceptors.createDeclaration(
+				new TestTask(),
+			);
+			const fn = (declaration.definition as any).fn;
+
+			await fn(undefined, createMockSdkContext());
+			await fn(undefined, createMockSdkContext());
+
+			const first = mockInterceptor.intercept.mock.calls[0]![0];
+			const second = mockInterceptor.intercept.mock.calls[1]![0];
+			expect(first.hostConfig).toBe(second.hostConfig);
+			expect(first.hostConfig).toEqual({ onEvents: [], onCrons: [] });
+		});
+
 		it("passes correct BaseCtx to interceptor", async () => {
 			const contextCaptor = captor<BaseCtx<any>>();
 			const mockInterceptor = mock<TaskInterceptor>();
