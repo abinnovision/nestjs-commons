@@ -1,5 +1,7 @@
 import {
 	Context,
+	CreateDurableTaskWorkflow,
+	DurableContext,
 	TaskWorkflowDeclaration,
 	WorkflowDeclaration,
 } from "@hatchet-dev/typescript-sdk";
@@ -10,6 +12,8 @@ import { DirectedGraph } from "directed-graph-typed";
 import { TaskHost, WorkflowHost } from "../abstracts/index.js";
 import { InputValidationFailedException } from "../exceptions/index.js";
 import {
+	createDurableTaskCtx,
+	createDurableWorkflowCtx,
 	createTaskCtx,
 	createWorkflowCtx,
 } from "../execution/context/index.js";
@@ -25,6 +29,9 @@ import type {
 } from "../execution/index.js";
 
 type CreateWorkflowTaskOpts = ReturnType<WorkflowDeclaration["task"]>;
+type CreateWorkflowDurableTaskOpts = ReturnType<
+	WorkflowDeclaration["durableTask"]
+>;
 
 @Injectable()
 export class DeclarationBuilderService implements OnModuleInit {
@@ -65,7 +72,9 @@ export class DeclarationBuilderService implements OnModuleInit {
 		}
 	}
 
-	private createTaskWorkflow(host: TaskHost<any>): TaskWorkflowDeclaration {
+	private createTaskWorkflow(
+		host: TaskHost<any>,
+	): TaskWorkflowDeclaration<any, any> {
 		// First, validate the host.
 		this.validateTaskHost(host);
 
@@ -87,7 +96,30 @@ export class DeclarationBuilderService implements OnModuleInit {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const proto = Object.getPrototypeOf(host);
 
+		const execute = (taskCtx: BaseCtx<any>): Promise<any> =>
+			this.executeWithInterceptors(taskCtx, async () => {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+				const fn = proto[methodName];
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+				return await fn.call(host, taskCtx);
+			});
+
 		// Construct an unbound declaration for it.
+
+		if (accessor.isDurable(methodName)) {
+			return CreateDurableTaskWorkflow({
+				...hostOpts,
+				...taskOpts,
+				fn: async (_: unknown, ctx: DurableContext<any>): Promise<any> => {
+					const partial = await this.preProcessContext(host, ctx, hostConfig);
+
+					return await execute(
+						createDurableTaskCtx({ fromSDK: ctx, ...partial }),
+					);
+				},
+			});
+		}
 
 		return new TaskWorkflowDeclaration({
 			...hostOpts,
@@ -98,16 +130,7 @@ export class DeclarationBuilderService implements OnModuleInit {
 				// Create the task context from the SDK context and the partial.
 				const taskCtx = createTaskCtx({ fromSDK: ctx, ...partial });
 
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				const result = await this.executeWithInterceptors(taskCtx, async () => {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-					const fn = proto[methodName];
-
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-					return await fn.call(host, taskCtx);
-				});
-
-				return result;
+				return await execute(taskCtx);
 			},
 		});
 	}
@@ -128,7 +151,10 @@ export class DeclarationBuilderService implements OnModuleInit {
 		const proto = Object.getPrototypeOf(host);
 
 		// Mapping of task name to task declaration.
-		const taskDecls = new Map<string, CreateWorkflowTaskOpts>();
+		const taskDecls = new Map<
+			string,
+			CreateWorkflowTaskOpts | CreateWorkflowDurableTaskOpts
+		>();
 
 		/*
 		 * Topologically sort the graph.
@@ -152,28 +178,54 @@ export class DeclarationBuilderService implements OnModuleInit {
 				return parentDecl;
 			});
 
-			const newTaskDecl = workflowDec.task({
-				...metadata,
-				name: method,
-				parents: parentsResolved,
-				fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
-					const partial = await this.preProcessContext(host, ctx, hostConfig);
+			const execute = (workflowCtx: BaseCtx<any>): Promise<any> =>
+				this.executeWithInterceptors(workflowCtx, async () => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+					const fn = proto[method];
 
-					// Create the workflow context from the SDK context and the partial
-					const workflowCtx = createWorkflowCtx({
-						fromSDK: ctx,
-						...partial,
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+					return await fn.call(host, workflowCtx);
+				});
+
+			/*
+			 * The SDK types `parents` as non-durable task opts only, while durable
+			 * task opts are accepted at runtime.
+			 */
+			const parents = parentsResolved as CreateWorkflowTaskOpts[];
+
+			const newTaskDecl = accessor.isDurable(method)
+				? workflowDec.durableTask({
+						...metadata,
+						name: method,
+						parents,
+						fn: async (_: unknown, ctx: DurableContext<any>): Promise<any> => {
+							const partial = await this.preProcessContext(
+								host,
+								ctx,
+								hostConfig,
+							);
+
+							return await execute(
+								createDurableWorkflowCtx({ fromSDK: ctx, ...partial }),
+							);
+						},
+					})
+				: workflowDec.task({
+						...metadata,
+						name: method,
+						parents,
+						fn: async (_: unknown, ctx: Context<any>): Promise<any> => {
+							const partial = await this.preProcessContext(
+								host,
+								ctx,
+								hostConfig,
+							);
+
+							return await execute(
+								createWorkflowCtx({ fromSDK: ctx, ...partial }),
+							);
+						},
 					});
-
-					return await this.executeWithInterceptors(workflowCtx, async () => {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-						const fn = proto[method];
-
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-						return await fn.call(host, workflowCtx);
-					});
-				},
-			});
 
 			taskDecls.set(method, newTaskDecl);
 		}
@@ -212,7 +264,7 @@ export class DeclarationBuilderService implements OnModuleInit {
 		// Validate that there is exactly one decorated method.
 		if (accessor.methods.length !== 1) {
 			throw new Error(
-				`TaskHost '${input.constructor.name}' must have exactly one decorated method with @Task()`,
+				`TaskHost '${input.constructor.name}' must have exactly one decorated method with @Task() or @DurableTask()`,
 			);
 		}
 

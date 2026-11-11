@@ -1,3 +1,7 @@
+import {
+	DurableEvictionNotSupportedException,
+	DurableRunNoWaitException,
+} from "../../exceptions/index.js";
 import { chainWithOptions } from "../../interceptor/chain.js";
 import { getRefAccessor } from "../../references/helpers.js";
 
@@ -5,7 +9,11 @@ import type { HostRunFn, HostRunOpts, HostRunReturn } from "./function-type.js";
 import type { ClientInterceptor, RunCtx } from "../../interceptor/index.js";
 import type { AnyCallableRef, InputOfRef } from "../../references/index.js";
 import type { WorkflowRunRef } from "../../sdk/types.js";
-import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
+import type {
+	Context,
+	DurableContext,
+	HatchetClient,
+} from "@hatchet-dev/typescript-sdk";
 
 /**
  * Run ref including the SDK's internal standalone task name.
@@ -90,16 +98,19 @@ function createHostRunFn(
 }
 
 /**
+ * Maps the child run options to the SDK.
+ * The SDK takes the child key from `key` and overwrites `childKey`.
+ */
+const toChildOpts = (options: HostRunOpts<boolean> | undefined) =>
+	options?.childKey === undefined
+		? options
+		: { ...options, key: options.childKey };
+
+/**
  * Creates a HostRunFn that uses SDK Context for spawning child workflows.
  * Used within task execution contexts.
  */
 export function createHostRunForContext(ctx: Context<any, any>): HostRunFn {
-	// The SDK takes the child key from `key` and overwrites `childKey`.
-	const toChildOpts = (options: HostRunOpts<boolean> | undefined) =>
-		options?.childKey === undefined
-			? options
-			: { ...options, key: options.childKey };
-
 	return createHostRunFn({
 		one: (workflowName, input, options) =>
 			ctx.runNoWaitChild(workflowName, input as any, toChildOpts(options)),
@@ -113,6 +124,52 @@ export function createHostRunForContext(ctx: Context<any, any>): HostRunFn {
 				})),
 			),
 	});
+}
+
+/**
+ * Creates a HostRunFn that spawns children through the SDK DurableContext,
+ * so that child runs are recorded in the durable event log.
+ * Used within durable task execution contexts.
+ */
+export function createHostRunForDurableContext(
+	ctx: DurableContext<any, any>,
+): HostRunFn {
+	// No await before the spawn call, so concurrent runs keep their call order.
+	const run = async (
+		ref: AnyCallableRef,
+		input: unknown,
+		options?: HostRunOpts<boolean>,
+	): Promise<unknown> => {
+		if (options?.wait === false) {
+			throw new DurableRunNoWaitException();
+		}
+
+		if (!ctx.supportsEviction) {
+			throw new DurableEvictionNotSupportedException();
+		}
+
+		const workflowName = getRefAccessor(ref).name;
+		const childOpts = toChildOpts(options);
+
+		if (Array.isArray(input)) {
+			if (input.length === 0) {
+				return [];
+			}
+
+			return await ctx.spawnChildren(
+				input.map((childInput) => ({
+					workflow: workflowName,
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					input: childInput,
+					options: childOpts ?? {},
+				})),
+			);
+		}
+
+		return await ctx.spawnChild(workflowName, input as any, childOpts);
+	};
+
+	return run as HostRunFn;
 }
 
 /**

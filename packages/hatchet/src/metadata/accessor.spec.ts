@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { fromCtor, fromInstance } from "./accessor.js";
 import {
+	DurableTestTask,
+	DurableTestWorkflow,
 	NoMethodsTask,
 	NoMethodsWorkflow,
 	TestTask,
@@ -138,6 +140,37 @@ describe("accessor.ts", () => {
 			const accessor = fromCtor(TestTaskWithRetries);
 
 			expect(accessor.getTaskMeta("execute")).toEqual({ retries: 3 });
+		});
+	});
+
+	describe("isDurable()", () => {
+		it("returns true for a @DurableTask method", () => {
+			expect(fromCtor(DurableTestTask).isDurable("execute")).toBe(true);
+		});
+
+		it("returns false for a @Task method", () => {
+			expect(fromCtor(TestTask).isDurable("execute")).toBe(false);
+		});
+
+		it("distinguishes durable and non-durable workflow tasks", () => {
+			const accessor = fromCtor(DurableTestWorkflow);
+
+			expect(accessor.methods).toEqual(["step1", "step2", "step3"]);
+			expect(accessor.isDurable("step1")).toBe(false);
+			expect(accessor.isDurable("step2")).toBe(true);
+			expect(accessor.isDurable("step3")).toBe(false);
+		});
+	});
+
+	describe("durable metadata", () => {
+		it("stores @DurableTask opts under the task opts key", () => {
+			expect(fromCtor(DurableTestTask).getTaskMeta("execute")).toEqual({});
+		});
+
+		it("stores @DurableWorkflowTask opts under the workflow task opts key", () => {
+			expect(
+				fromCtor(DurableTestWorkflow).getWorkflowTaskMeta("step2"),
+			).toEqual({ parents: ["step1"] });
 		});
 	});
 });

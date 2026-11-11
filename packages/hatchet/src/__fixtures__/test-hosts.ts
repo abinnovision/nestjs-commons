@@ -2,9 +2,20 @@
 import { z } from "zod";
 
 import { taskHost, workflowHost } from "../abstracts/index.js";
-import { Host, Task, WorkflowTask } from "../metadata/index.js";
+import {
+	DurableTask,
+	DurableWorkflowTask,
+	Host,
+	Task,
+	WorkflowTask,
+} from "../metadata/index.js";
 
-import type { TaskCtx, WorkflowCtx } from "../execution/index.js";
+import type {
+	DurableTaskCtx,
+	DurableWorkflowCtx,
+	TaskCtx,
+	WorkflowCtx,
+} from "../execution/index.js";
 
 // ============ TaskHost Fixtures ============
 
@@ -55,6 +66,38 @@ export class TestWorkflow extends workflowHost(z.object({ id: z.string() })) {
 export class NoMethodsWorkflow extends workflowHost() {
 	public notDecorated() {
 		return {};
+	}
+}
+
+// ============ Durable Fixtures ============
+
+/** Durable TaskHost with string data schema */
+@Host({ name: "durable-test-task" })
+export class DurableTestTask extends taskHost(z.object({ data: z.string() })) {
+	@DurableTask({})
+	public execute(ctx: DurableTaskCtx<typeof this>) {
+		return { result: ctx.input.data };
+	}
+}
+
+/** WorkflowHost mixing durable and non-durable tasks in both directions */
+@Host({ name: "durable-test-workflow" })
+export class DurableTestWorkflow extends workflowHost(
+	z.object({ id: z.string() }),
+) {
+	@WorkflowTask<typeof DurableTestWorkflow>({ parents: [] })
+	public step1(_ctx: WorkflowCtx<typeof this>) {
+		return { step: 1 };
+	}
+
+	@DurableWorkflowTask<typeof DurableTestWorkflow>({ parents: ["step1"] })
+	public step2(_ctx: DurableWorkflowCtx<typeof this>) {
+		return { step: 2 };
+	}
+
+	@WorkflowTask<typeof DurableTestWorkflow>({ parents: ["step2"] })
+	public step3(_ctx: WorkflowCtx<typeof this>) {
+		return { step: 3 };
 	}
 }
 

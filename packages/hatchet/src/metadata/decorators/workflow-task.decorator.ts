@@ -1,6 +1,6 @@
 import { METADATA_KEY_WORKFLOW_TASK_OPTS as METADATA_KEY } from "../keys.js";
 
-import type { WorkflowCtx } from "../../execution/index.js";
+import type { DurableCtxMembers, WorkflowCtx } from "../../execution/index.js";
 import type {
 	ContextMethodKeys,
 	WorkflowHostCtor,
@@ -16,14 +16,21 @@ export type WorkflowTaskOpts<C extends WorkflowHostCtor<any>> = Omit<
 
 /**
  * Decorator to mark a method as a workflow task.
+ * Methods taking a `DurableWorkflowCtx` must use `@DurableWorkflowTask()` instead.
  */
 export function WorkflowTask<C extends WorkflowHostCtor<any>>(
 	opts: WorkflowTaskOpts<C>,
-): MethodDecorator {
-	return (_target, _propertyKey, descriptor: TypedPropertyDescriptor<any>) => {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		Reflect.defineMetadata(METADATA_KEY, opts, descriptor.value);
-
-		return descriptor;
+) {
+	return <F extends (...args: any[]) => any>(
+		_target: object,
+		_propertyKey: string | symbol,
+		descriptor: TypedPropertyDescriptor<F> &
+			(Parameters<F>[0] extends DurableCtxMembers
+				? {
+						error: "A DurableWorkflowCtx parameter requires @DurableWorkflowTask()";
+					}
+				: unknown),
+	): void => {
+		Reflect.defineMetadata(METADATA_KEY, opts, descriptor.value as object);
 	};
 }

@@ -4,18 +4,34 @@ import { mockDeep } from "vitest-mock-extended";
 import {
 	createHostRunForAdmin,
 	createHostRunForContext,
+	createHostRunForDurableContext,
 } from "./adapter-factory.js";
 import { TestTask, TestWorkflow } from "../../__fixtures__/test-hosts.js";
+import {
+	DurableEvictionNotSupportedException,
+	DurableRunNoWaitException,
+} from "../../exceptions/index.js";
 import { taskRef, workflowRef } from "../../references/index.js";
 
 import type { ClientInterceptor } from "../../interceptor/index.js";
-import type { Context, HatchetClient } from "@hatchet-dev/typescript-sdk";
+import type {
+	Context,
+	DurableContext,
+	HatchetClient,
+} from "@hatchet-dev/typescript-sdk";
 
 const createMockHatchetClient = () => mockDeep<HatchetClient>();
 
 const createMockSdkContext = <I>(input?: I) => {
 	const mock = mockDeep<Context<I, any>>();
 	Object.defineProperty(mock, "input", { value: input, writable: true });
+
+	return mock;
+};
+
+const createMockDurableContext = (supportsEviction = true) => {
+	const mock = mockDeep<DurableContext<any, any>>();
+	Object.defineProperty(mock, "supportsEviction", { value: supportsEviction });
 
 	return mock;
 };
@@ -342,5 +358,119 @@ describe("createHostRunForAdmin()", () => {
 		expect(result).toEqual([]);
 		expect(mockClient.admin.runWorkflows).not.toHaveBeenCalled();
 		expect(mockClient.runNoWait).not.toHaveBeenCalled();
+	});
+});
+
+describe("createHostRunForDurableContext()", () => {
+	let durableCtx: ReturnType<typeof createMockDurableContext>;
+	let runFn: ReturnType<typeof createHostRunForDurableContext>;
+
+	beforeEach(() => {
+		durableCtx = createMockDurableContext();
+		runFn = createHostRunForDurableContext(durableCtx);
+	});
+
+	it("spawns a child with name, input and key", async () => {
+		durableCtx.spawnChild.mockResolvedValueOnce({ result: "test" });
+
+		await runFn(taskRef(TestTask), { data: "test" }, { childKey: "child-1" });
+
+		expect(durableCtx.spawnChild).toHaveBeenCalledWith(
+			"test-task",
+			{ data: "test" },
+			{ childKey: "child-1", key: "child-1" },
+		);
+	});
+
+	it("returns the child output", async () => {
+		durableCtx.spawnChild.mockResolvedValueOnce({ result: "test" });
+
+		const result = await runFn(taskRef(TestTask), { data: "test" });
+
+		expect(result).toEqual({ result: "test" });
+	});
+
+	it("spawns children for array inputs", async () => {
+		durableCtx.spawnChildren.mockResolvedValueOnce([
+			{ result: "a" },
+			{ result: "b" },
+		]);
+
+		const result = await runFn(
+			taskRef(TestTask),
+			[{ data: "a" }, { data: "b" }],
+			{
+				childKey: "child-1",
+			},
+		);
+
+		expect(durableCtx.spawnChildren).toHaveBeenCalledWith([
+			{
+				workflow: "test-task",
+				input: { data: "a" },
+				options: { childKey: "child-1", key: "child-1" },
+			},
+			{
+				workflow: "test-task",
+				input: { data: "b" },
+				options: { childKey: "child-1", key: "child-1" },
+			},
+		]);
+		expect(durableCtx.spawnChild).not.toHaveBeenCalled();
+		expect(result).toEqual([{ result: "a" }, { result: "b" }]);
+	});
+
+	it("returns an empty array without calling the SDK for empty input", async () => {
+		const result = await runFn(taskRef(TestTask), []);
+
+		expect(result).toEqual([]);
+		expect(durableCtx.spawnChildren).not.toHaveBeenCalled();
+	});
+
+	it("rejects when wait is false", async () => {
+		const result = runFn(taskRef(TestTask), { data: "test" }, { wait: false });
+
+		await expect(result).rejects.toBeInstanceOf(DurableRunNoWaitException);
+		expect(durableCtx.spawnChild).not.toHaveBeenCalled();
+	});
+
+	it("rejects array input when wait is false", async () => {
+		const result = runFn(taskRef(TestTask), [{ data: "a" }], { wait: false });
+
+		await expect(result).rejects.toBeInstanceOf(DurableRunNoWaitException);
+		expect(durableCtx.spawnChildren).not.toHaveBeenCalled();
+	});
+
+	it("propagates a spawnChild rejection", async () => {
+		const error = new Error("child failed");
+		durableCtx.spawnChild.mockRejectedValueOnce(error);
+
+		await expect(runFn(taskRef(TestTask), { data: "test" })).rejects.toBe(
+			error,
+		);
+	});
+
+	it("rejects when the engine does not support eviction", async () => {
+		const legacyRunFn = createHostRunForDurableContext(
+			createMockDurableContext(false),
+		);
+
+		await expect(
+			legacyRunFn(taskRef(TestTask), { data: "test" }),
+		).rejects.toBeInstanceOf(DurableEvictionNotSupportedException);
+	});
+
+	it("spawns concurrent children synchronously in call order", async () => {
+		durableCtx.spawnChild.mockResolvedValue({ result: "test" });
+
+		const first = runFn(taskRef(TestTask), { data: "a" });
+		const second = runFn(taskRef(TestTask), { data: "b" });
+
+		expect(durableCtx.spawnChild.mock.calls.map((call) => call[1])).toEqual([
+			{ data: "a" },
+			{ data: "b" },
+		]);
+
+		await Promise.all([first, second]);
 	});
 });
