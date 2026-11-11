@@ -1,9 +1,11 @@
 import { ModuleRef } from "@nestjs/core";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { any, captor, mock } from "vitest-mock-extended";
 
 import { DeclarationBuilderService } from "./declaration-builder.service.js";
 import {
+	DurableTestTask,
+	DurableTestWorkflow,
 	NoMethodsTask,
 	NoMethodsWorkflow,
 	NoSchemaTask,
@@ -16,7 +18,7 @@ import {
 	HatchetException,
 	InputValidationFailedException,
 } from "../exceptions/index.js";
-import { BaseCtx } from "../execution/index.js";
+import { BaseCtx, isDurableCtx } from "../execution/index.js";
 import { TaskInterceptor } from "../interceptor/index.js";
 import { InterceptorRegistration } from "../internal/registrations.js";
 import { Host, Task, WorkflowTask } from "../metadata/index.js";
@@ -26,6 +28,7 @@ import type { TaskCtx, WorkflowCtx } from "../execution/index.js";
 // Set design:paramtypes for shared fixtures
 setParamTypes(TestTask.prototype, "execute", [Object]);
 setParamTypes(NoSchemaTask.prototype, "execute", [Object]);
+setParamTypes(DurableTestTask.prototype, "execute", [Object]);
 
 // TaskHost with multiple decorated methods (invalid) - test-specific fixture
 @Host({ name: "multiple-task-methods" })
@@ -91,6 +94,21 @@ const createMockSdkContext = (
 ): { input: unknown; additionalMetadata: () => Record<string, unknown> } => ({
 	input,
 	additionalMetadata: () => additionalMetadata,
+});
+
+// Helper to create mock SDK durable context
+const createMockDurableSdkContext = (
+	input: unknown = { data: "test" },
+	invocationCount = 1,
+) => ({
+	...createMockSdkContext(input),
+	invocationCount,
+	supportsEviction: true,
+	sleepFor: vi.fn(),
+	sleepUntil: vi.fn(),
+	waitFor: vi.fn(),
+	waitForEvent: vi.fn(),
+	now: vi.fn(),
 });
 
 async function captureRejection(fn: () => Promise<unknown>): Promise<unknown> {
@@ -436,6 +454,98 @@ describe("declaration-builder.service.ts", () => {
 				"interceptor2-end",
 				"interceptor1-end",
 			]);
+		});
+	});
+
+	describe("durable tasks", () => {
+		it("registers a durable TaskHost task as a durable task", () => {
+			const declaration = service.createDeclaration(new DurableTestTask());
+
+			expect(declaration.definition._durableTasks).toHaveLength(1);
+			expect(declaration.definition._tasks).toHaveLength(0);
+		});
+
+		it("keeps non-durable TaskHost tasks unchanged", () => {
+			const declaration = service.createDeclaration(new TestTask());
+
+			expect(declaration.definition._tasks).toHaveLength(1);
+			expect(declaration.definition._durableTasks).toHaveLength(0);
+		});
+
+		it("mixes durable and non-durable tasks in one workflow", () => {
+			const { definition } = service.createDeclaration(
+				new DurableTestWorkflow(),
+			);
+
+			const step1 = definition._tasks.find((t) => t.name === "step1");
+			const step2 = definition._durableTasks.find((t) => t.name === "step2");
+			const step3 = definition._tasks.find((t) => t.name === "step3");
+
+			expect(definition._tasks).toHaveLength(2);
+			expect(definition._durableTasks).toHaveLength(1);
+			expect(step2?.parents).toEqual([step1]);
+			expect(step3?.parents).toEqual([step2]);
+		});
+
+		it("runs interceptors with a durable ctx", async () => {
+			const mockInterceptor = mock<TaskInterceptor>();
+			const serviceWithInterceptors = createServiceWithInterceptors([
+				mockInterceptor,
+			]);
+			const declaration = serviceWithInterceptors.createDeclaration(
+				new DurableTestTask(),
+			);
+			const fn = (declaration.definition as any).fn;
+
+			await fn(undefined, createMockDurableSdkContext({ data: "test" }, 2));
+
+			const ctx = mockInterceptor.intercept.mock.calls[0]![0];
+			expect(isDurableCtx(ctx)).toBe(true);
+			expect(ctx).toMatchObject({
+				input: { data: "test" },
+				invocationCount: 2,
+				isReplay: true,
+			});
+		});
+
+		it("runs the durable workflow task with a durable ctx", async () => {
+			const mockInterceptor = mock<TaskInterceptor>();
+			const serviceWithInterceptors = createServiceWithInterceptors([
+				mockInterceptor,
+			]);
+			const { definition } = serviceWithInterceptors.createDeclaration(
+				new DurableTestWorkflow(),
+			);
+			const step2 = definition._durableTasks[0]!;
+
+			await step2.fn!(
+				undefined as any,
+				createMockDurableSdkContext({ id: "1" }) as any,
+			);
+
+			const ctx = mockInterceptor.intercept.mock.calls[0]![0];
+			expect(isDurableCtx(ctx)).toBe(true);
+		});
+
+		it("validates the input on every invocation", async () => {
+			const declaration = service.createDeclaration(new DurableTestTask());
+			const fn = (declaration.definition as any).fn;
+
+			await expect(
+				fn(undefined, createMockDurableSdkContext({ data: 42 }, 1)),
+			).rejects.toBeInstanceOf(InputValidationFailedException);
+			await expect(
+				fn(undefined, createMockDurableSdkContext({ data: 42 }, 2)),
+			).rejects.toBeInstanceOf(InputValidationFailedException);
+		});
+
+		it("runs the durable task method", async () => {
+			const declaration = service.createDeclaration(new DurableTestTask());
+			const fn = (declaration.definition as any).fn;
+
+			await expect(
+				fn(undefined, createMockDurableSdkContext({ data: "test" })),
+			).resolves.toEqual({ result: "test" });
 		});
 	});
 });

@@ -4,9 +4,14 @@ export type {
 	TaskCtx,
 	WorkflowCtx,
 	HelperCtx,
+	DurableCtxMembers,
+	DurableTaskCtx,
+	DurableWorkflowCtx,
+	WaitForEventOpts,
 	TriggerSource,
 	HostTriggerConfig,
 } from "./context/index.js";
+export { isDurableCtx } from "./context/index.js";
 
 // Host run types
 export type {

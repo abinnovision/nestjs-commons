@@ -335,6 +335,111 @@ export class MyTask extends taskHost(schema) {
 }
 ```
 
+## Durable Tasks
+
+Durable tasks are backed by Hatchet's durable execution. Waits, sleeps and child runs are recorded in a
+durable event log, so a durable task can be evicted from the worker and resumed later without repeating
+recorded work.
+
+Use `@DurableTask()` on a task host and `@DurableWorkflowTask()` on a workflow host. The method must take a
+`DurableTaskCtx` or `DurableWorkflowCtx`; any other context type is rejected at compile time. Durable and
+non-durable tasks can be mixed in one workflow and can be each other's `parents`.
+
+```typescript
+@Host({ name: "order-fulfillment" })
+export class OrderFulfillmentTask extends taskHost(
+  z.object({ orderId: z.string() }),
+) {
+  @DurableTask({ executionTimeout: "1h" })
+  public async task(ctx: DurableTaskCtx<typeof this>) {
+    const payment = await ctx.run(taskRef(ChargePaymentTask), {
+      orderId: ctx.input.orderId,
+    });
+
+    await ctx.sleepFor("10m");
+
+    const shipped = await ctx.waitForEvent(OrderShippedEvent, {
+      expression: `input.orderId == '${ctx.input.orderId}'`,
+    });
+
+    return { paymentId: payment.paymentId, trackingId: shipped.trackingId };
+  }
+}
+
+@Host({ name: "order-workflow" })
+export class OrderWorkflow extends workflowHost(
+  z.object({ orderId: z.string() }),
+) {
+  @WorkflowTask<typeof OrderWorkflow>({ parents: [] })
+  public async validate(ctx: WorkflowCtx<typeof this>) {
+    return { valid: true };
+  }
+
+  @DurableWorkflowTask<typeof OrderWorkflow>({ parents: ["validate"] })
+  public async approve(ctx: DurableWorkflowCtx<typeof this>) {
+    return await ctx.waitForEvent("order:approved");
+  }
+}
+```
+
+### Durable Context
+
+In addition to the regular context members, a durable context provides:
+
+| Member                           | Description                                                                                                           |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `ctx.run(ref, input, opts?)`     | Runs a child task or workflow, recorded in the durable event log                                                      |
+| `ctx.sleepFor(duration)`         | Sleeps for a duration                                                                                                 |
+| `ctx.sleepUntil(date)`           | Sleeps until a date                                                                                                   |
+| `ctx.waitFor(conditions)`        | Waits for SDK conditions                                                                                              |
+| `ctx.waitForEvent(event, opts?)` | Waits for an event. An `EventDefinition` returns the validated payload, a string key returns the raw payload          |
+| `ctx.now()`                      | Returns the current time, recorded in the durable event log                                                           |
+| `ctx.invocationCount`            | Number of times this durable task has been invoked, starting at 1                                                     |
+| `ctx.isReplay`                   | `true` whenever this durable task was re-invoked (`invocationCount > 1`), after eviction, a worker restart or a retry |
+| `ctx.fromSDK`                    | The SDK `DurableContext`                                                                                              |
+
+`waitForEvent` options are `expression`, `scope`, `lookbackWindow` and `label`. With an `EventDefinition`,
+a payload that fails the schema throws `EventPayloadMalformedException`. This includes the empty payload
+the SDK resolves with when no event matched; pass the string key instead if that case is expected.
+The payload of events sent with `Client.emit` includes the `__event_name` marker, so `.strict()` schemas
+reject it, the same as with `isEvent` and `cast`.
+
+`isDurableCtx(ctx)` tells a durable context apart from a regular one, for example in a task interceptor.
+
+### Child Runs
+
+Durable `ctx.run` spawns children through `DurableContext.spawnChild`/`spawnChildren`, so their results are
+recorded and returned on replay instead of spawning the children again. It has these limits:
+
+- It always waits for the result. `wait: false` throws `DurableRunNoWaitException`.
+- It requires a Hatchet engine with durable eviction support (>= v0.80.0). On older engines, or when the
+  engine version is unknown, it throws `DurableEvictionNotSupportedException`. This is stricter than the SDK,
+  which falls back to unrecorded child runs. `ctx.fromSDK.spawnChild` remains available as an escape hatch.
+
+Side effects belong in separate task hosts that the durable task calls through `ctx.run(taskRef(...))`.
+Each child run executes once and its output is replayed from the event log, and each side effect gets its
+own retries and timeouts.
+
+### Determinism
+
+1. A durable task re-runs from the top on each invocation. Only durable calls (`run`, `sleepFor`,
+   `sleepUntil`, `waitFor`, `waitForEvent`, `now`) return recorded results.
+2. Durable calls are matched by order. Changing their sequence while runs are in flight can fail those runs
+   (SDK `NonDeterminismError`).
+3. Branch only on the input and on durable results. Use `ctx.now()`, not `Date.now()`.
+4. Task interceptors and input schemas run on every invocation, including re-invocations. Skip one-shot side
+   effects in interceptors when `isDurableCtx(ctx) && ctx.isReplay` is true.
+
+### Engines Without Eviction Support
+
+| Member                                | Behavior                                                  |
+| ------------------------------------- | --------------------------------------------------------- |
+| `run`                                 | Throws `DurableEvictionNotSupportedException`             |
+| `sleepFor`, `waitFor`, `waitForEvent` | Forwarded to the SDK unchanged                            |
+| `now`, `sleepUntil`                   | Forwarded to the SDK unchanged, not stable across replays |
+| `waitForEvent` with `lookbackWindow`  | Forwarded to the SDK unchanged, not stable across replays |
+| `invocationCount`, `isReplay`         | Forwarded                                                 |
+
 ## API Reference
 
 ### Module
@@ -355,11 +460,13 @@ Module options (extras to `forRoot`/`forRootAsync`):
 
 ### Decorators
 
-| Decorator             | Description                         |
-| --------------------- | ----------------------------------- |
-| `@Host(opts)`         | Mark class as task or workflow host |
-| `@Task(opts)`         | Mark method as standalone task      |
-| `@WorkflowTask(opts)` | Mark method as workflow step        |
+| Decorator                    | Description                            |
+| ---------------------------- | -------------------------------------- |
+| `@Host(opts)`                | Mark class as task or workflow host    |
+| `@Task(opts)`                | Mark method as standalone task         |
+| `@WorkflowTask(opts)`        | Mark method as workflow step           |
+| `@DurableTask(opts)`         | Mark method as durable standalone task |
+| `@DurableWorkflowTask(opts)` | Mark method as durable workflow step   |
 
 ### Host Factories
 
@@ -387,11 +494,13 @@ Calls to `emit`, `emitBulk` and `run` pass through registered [client intercepto
 
 ### Context Types
 
-| Type             | Description                |
-| ---------------- | -------------------------- |
-| `TaskCtx<T>`     | Context for task execution |
-| `WorkflowCtx<T>` | Context for workflow tasks |
-| `HelperCtx<T>`   | Context for helper methods |
+| Type                    | Description                        |
+| ----------------------- | ---------------------------------- |
+| `TaskCtx<T>`            | Context for task execution         |
+| `WorkflowCtx<T>`        | Context for workflow tasks         |
+| `HelperCtx<T>`          | Context for helper methods         |
+| `DurableTaskCtx<T>`     | Context for durable task execution |
+| `DurableWorkflowCtx<T>` | Context for durable workflow tasks |
 
 ### Context Properties
 
@@ -400,6 +509,8 @@ ctx.input       // Validated input data
 ctx.fromSDK     // Underlying Hatchet SDK context
 ctx.run(ref, input, opts ?)  // Invoke other tasks/workflows
 ctx.parent(method)          // Get parent task output (WorkflowCtx only)
+ctx.sleepFor(duration)      // Durable sleep (durable contexts only)
+ctx.waitForEvent(event, opts ?)  // Durable event wait (durable contexts only)
 ```
 
 ## License

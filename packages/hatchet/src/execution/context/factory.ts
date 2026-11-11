@@ -1,15 +1,24 @@
 import { TASK_MARKER } from "./types.js";
-import { createHostRunForContext } from "../host-run/adapter-factory.js";
+import { EventPayloadMalformedException } from "../../exceptions/index.js";
+import {
+	createHostRunForContext,
+	createHostRunForDurableContext,
+} from "../host-run/adapter-factory.js";
 
 import type {
 	BaseCtx,
+	DurableCtxMembers,
+	DurableTaskCtx,
+	DurableWorkflowCtx,
 	HostTriggerConfig,
 	TaskCtx,
 	TriggerSource,
+	WaitForEventOpts,
 	WorkflowCtx,
 } from "./types.js";
 import type { AnyEventDefinition, EventOutput } from "../../events/index.js";
 import type { AnyTaskFn, OutputOfTaskFn } from "../../references/shared.js";
+import type { DurableContext } from "@hatchet-dev/typescript-sdk";
 
 /**
  * Arguments for context factory functions.
@@ -80,6 +89,56 @@ const mapContextProperties = <I>(
 });
 
 /**
+ * Arguments for durable context factory functions.
+ */
+type CreateDurableCtxArgs<I> = Omit<CreateCtxArgs<I>, "fromSDK"> & {
+	fromSDK: DurableContext<I>;
+};
+
+/**
+ * Creates the durable members bound to the SDK durable context.
+ */
+const createDurableMembers = (
+	fromSDK: DurableContext<any, any>,
+): DurableCtxMembers => {
+	const waitForEvent = async (
+		event: string | AnyEventDefinition,
+		opts?: WaitForEventOpts,
+	): Promise<unknown> => {
+		const key = typeof event === "string" ? event : event.name;
+		const payload = await fromSDK.waitForEvent(
+			key,
+			opts?.expression,
+			undefined,
+			opts?.scope,
+			opts?.lookbackWindow,
+			opts?.label,
+		);
+
+		if (typeof event === "string") {
+			return payload;
+		}
+
+		const result = await event.schema["~standard"].validate(payload);
+		if (result.issues) {
+			throw new EventPayloadMalformedException(event.name, result.issues);
+		}
+
+		return result.value;
+	};
+
+	return {
+		invocationCount: fromSDK.invocationCount,
+		isReplay: fromSDK.invocationCount > 1,
+		sleepFor: fromSDK.sleepFor.bind(fromSDK),
+		sleepUntil: fromSDK.sleepUntil.bind(fromSDK),
+		waitFor: fromSDK.waitFor.bind(fromSDK),
+		now: fromSDK.now.bind(fromSDK),
+		waitForEvent: waitForEvent as DurableCtxMembers["waitForEvent"],
+	};
+};
+
+/**
  * Creates a TaskCtx from SDK Context for standalone task execution.
  *
  * @param args The arguments for creating the task context.
@@ -115,3 +174,40 @@ export const createWorkflowCtx = <I>(
 		parent,
 	};
 };
+
+/**
+ * Creates a DurableTaskCtx from SDK DurableContext for durable standalone task execution.
+ *
+ * @param args The arguments for creating the durable task context.
+ */
+export const createDurableTaskCtx = <I>(
+	args: CreateDurableCtxArgs<I>,
+): DurableTaskCtx<any> => ({
+	...createTaskCtx(args),
+	...createDurableMembers(args.fromSDK),
+	fromSDK: args.fromSDK,
+	run: createHostRunForDurableContext(args.fromSDK),
+});
+
+/**
+ * Creates a DurableWorkflowCtx from SDK DurableContext for durable workflow task execution.
+ *
+ * @param args The arguments for creating the durable workflow context.
+ */
+export const createDurableWorkflowCtx = <I>(
+	args: CreateDurableCtxArgs<I>,
+): DurableWorkflowCtx<any> => ({
+	...createWorkflowCtx(args),
+	...createDurableMembers(args.fromSDK),
+	fromSDK: args.fromSDK,
+	run: createHostRunForDurableContext(args.fromSDK),
+});
+
+/**
+ * Returns true if the context belongs to a durable task.
+ *
+ * @param ctx The context to check.
+ */
+export const isDurableCtx = <C extends BaseCtx<any>>(
+	ctx: C,
+): ctx is C & DurableCtxMembers => "invocationCount" in ctx;

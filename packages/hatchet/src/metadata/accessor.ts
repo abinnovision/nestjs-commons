@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment */
 import {
+	METADATA_KEY_DURABLE,
 	METADATA_KEY_HOST_OPTS,
 	METADATA_KEY_TASK_OPTS,
 	METADATA_KEY_WORKFLOW_TASK_OPTS,
@@ -91,6 +92,16 @@ class HostAccessor {
 		return Reflect.getMetadata(
 			METADATA_KEY_TASK_OPTS,
 			this.ctor.prototype[method],
+		);
+	}
+
+	/**
+	 * Returns true if the method is decorated with a durable task decorator.
+	 */
+	public isDurable(method: string): boolean {
+		return (
+			Reflect.getMetadata(METADATA_KEY_DURABLE, this.ctor.prototype[method]) ===
+			true
 		);
 	}
 }

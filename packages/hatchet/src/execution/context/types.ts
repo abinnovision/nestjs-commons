@@ -2,7 +2,11 @@ import type { TaskHost, WorkflowHost } from "../../abstracts/index.js";
 import type { AnyEventDefinition, EventOutput } from "../../events/index.js";
 import type { AnyTaskFn, OutputOfTaskFn } from "../../references/shared.js";
 import type { HostRunFn } from "../host-run/index.js";
-import type { Context } from "@hatchet-dev/typescript-sdk";
+import type {
+	Context,
+	DurableContext,
+	Duration,
+} from "@hatchet-dev/typescript-sdk";
 
 export const TASK_MARKER = Symbol("TASK_MARKER");
 export type TaskMarker = typeof TASK_MARKER;
@@ -125,3 +129,96 @@ export type WorkflowCtx<T extends WorkflowHost<any>> = BaseCtx<
 export type HelperCtx<T extends TaskHost<any> | WorkflowHost<any>> = BaseCtx<
 	T extends TaskHost<infer I> ? I : T extends WorkflowHost<infer I> ? I : never
 >;
+
+/**
+ * Options for {@link DurableCtxMembers.waitForEvent}.
+ */
+export interface WaitForEventOpts {
+	/**
+	 * CEL expression to filter the event payload.
+	 */
+	expression?: string;
+
+	/**
+	 * Scope to match the event against.
+	 */
+	scope?: string;
+
+	/**
+	 * Lookback window for events published before the wait started.
+	 */
+	lookbackWindow?: Duration;
+
+	/**
+	 * Label of the wait in the durable event log.
+	 */
+	label?: string;
+}
+
+/**
+ * Members available on the context of a durable task.
+ * These forward to the SDK's `DurableContext`.
+ *
+ * @remarks On a durable context, `run` rejects `wait: false` at runtime with
+ * `DurableRunNoWaitException`, as durable child runs are always awaited.
+ */
+export interface DurableCtxMembers {
+	/**
+	 * Number of times this durable task has been invoked (starts at 1).
+	 */
+	readonly invocationCount: number;
+
+	/**
+	 * True whenever this durable task was re-invoked (`invocationCount > 1`).
+	 * This covers both a resume after eviction or a worker restart, and a retry.
+	 */
+	readonly isReplay: boolean;
+
+	/**
+	 * Sleeps for the given duration. The sleep is recorded in the durable event log.
+	 */
+	sleepFor: DurableContext<any>["sleepFor"];
+
+	/**
+	 * Sleeps until the given date. The sleep is recorded in the durable event log.
+	 */
+	sleepUntil: DurableContext<any>["sleepUntil"];
+
+	/**
+	 * Waits for the given conditions. The wait is recorded in the durable event log.
+	 */
+	waitFor: DurableContext<any>["waitFor"];
+
+	/**
+	 * Returns the current time, recorded in the durable event log.
+	 */
+	now: DurableContext<any>["now"];
+
+	/**
+	 * Waits for an event. With an event definition, the payload is validated
+	 * against its schema. With a string key, the raw payload is returned.
+	 */
+	waitForEvent: {
+		<E extends AnyEventDefinition>(
+			event: E,
+			opts?: WaitForEventOpts,
+		): Promise<EventOutput<E>>;
+		(key: string, opts?: WaitForEventOpts): Promise<Record<string, unknown>>;
+	};
+}
+
+/**
+ * Context type of the run of a durable standalone task.
+ */
+export type DurableTaskCtx<T extends TaskHost<any>> = TaskCtx<T> &
+	DurableCtxMembers & {
+		fromSDK: DurableContext<T extends TaskHost<infer I> ? I : never>;
+	};
+
+/**
+ * Context type of the run of a durable workflow task.
+ */
+export type DurableWorkflowCtx<T extends WorkflowHost<any>> = WorkflowCtx<T> &
+	DurableCtxMembers & {
+		fromSDK: DurableContext<T extends WorkflowHost<infer I> ? I : never>;
+	};

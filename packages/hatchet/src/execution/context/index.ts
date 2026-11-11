@@ -3,6 +3,10 @@ export type {
 	TaskCtx,
 	WorkflowCtx,
 	HelperCtx,
+	DurableCtxMembers,
+	DurableTaskCtx,
+	DurableWorkflowCtx,
+	WaitForEventOpts,
 	TriggerSource,
 	HostTriggerConfig,
 } from "./types.js";
@@ -10,4 +14,10 @@ export type {
 export { TASK_MARKER } from "./types.js";
 export type { TaskMarker } from "./types.js";
 
-export { createTaskCtx, createWorkflowCtx } from "./factory.js";
+export {
+	createDurableTaskCtx,
+	createDurableWorkflowCtx,
+	createTaskCtx,
+	createWorkflowCtx,
+	isDurableCtx,
+} from "./factory.js";
