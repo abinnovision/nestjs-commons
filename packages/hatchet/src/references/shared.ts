@@ -214,9 +214,9 @@ export type InvalidWorkflowHost<Reason extends string> = `Error: ${Reason}`;
  * Validates that a TaskHost has exactly one task method.
  * Returns the host type if valid, or an error type with a descriptive message.
  *
- * Used by {@link taskRef} to provide compile-time validation.
+ * Used by `taskRef()` and `HatchetModule.forFeature()` for compile-time validation.
  *
- * @internal Used in taskRef() signature but not intended for direct external use.
+ * @internal Not intended for direct external use.
  * @template C - The task host constructor type to validate.
  */
 export type ValidTaskHost<C extends TaskHostCtor<any>> =
@@ -232,9 +232,9 @@ export type ValidTaskHost<C extends TaskHostCtor<any>> =
  * Validates that a WorkflowHost has at least one workflow task method.
  * Returns the host type if valid, or an error type with a descriptive message.
  *
- * Used by {@link workflowRef} to provide compile-time validation.
+ * Used by `workflowRef()` and `HatchetModule.forFeature()` for compile-time validation.
  *
- * @internal Used in workflowRef() signature but not intended for direct external use.
+ * @internal Not intended for direct external use.
  * @template C - The workflow host constructor type to validate.
  */
 export type ValidWorkflowHost<C extends WorkflowHostCtor<any>> =
@@ -243,3 +243,16 @@ export type ValidWorkflowHost<C extends WorkflowHostCtor<any>> =
 			? InvalidWorkflowHost<"WorkflowHost must have at least one method with WorkflowCtx parameter">
 			: C
 		: never;
+
+/**
+ * Validates a task or workflow host constructor.
+ *
+ * @internal Used by `HatchetModule.forFeature()`.
+ * @template C - The host constructor type to validate.
+ */
+export type ValidHost<C extends AnyHostCtor> =
+	C extends TaskHostCtor<any>
+		? ValidTaskHost<C>
+		: C extends WorkflowHostCtor<any>
+			? ValidWorkflowHost<C>
+			: never;

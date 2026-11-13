@@ -160,13 +160,17 @@ describe("@WorkflowTask()", () => {
 
 describe("durable refs", () => {
 	it("infers input and output of durable refs", () => {
+		// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref types
 		type Ref = ReturnType<typeof taskRef<typeof DurableTestTask>>;
 
+		// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref types
 		expectTypeOf<InputOfRef<Ref>>().toEqualTypeOf<{ data: string }>();
+		// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref types
 		expectTypeOf<OutputOfRef<Ref>>().toEqualTypeOf<{
 			result: string;
 		}>();
 		expectTypeOf<
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref types
 			OutputOfRef<ReturnType<typeof workflowRef<typeof DurableTestWorkflow>>>
 		>().toEqualTypeOf<{
 			step1: { step: number };

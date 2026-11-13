@@ -1,4 +1,4 @@
-import { Client, taskRef } from "@abinnovision/nestjs-hatchet";
+import { Client } from "@abinnovision/nestjs-hatchet";
 import { Controller, Get } from "@nestjs/common";
 
 import { ProcessDataTask } from "../domain/process-data.task";
@@ -9,7 +9,7 @@ export class AdminController {
 
 	@Get()
 	public async cleanup() {
-		return await this.client.run(taskRef(ProcessDataTask), {
+		return await this.client.run(ProcessDataTask, {
 			data: "admin",
 		});
 	}

@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { getRefAccessor, taskRef, workflowRef } from "./helpers.js";
+import { taskRef, toHostCtor, workflowRef } from "./helpers.js";
 import { TestTask, TestWorkflow } from "../__fixtures__/test-hosts.js";
 
 describe("ref/helpers.ts", () => {
 	describe("#taskRef()", () => {
 		it("creates reference with host property", () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated helper
 			const ref = taskRef(TestTask);
 
 			expect(ref.host).toBe(TestTask);
 		});
 
 		it("creates reference with method property", () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated helper
 			const ref = taskRef(TestTask);
 
 			expect(ref.method).toBe("execute");
@@ -20,27 +22,26 @@ describe("ref/helpers.ts", () => {
 
 	describe("#workflowRef()", () => {
 		it("creates reference with host property", () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated helper
 			const ref = workflowRef(TestWorkflow);
 
 			expect(ref.host).toBe(TestWorkflow);
 		});
 	});
 
-	describe("#getRefAccessor()", () => {
-		it("returns accessor for task ref", () => {
-			const ref = taskRef(TestTask);
-			const accessor = getRefAccessor(ref);
-
-			expect(accessor.name).toBe("test-task");
-			expect(accessor.isTask).toBe(true);
+	describe("#toHostCtor()", () => {
+		it("returns a host class as is", () => {
+			expect(toHostCtor(TestTask)).toBe(TestTask);
 		});
 
-		it("returns accessor for workflow ref", () => {
-			const ref = workflowRef(TestWorkflow);
-			const accessor = getRefAccessor(ref);
+		it("returns the host of a task ref", () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated helper
+			expect(toHostCtor(taskRef(TestTask))).toBe(TestTask);
+		});
 
-			expect(accessor.name).toBe("test-workflow");
-			expect(accessor.isWorkflow).toBe(true);
+		it("returns the host of a workflow ref", () => {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated helper
+			expect(toHostCtor(workflowRef(TestWorkflow))).toBe(TestWorkflow);
 		});
 	});
 });

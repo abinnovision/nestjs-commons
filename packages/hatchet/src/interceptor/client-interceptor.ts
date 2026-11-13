@@ -1,7 +1,7 @@
 import type { TaskInterceptor } from "./interceptor.js";
 import type { AnyEventDefinition } from "../events/index.js";
 import type { HostRunOpts } from "../execution/host-run/function-type.js";
-import type { AnyCallableRef } from "../references/index.js";
+import type { AnyCallableRef } from "../references/refs.js";
 import type { HatchetClient } from "@hatchet-dev/typescript-sdk";
 
 /**
@@ -29,8 +29,12 @@ export interface EmitCtx {
  * Context of an intercepted `Client.run` call.
  */
 export interface RunCtx {
+	/**
+	 * The ref if one was passed, otherwise a ref built from the host class
+	 * (a new object per call).
+	 */
 	readonly ref: AnyCallableRef;
-	/** Task or workflow name resolved from the ref. */
+	/** Task or workflow name of the host. */
 	readonly name: string;
 	/** Input(s) as passed by the caller. An array means multiple runs. */
 	readonly input: unknown;

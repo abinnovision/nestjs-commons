@@ -11,7 +11,7 @@ import {
 	DurableEvictionNotSupportedException,
 	DurableRunNoWaitException,
 } from "../../exceptions/index.js";
-import { taskRef, workflowRef } from "../../references/index.js";
+import { taskRef } from "../../references/index.js";
 
 import type { ClientInterceptor } from "../../interceptor/index.js";
 import type {
@@ -63,12 +63,11 @@ describe("createHostRunForContext()", () => {
 	});
 
 	it("calls SDK runNoWaitChild with workflow name", async () => {
-		const ref = taskRef(TestTask);
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(
 			createMockRunRef({ result: "test" }),
 		);
 
-		await runFn(ref, { data: "test" });
+		await runFn(TestTask, { data: "test" });
 
 		expect(sdkCtx.runNoWaitChild).toHaveBeenCalledWith(
 			"test-task",
@@ -82,7 +81,7 @@ describe("createHostRunForContext()", () => {
 			createMockRunRef({ result: "test" }),
 		);
 
-		await runFn(taskRef(TestTask), { data: "test" }, { childKey: "child-1" });
+		await runFn(TestTask, { data: "test" }, { childKey: "child-1" });
 
 		expect(sdkCtx.runNoWaitChild).toHaveBeenCalledWith(
 			"test-task",
@@ -92,35 +91,32 @@ describe("createHostRunForContext()", () => {
 	});
 
 	it("waits for output by default", async () => {
-		const ref = taskRef(TestTask);
 		const expectedOutput = { result: "test" };
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(
 			createMockRunRef(expectedOutput),
 		);
 
-		const result = await runFn(ref, { data: "test" });
+		const result = await runFn(TestTask, { data: "test" });
 
 		expect(result).toEqual(expectedOutput);
 	});
 
 	it("returns run ref when wait is false", async () => {
-		const ref = taskRef(TestTask);
 		const mockRunRef = createMockRunRef({ result: "test" });
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(mockRunRef);
 
-		const result = await runFn(ref, { data: "test" }, { wait: false });
+		const result = await runFn(TestTask, { data: "test" }, { wait: false });
 
 		expect(result).toBe(mockRunRef);
 	});
 
 	it("handles array inputs", async () => {
-		const ref = taskRef(TestTask);
 		sdkCtx.bulkRunNoWaitChildren.mockResolvedValueOnce([
 			createMockRunRef({ result: "a" }),
 			createMockRunRef({ result: "b" }),
 		]);
 
-		const result = await runFn(ref, [{ data: "a" }, { data: "b" }]);
+		const result = await runFn(TestTask, [{ data: "a" }, { data: "b" }]);
 
 		expect(sdkCtx.bulkRunNoWaitChildren).toHaveBeenCalledTimes(1);
 		expect(sdkCtx.bulkRunNoWaitChildren).toHaveBeenCalledWith([
@@ -132,7 +128,6 @@ describe("createHostRunForContext()", () => {
 	});
 
 	it("returns run refs for array inputs when wait is false", async () => {
-		const ref = taskRef(TestTask);
 		const mockRunRef1 = createMockRunRef({ result: "a" });
 		const mockRunRef2 = createMockRunRef({ result: "b" });
 		sdkCtx.bulkRunNoWaitChildren.mockResolvedValueOnce([
@@ -140,7 +135,7 @@ describe("createHostRunForContext()", () => {
 			mockRunRef2,
 		]);
 
-		const result = await runFn(ref, [{ data: "a" }, { data: "b" }], {
+		const result = await runFn(TestTask, [{ data: "a" }, { data: "b" }], {
 			wait: false,
 		});
 
@@ -155,7 +150,7 @@ describe("createHostRunForContext()", () => {
 			createMockRunRef({ result: "b" }),
 		]);
 
-		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }], {
+		await runFn(TestTask, [{ data: "a" }, { data: "b" }], {
 			childKey: "child-1",
 		});
 
@@ -177,14 +172,14 @@ describe("createHostRunForContext()", () => {
 			mockRunRef2,
 		]);
 
-		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
+		await runFn(TestTask, [{ data: "a" }, { data: "b" }]);
 
 		expect(mockRunRef1._standaloneTaskName).toBe("test-task");
 		expect(mockRunRef2._standaloneTaskName).toBe("test-task");
 	});
 
 	it("returns an empty array without calling the SDK for empty input", async () => {
-		const result = await runFn(taskRef(TestTask), []);
+		const result = await runFn(TestTask, []);
 
 		expect(result).toEqual([]);
 		expect(sdkCtx.bulkRunNoWaitChildren).not.toHaveBeenCalled();
@@ -195,7 +190,7 @@ describe("createHostRunForContext()", () => {
 		const mockRunRef = createMockRunRef({ result: "test" });
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(mockRunRef);
 
-		await runFn(taskRef(TestTask), { data: "test" });
+		await runFn(TestTask, { data: "test" });
 
 		expect(mockRunRef._standaloneTaskName).toBe("test-task");
 	});
@@ -204,7 +199,7 @@ describe("createHostRunForContext()", () => {
 		const mockRunRef = createMockRunRef({ step1: {}, step2: {} });
 		sdkCtx.runNoWaitChild.mockResolvedValueOnce(mockRunRef);
 
-		await runFn(workflowRef(TestWorkflow), { id: "1" });
+		await runFn(TestWorkflow, { id: "1" });
 
 		expect(mockRunRef._standaloneTaskName).toBeUndefined();
 	});
@@ -220,12 +215,26 @@ describe("createHostRunForAdmin()", () => {
 	});
 
 	it("calls SDK runNoWait with workflow name", async () => {
-		const ref = taskRef(TestTask);
 		mockClient.runNoWait.mockResolvedValueOnce(
 			createMockRunRef({ result: "test" }),
 		);
 
-		await runFn(ref, { data: "test" });
+		await runFn(TestTask, { data: "test" });
+
+		expect(mockClient.runNoWait).toHaveBeenCalledWith(
+			"test-task",
+			{ data: "test" },
+			{},
+		);
+	});
+
+	it("accepts the deprecated ref", async () => {
+		mockClient.runNoWait.mockResolvedValueOnce(
+			createMockRunRef({ result: "test" }),
+		);
+
+		// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref overload
+		await runFn(taskRef(TestTask), { data: "test" });
 
 		expect(mockClient.runNoWait).toHaveBeenCalledWith(
 			"test-task",
@@ -235,35 +244,32 @@ describe("createHostRunForAdmin()", () => {
 	});
 
 	it("waits for output by default", async () => {
-		const ref = taskRef(TestTask);
 		const expectedOutput = { result: "test" };
 		mockClient.runNoWait.mockResolvedValueOnce(
 			createMockRunRef(expectedOutput),
 		);
 
-		const result = await runFn(ref, { data: "test" });
+		const result = await runFn(TestTask, { data: "test" });
 
 		expect(result).toEqual(expectedOutput);
 	});
 
 	it("returns run ref when wait is false", async () => {
-		const ref = taskRef(TestTask);
 		const mockRunRef = createMockRunRef({ result: "test" });
 		mockClient.runNoWait.mockResolvedValueOnce(mockRunRef);
 
-		const result = await runFn(ref, { data: "test" }, { wait: false });
+		const result = await runFn(TestTask, { data: "test" }, { wait: false });
 
 		expect(result).toBe(mockRunRef);
 	});
 
 	it("handles array inputs", async () => {
-		const ref = taskRef(TestTask);
 		mockClient.admin.runWorkflows.mockResolvedValueOnce([
 			createMockRunRef({ result: "a" }),
 			createMockRunRef({ result: "b" }),
 		]);
 
-		const result = await runFn(ref, [{ data: "a" }, { data: "b" }]);
+		const result = await runFn(TestTask, [{ data: "a" }, { data: "b" }]);
 
 		expect(mockClient.admin.runWorkflows).toHaveBeenCalledTimes(1);
 		expect(mockClient.admin.runWorkflows).toHaveBeenCalledWith([
@@ -282,11 +288,9 @@ describe("createHostRunForAdmin()", () => {
 			mockRunRef2,
 		]);
 
-		const result = await runFn(
-			taskRef(TestTask),
-			[{ data: "a" }, { data: "b" }],
-			{ wait: false },
-		);
+		const result = await runFn(TestTask, [{ data: "a" }, { data: "b" }], {
+			wait: false,
+		});
 
 		expect((result as any[])[0]).toBe(mockRunRef1);
 		expect((result as any[])[1]).toBe(mockRunRef2);
@@ -300,7 +304,7 @@ describe("createHostRunForAdmin()", () => {
 			mockRunRef2,
 		]);
 
-		await runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
+		await runFn(TestTask, [{ data: "a" }, { data: "b" }]);
 
 		expect(mockRunRef1._standaloneTaskName).toBe("test-task");
 		expect(mockRunRef2._standaloneTaskName).toBe("test-task");
@@ -313,18 +317,18 @@ describe("createHostRunForAdmin()", () => {
 			rejectingRunRef(error),
 		]);
 
-		await expect(
-			runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]),
-		).rejects.toBe(error);
+		await expect(runFn(TestTask, [{ data: "a" }, { data: "b" }])).rejects.toBe(
+			error,
+		);
 	});
 
 	it("propagates a runWorkflows rejection", async () => {
 		const error = new Error("trigger failed");
 		mockClient.admin.runWorkflows.mockRejectedValueOnce(error);
 
-		await expect(
-			runFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]),
-		).rejects.toBe(error);
+		await expect(runFn(TestTask, [{ data: "a" }, { data: "b" }])).rejects.toBe(
+			error,
+		);
 	});
 
 	it("applies interceptor-replaced options to every bulk entry", async () => {
@@ -342,7 +346,7 @@ describe("createHostRunForAdmin()", () => {
 			createMockRunRef({ result: "b" }),
 		]);
 
-		await interceptedRunFn(taskRef(TestTask), [{ data: "a" }, { data: "b" }]);
+		await interceptedRunFn(TestTask, [{ data: "a" }, { data: "b" }]);
 
 		expect(interceptRun).toHaveBeenCalledTimes(1);
 		const entries = mockClient.admin.runWorkflows.mock.calls[0]![0];
@@ -353,7 +357,7 @@ describe("createHostRunForAdmin()", () => {
 	});
 
 	it("returns an empty array without calling the SDK for empty input", async () => {
-		const result = await runFn(taskRef(TestTask), []);
+		const result = await runFn(TestTask, []);
 
 		expect(result).toEqual([]);
 		expect(mockClient.admin.runWorkflows).not.toHaveBeenCalled();
@@ -373,7 +377,7 @@ describe("createHostRunForDurableContext()", () => {
 	it("spawns a child with name, input and key", async () => {
 		durableCtx.spawnChild.mockResolvedValueOnce({ result: "test" });
 
-		await runFn(taskRef(TestTask), { data: "test" }, { childKey: "child-1" });
+		await runFn(TestTask, { data: "test" }, { childKey: "child-1" });
 
 		expect(durableCtx.spawnChild).toHaveBeenCalledWith(
 			"test-task",
@@ -385,7 +389,7 @@ describe("createHostRunForDurableContext()", () => {
 	it("returns the child output", async () => {
 		durableCtx.spawnChild.mockResolvedValueOnce({ result: "test" });
 
-		const result = await runFn(taskRef(TestTask), { data: "test" });
+		const result = await runFn(TestTask, { data: "test" });
 
 		expect(result).toEqual({ result: "test" });
 	});
@@ -396,13 +400,9 @@ describe("createHostRunForDurableContext()", () => {
 			{ result: "b" },
 		]);
 
-		const result = await runFn(
-			taskRef(TestTask),
-			[{ data: "a" }, { data: "b" }],
-			{
-				childKey: "child-1",
-			},
-		);
+		const result = await runFn(TestTask, [{ data: "a" }, { data: "b" }], {
+			childKey: "child-1",
+		});
 
 		expect(durableCtx.spawnChildren).toHaveBeenCalledWith([
 			{
@@ -421,21 +421,21 @@ describe("createHostRunForDurableContext()", () => {
 	});
 
 	it("returns an empty array without calling the SDK for empty input", async () => {
-		const result = await runFn(taskRef(TestTask), []);
+		const result = await runFn(TestTask, []);
 
 		expect(result).toEqual([]);
 		expect(durableCtx.spawnChildren).not.toHaveBeenCalled();
 	});
 
 	it("rejects when wait is false", async () => {
-		const result = runFn(taskRef(TestTask), { data: "test" }, { wait: false });
+		const result = runFn(TestTask, { data: "test" }, { wait: false });
 
 		await expect(result).rejects.toBeInstanceOf(DurableRunNoWaitException);
 		expect(durableCtx.spawnChild).not.toHaveBeenCalled();
 	});
 
 	it("rejects array input when wait is false", async () => {
-		const result = runFn(taskRef(TestTask), [{ data: "a" }], { wait: false });
+		const result = runFn(TestTask, [{ data: "a" }], { wait: false });
 
 		await expect(result).rejects.toBeInstanceOf(DurableRunNoWaitException);
 		expect(durableCtx.spawnChildren).not.toHaveBeenCalled();
@@ -445,9 +445,7 @@ describe("createHostRunForDurableContext()", () => {
 		const error = new Error("child failed");
 		durableCtx.spawnChild.mockRejectedValueOnce(error);
 
-		await expect(runFn(taskRef(TestTask), { data: "test" })).rejects.toBe(
-			error,
-		);
+		await expect(runFn(TestTask, { data: "test" })).rejects.toBe(error);
 	});
 
 	it("rejects when the engine does not support eviction", async () => {
@@ -456,15 +454,15 @@ describe("createHostRunForDurableContext()", () => {
 		);
 
 		await expect(
-			legacyRunFn(taskRef(TestTask), { data: "test" }),
+			legacyRunFn(TestTask, { data: "test" }),
 		).rejects.toBeInstanceOf(DurableEvictionNotSupportedException);
 	});
 
 	it("spawns concurrent children synchronously in call order", async () => {
 		durableCtx.spawnChild.mockResolvedValue({ result: "test" });
 
-		const first = runFn(taskRef(TestTask), { data: "a" });
-		const second = runFn(taskRef(TestTask), { data: "b" });
+		const first = runFn(TestTask, { data: "a" });
+		const second = runFn(TestTask, { data: "b" });
 
 		expect(durableCtx.spawnChild.mock.calls.map((call) => call[1])).toEqual([
 			{ data: "a" },

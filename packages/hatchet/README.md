@@ -59,7 +59,7 @@ export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 ### 3. Register and invoke
 
 ```typescript
-import { Client, HatchetModule, taskRef } from "@abinnovision/nestjs-hatchet";
+import { Client, HatchetModule } from "@abinnovision/nestjs-hatchet";
 import { Injectable, Module } from "@nestjs/common";
 
 import { ProcessDataTask } from "./process-data.task";
@@ -69,12 +69,12 @@ export class MyService {
   constructor(private readonly client: Client) {}
 
   async process(data: string) {
-    return this.client.run(taskRef(ProcessDataTask), { data });
+    return this.client.run(ProcessDataTask, { data });
   }
 }
 
 @Module({
-  imports: [HatchetModule.forFeature(taskRef(ProcessDataTask))],
+  imports: [HatchetModule.forFeature(ProcessDataTask)],
   providers: [ProcessDataTask, MyService],
 })
 export class ProcessDataModule {}
@@ -156,7 +156,7 @@ await client.emit(UserCreatedEvent, {
 ### Non-blocking execution
 
 ```typescript
-const runRef = await ctx.run(taskRef(SomeTask), input, { wait: false });
+const runRef = await ctx.run(SomeTask, input, { wait: false });
 // Continue without waiting...
 const result = await runRef.output; // Await when needed
 ```
@@ -293,7 +293,6 @@ import {
   Task,
   TaskCtx,
   taskHost,
-  taskRef,
 } from "@abinnovision/nestjs-hatchet";
 import {
   Controller,
@@ -332,7 +331,7 @@ export class UsersController {
 
   @Post()
   public async create() {
-    return this.client.run(taskRef(SendWelcomeMailTask), { userId: "123" });
+    return this.client.run(SendWelcomeMailTask, { userId: "123" });
   }
 }
 
@@ -344,7 +343,7 @@ export class UsersController {
       clientInterceptors: [CorrelationClientInterceptor],
       taskInterceptors: [CorrelationTaskInterceptor],
     }),
-    HatchetModule.forFeature(taskRef(SendWelcomeMailTask)),
+    HatchetModule.forFeature(SendWelcomeMailTask),
   ],
   controllers: [UsersController],
   providers: [
@@ -396,7 +395,7 @@ export class OrderFulfillmentTask extends taskHost(
 ) {
   @Task({ durable: true, executionTimeout: "1h" })
   public async task(ctx: DurableTaskCtx<typeof this>) {
-    const payment = await ctx.run(taskRef(ChargePaymentTask), {
+    const payment = await ctx.run(ChargePaymentTask, {
       orderId: ctx.input.orderId,
     });
 
@@ -432,7 +431,7 @@ A durable context has these members on top of the regular ones:
 
 | Member                           | Description                                                                                                           |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `ctx.run(ref, input, opts?)`     | Runs a child task or workflow, recorded in the durable event log                                                      |
+| `ctx.run(Host, input, opts?)`    | Runs a child task or workflow, recorded in the durable event log                                                      |
 | `ctx.sleepFor(duration)`         | Sleeps for a duration                                                                                                 |
 | `ctx.sleepUntil(date)`           | Sleeps until a date                                                                                                   |
 | `ctx.waitFor(conditions)`        | Waits for SDK conditions                                                                                              |
@@ -460,7 +459,7 @@ recorded and returned on replay instead of spawning the children again. It has t
   engine version is unknown, it throws `DurableEvictionNotSupportedException`. This is stricter than the SDK,
   which falls back to unrecorded child runs. `ctx.fromSDK.spawnChild` remains available as an escape hatch.
 
-Side effects belong in separate task hosts that the durable task calls through `ctx.run(taskRef(...))`.
+Side effects belong in separate task hosts that the durable task calls through `ctx.run(Host, ...)`.
 Each child run executes once and its output is replayed from the event log, and each side effect gets its
 own retries and timeouts.
 
@@ -492,7 +491,7 @@ own retries and timeouts.
 | ------------------------------------- | ------------------------------------------- |
 | `HatchetModule.forRoot(config)`       | Initialize with synchronous config          |
 | `HatchetModule.forRootAsync(options)` | Initialize with async config factory        |
-| `HatchetModule.forFeature(...refs)`   | Register tasks/workflows in feature modules |
+| `HatchetModule.forFeature(...hosts)`  | Register tasks/workflows in feature modules |
 
 Module options (extras to `forRoot`/`forRootAsync`):
 
@@ -517,18 +516,17 @@ Module options (extras to `forRoot`/`forRootAsync`):
 | `taskHost(schema?)`     | Create TaskHost base class     |
 | `workflowHost(schema?)` | Create WorkflowHost base class |
 
-### References
+### References (deprecated)
 
-| Function                     | Description                         |
-| ---------------------------- | ----------------------------------- |
-| `taskRef(TaskClass)`         | Create type-safe task reference     |
-| `workflowRef(WorkflowClass)` | Create type-safe workflow reference |
+`taskRef` and `workflowRef` (with the `TaskRef`, `WorkflowRef`, `AnyCallableRef`, `InputOfRef` and `OutputOfRef` types) are deprecated and will be removed. Pass the host class directly to `client.run`, `ctx.run` and `forFeature`.
+
+`run` does not validate the host shape at compile time. `forFeature` does that at compile time, and the worker validates hosts at startup.
 
 ### Client
 
 | Method                                    | Description                                   |
 | ----------------------------------------- | --------------------------------------------- |
-| `client.run(ref, input, opts?)`           | Execute task/workflow                         |
+| `client.run(Host, input, opts?)`          | Execute task/workflow                         |
 | `client.emit(event, payload \| payloads)` | Emit one or many events                       |
 | `client.emitBulk(event, payloads)`        | Emit multiple events (deprecated, use `emit`) |
 
@@ -549,7 +547,7 @@ Calls to `emit`, `emitBulk` and `run` pass through registered [client intercepto
 ```typescript
 ctx.input       // Validated input data
 ctx.fromSDK     // Underlying Hatchet SDK context
-ctx.run(ref, input, opts ?)  // Invoke other tasks/workflows
+ctx.run(Host, input, opts ?)  // Invoke other tasks/workflows
 ctx.parent(method)          // Get parent task output (WorkflowCtx only)
 ctx.sleepFor(duration)      // Durable sleep (durable contexts only)
 ctx.waitForEvent(event, opts ?)  // Durable event wait (durable contexts only)
