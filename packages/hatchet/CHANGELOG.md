@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.10.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.9.0...nestjs-hatchet-v0.10.0) (2026-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **hatchet:** trigger array runs through the SDK bulk APIs ([#311](https://github.com/abinnovision/nestjs-commons/issues/311))
+
+### Features
+
+* **hatchet:** accept host classes in run and forFeature ([#318](https://github.com/abinnovision/nestjs-commons/issues/318)) ([8a3beb3](https://github.com/abinnovision/nestjs-commons/commit/8a3beb30ef6c2baefb01714031ed17e718a6ae2e))
+* **hatchet:** add durable task support ([#314](https://github.com/abinnovision/nestjs-commons/issues/314)) ([b3ed9e1](https://github.com/abinnovision/nestjs-commons/commit/b3ed9e1db514ce783f314fa0de04fb8641441c90))
+
+
+### Performance Improvements
+
+* **hatchet:** build the host trigger config once per declaration ([#312](https://github.com/abinnovision/nestjs-commons/issues/312)) ([c945640](https://github.com/abinnovision/nestjs-commons/commit/c945640d1cff52851b2ae44bd06c80619458ef95))
+* **hatchet:** trigger array runs through the SDK bulk APIs ([#311](https://github.com/abinnovision/nestjs-commons/issues/311)) ([754d69f](https://github.com/abinnovision/nestjs-commons/commit/754d69fb6ef2182fec113406daa85fea298ce3f1))
+
 ## [0.9.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-hatchet-v0.8.0...nestjs-hatchet-v0.9.0) (2026-11-10)
 
 
