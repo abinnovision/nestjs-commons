@@ -2,13 +2,7 @@
 import { z } from "zod";
 
 import { taskHost, workflowHost } from "../abstracts/index.js";
-import {
-	DurableTask,
-	DurableWorkflowTask,
-	Host,
-	Task,
-	WorkflowTask,
-} from "../metadata/index.js";
+import { Host, Task, WorkflowTask } from "../metadata/index.js";
 
 import type {
 	DurableTaskCtx,
@@ -74,7 +68,7 @@ export class NoMethodsWorkflow extends workflowHost() {
 /** Durable TaskHost with string data schema */
 @Host({ name: "durable-test-task" })
 export class DurableTestTask extends taskHost(z.object({ data: z.string() })) {
-	@DurableTask({})
+	@Task({ durable: true })
 	public execute(ctx: DurableTaskCtx<typeof this>) {
 		return { result: ctx.input.data };
 	}
@@ -90,7 +84,10 @@ export class DurableTestWorkflow extends workflowHost(
 		return { step: 1 };
 	}
 
-	@DurableWorkflowTask<typeof DurableTestWorkflow>({ parents: ["step1"] })
+	@WorkflowTask<typeof DurableTestWorkflow>({
+		durable: true,
+		parents: ["step1"],
+	})
 	public step2(_ctx: DurableWorkflowCtx<typeof this>) {
 		return { step: 2 };
 	}

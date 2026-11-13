@@ -1,29 +1,48 @@
-import { METADATA_KEY_TASK_OPTS as METADATA_KEY } from "../keys.js";
+import { METADATA_KEY_DURABLE, METADATA_KEY_TASK_OPTS } from "../keys.js";
 
-import type { DurableCtxMembers } from "../../execution/index.js";
+import type { CtxGuard } from "./ctx-guard.js";
 import type {
 	CreateBaseWorkflowOpts,
+	CreateDurableTaskWorkflowOpts,
 	CreateTaskWorkflowOpts,
 } from "@hatchet-dev/typescript-sdk";
 
-export type TaskOpts = Omit<
-	CreateTaskWorkflowOpts,
-	"fn" | "name" | keyof CreateBaseWorkflowOpts
->;
+type OmittedKeys = "fn" | "name" | keyof CreateBaseWorkflowOpts;
+
+export type TaskOpts =
+	| (Omit<CreateTaskWorkflowOpts, OmittedKeys> & { durable?: false })
+	| (Omit<CreateDurableTaskWorkflowOpts, OmittedKeys> & { durable: true });
 
 /**
  * Decorator to mark a method as a Hatchet task.
- * Methods taking a `DurableTaskCtx` must use `@DurableTask()` instead.
+ * With `durable: true`, the task runs as a durable task and the method must take a `DurableTaskCtx`.
  */
-export const Task = (opts: TaskOpts) => {
-	return <F extends (...args: any[]) => any>(
+export function Task(
+	opts: Extract<TaskOpts, { durable: true }>,
+): CtxGuard<true, "durable: true requires a DurableTaskCtx parameter">;
+export function Task(
+	opts: Extract<TaskOpts, { durable?: false }>,
+): CtxGuard<false, "A DurableTaskCtx parameter requires durable: true">;
+export function Task(opts: TaskOpts) {
+	return (
 		_target: object,
 		_propertyKey: string | symbol,
-		descriptor: TypedPropertyDescriptor<F> &
-			(Parameters<F>[0] extends DurableCtxMembers
-				? { error: "A DurableTaskCtx parameter requires @DurableTask()" }
-				: unknown),
+		descriptor: PropertyDescriptor,
 	): void => {
-		Reflect.defineMetadata(METADATA_KEY, opts, descriptor.value as object);
+		const { durable, ...rest } = opts;
+
+		Reflect.defineMetadata(
+			METADATA_KEY_TASK_OPTS,
+			rest,
+			descriptor.value as object,
+		);
+
+		if (durable) {
+			Reflect.defineMetadata(
+				METADATA_KEY_DURABLE,
+				true,
+				descriptor.value as object,
+			);
+		}
 	};
-};
+}
