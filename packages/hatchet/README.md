@@ -2,7 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/@abinnovision/nestjs-hatchet?style=flat-square)](https://www.npmjs.com/package/@abinnovision/nestjs-hatchet)
 
-NestJS integration for [Hatchet](https://hatchet.run) - a distributed workflow orchestration engine. Provides type-safe decorators, services, and event handling for building robust workflows.
+NestJS integration for [Hatchet](https://hatchet.run), a distributed workflow orchestration engine. Tasks,
+workflows and events are declared as decorated Nest providers with schema-validated inputs, and the module
+registers them with a Hatchet worker.
 
 ## Installation
 
@@ -10,12 +12,12 @@ NestJS integration for [Hatchet](https://hatchet.run) - a distributed workflow o
 yarn add @abinnovision/nestjs-hatchet @hatchet-dev/typescript-sdk
 ```
 
-`@hatchet-dev/typescript-sdk` is a peer dependency, so your application controls the SDK
-version. Import SDK types such as `Context` directly from it.
+`@hatchet-dev/typescript-sdk` is a peer dependency, so your application picks the SDK version.
+Import SDK types such as `Context` directly from it.
 
-## Quick Start
+## Quick start
 
-### 1. Configure Module
+### 1. Configure the module
 
 ```typescript
 import { HatchetModule } from "@abinnovision/nestjs-hatchet";
@@ -35,12 +37,11 @@ import { Module } from "@nestjs/common";
 export class AppModule {}
 ```
 
-The worker is stopped through Nest's shutdown hooks, waiting for running tasks to
-finish. Call `app.enableShutdownHooks()` so this also happens on `SIGTERM`/`SIGINT`.
-To let the Hatchet SDK handle these signals itself instead, set `handleKill: true` in
-the worker options.
+Nest's shutdown hooks stop the worker after running tasks finish. Call
+`app.enableShutdownHooks()` so this also happens on `SIGTERM`/`SIGINT`, or set
+`handleKill: true` in the worker options to let the Hatchet SDK handle the signals.
 
-### 2. Define a Task
+### 2. Define a task
 
 ```typescript
 import { Host, Task, TaskCtx, taskHost } from "@abinnovision/nestjs-hatchet";
@@ -55,7 +56,7 @@ export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 }
 ```
 
-### 3. Register and Invoke
+### 3. Register and invoke
 
 ```typescript
 import { Client, HatchetModule, taskRef } from "@abinnovision/nestjs-hatchet";
@@ -79,15 +80,15 @@ export class MyService {
 export class ProcessDataModule {}
 ```
 
-`forFeature()` only registers the hosts with the worker. Each host must also be listed
-in the `providers` of a module, otherwise the worker cannot resolve it and the
-application fails to start.
+`forFeature()` only registers the hosts with the worker. Each host must also be in the
+`providers` of a module, or the application fails to start because the worker cannot
+resolve it.
 
-## Core Concepts
+## Core concepts
 
 ### Tasks
 
-Standalone units of work with a single executable method.
+A task is a standalone unit of work with a single method.
 
 ```typescript
 @Host({ name: "cleanup" })
@@ -101,7 +102,7 @@ export class CleanupTask extends taskHost() {
 
 ### Workflows
 
-Multi-step processes with task dependencies.
+A workflow has several tasks that can depend on each other through `parents`.
 
 ```typescript
 @Host({ name: "order-workflow" })
@@ -123,7 +124,7 @@ export class OrderWorkflow extends workflowHost(
 
 ### Events
 
-Type-safe event definitions with schema validation.
+An event definition pairs an event key with a schema for its payload.
 
 ```typescript
 // Define event
@@ -150,9 +151,9 @@ await client.emit(UserCreatedEvent, {
 });
 ```
 
-## Advanced Usage
+## Advanced usage
 
-### Non-Blocking Execution
+### Non-blocking execution
 
 ```typescript
 const runRef = await ctx.run(taskRef(SomeTask), input, { wait: false });
@@ -160,7 +161,7 @@ const runRef = await ctx.run(taskRef(SomeTask), input, { wait: false });
 const result = await runRef.output; // Await when needed
 ```
 
-### Bulk Event Emission
+### Bulk event emission
 
 ```typescript
 await client.emit(OrderEvent, [
@@ -169,157 +170,7 @@ await client.emit(OrderEvent, [
 ]);
 ```
 
-### Task interceptors
-
-Task interceptors wrap every task execution on the worker, including each task of a workflow, e.g. for
-logging or tracing. Pass them to `forRoot()`/`forRootAsync()` and list them as providers, since they are
-resolved from the application rather than instantiated by the module. For producer-side
-calls, see [Client interceptors](#client-interceptors).
-
-```typescript
-import {
-  BaseCtx,
-  HatchetModule,
-  TaskInterceptor,
-} from "@abinnovision/nestjs-hatchet";
-import { Injectable, Logger, Module } from "@nestjs/common";
-
-@Injectable()
-export class LoggingInterceptor extends TaskInterceptor {
-  private readonly logger = new Logger(LoggingInterceptor.name);
-
-  public async intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
-    this.logger.log(`Running ${ctx.fromSDK.taskName()}`);
-    return next();
-  }
-}
-
-@Module({
-  imports: [
-    HatchetModule.forRoot({
-      config: {},
-      worker: { name: "my-worker" },
-      taskInterceptors: [LoggingInterceptor],
-    }),
-  ],
-  providers: [LoggingInterceptor],
-})
-export class AppModule {}
-```
-
-### Client interceptors
-
-Client interceptors wrap producer-side calls on `Client`: `client.emit` (and the
-deprecated `emitBulk`) and `client.run`. Extend `ClientInterceptor` and implement
-`interceptEmit`, `interceptRun`, or both. Register the class with the
-`clientInterceptors` option of `forRoot()`/`forRootAsync()` and list it in `providers`.
-
-The example below propagates a correlation id. The client interceptor writes it into
-`additionalMetadata`, and a task interceptor on the worker restores it from the
-metadata of the running task.
-
-```typescript
-import { AsyncLocalStorage } from "node:async_hooks";
-import { randomUUID } from "node:crypto";
-
-import {
-  BaseCtx,
-  ClientInterceptor,
-  EmitCtx,
-  EmitOptions,
-  HatchetModule,
-  TaskInterceptor,
-  RunCtx,
-  RunOptions,
-} from "@abinnovision/nestjs-hatchet";
-import { Injectable, Module } from "@nestjs/common";
-
-export const correlation = new AsyncLocalStorage<{ id: string }>();
-
-@Injectable()
-export class CorrelationClientInterceptor extends ClientInterceptor {
-  public override async interceptEmit(
-    ctx: EmitCtx,
-    next: (options?: EmitOptions) => Promise<unknown>,
-  ) {
-    const id = correlation.getStore()?.id;
-    if (!id) return next();
-
-    return next({
-      ...ctx.options,
-      additionalMetadata: {
-        correlationId: id,
-        ...ctx.options?.additionalMetadata,
-      },
-    });
-  }
-
-  public override async interceptRun(
-    ctx: RunCtx,
-    next: (options?: RunOptions) => Promise<unknown>,
-  ) {
-    const id = correlation.getStore()?.id;
-    if (!id) return next();
-
-    return next({
-      ...ctx.options,
-      additionalMetadata: {
-        correlationId: id,
-        ...ctx.options?.additionalMetadata,
-      },
-    });
-  }
-}
-
-@Injectable()
-export class CorrelationInterceptor extends TaskInterceptor {
-  public async intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
-    const id = ctx.fromSDK.additionalMetadata()?.correlationId ?? randomUUID();
-    return correlation.run({ id }, next);
-  }
-}
-
-@Module({
-  imports: [
-    HatchetModule.forRootAsync({
-      useFactory: () => ({ config: {}, worker: { name: "my-worker" } }),
-      clientInterceptors: [CorrelationClientInterceptor],
-      taskInterceptors: [CorrelationInterceptor],
-    }),
-  ],
-  providers: [CorrelationClientInterceptor, CorrelationInterceptor],
-})
-export class AppModule {}
-```
-
-Behavior:
-
-- Each interceptor runs once per call. A bulk emit (array payload) and a `run` with
-  array input each count as one call.
-- Interceptors change options only. The payload or input is not modifiable.
-- `next()` keeps the current options. `next(options)` replaces them for the following
-  interceptors and the SDK call, so spread `ctx.options` to keep caller values.
-- `next(undefined)` behaves like `next()`. To drop all options, pass `{}`.
-- `wait` and the return shape of `client.run` cannot be overridden. `RunOptions`
-  excludes `wait`.
-- With `wait: true` (the default), `interceptRun` wraps the full run, including
-  awaiting the output. With `wait: false` it wraps only the enqueue.
-- `childKey` has no effect on `Client.run`.
-- Interceptors run in array order, the first being the outermost. An interceptor may
-  skip `next()` to short-circuit the call.
-- Client interceptor classes must be listed in `providers`. A missing provider fails
-  application bootstrap.
-- Child runs started with `ctx.run` inherit the parent's `additionalMetadata` on
-  Hatchet engine `>= v0.104.0`, so they need no client interceptor.
-
-Caveats:
-
-- Calling `client.emit` or `client.run` inside an interceptor re-enters the chain.
-  Guard against the recursion yourself.
-- Request-scoped interceptor providers are not supported, same as task
-  interceptors.
-
-### Helper Methods
+### Helper methods
 
 ```typescript
 @Host({ name: "my-task" })
@@ -335,11 +186,203 @@ export class MyTask extends taskHost(schema) {
 }
 ```
 
-## Durable Tasks
+## Interceptors
 
-Durable tasks are backed by Hatchet's durable execution. Waits, sleeps and child runs are recorded in a
-durable event log, so a durable task can be evicted from the worker and resumed later without repeating
-recorded work.
+There are two kinds of interceptors:
+
+- A `TaskInterceptor` wraps every task execution on the worker, including each task of a workflow.
+- A `ClientInterceptor` wraps `client.emit` and `client.run` on the producer side.
+
+Register them with the `taskInterceptors` and `clientInterceptors` options of `forRoot()`/`forRootAsync()`,
+and list each class in `providers`. The module resolves interceptors from the application, so a missing
+provider fails application startup.
+
+### Example: correlation ids
+
+This example carries a correlation id from an HTTP request to the task that the request starts:
+
+1. A middleware stores the id of each request in an `AsyncLocalStorage`.
+2. The client interceptor copies the id into the `additionalMetadata` of every run and event.
+3. On the worker, the task interceptor reads the id back from the metadata and restores the storage
+   before the task runs.
+
+```typescript
+// correlation.ts
+import { AsyncLocalStorage } from "node:async_hooks";
+import { randomUUID } from "node:crypto";
+
+import {
+  BaseCtx,
+  ClientInterceptor,
+  EmitCtx,
+  EmitOptions,
+  RunCtx,
+  RunOptions,
+  TaskInterceptor,
+} from "@abinnovision/nestjs-hatchet";
+import { Injectable, NestMiddleware } from "@nestjs/common";
+import type { NextFunction, Request, Response } from "express";
+
+const storage = new AsyncLocalStorage<{ id: string }>();
+
+export const correlationId = () => storage.getStore()?.id;
+
+// Opens a correlation context for every HTTP request.
+@Injectable()
+export class CorrelationMiddleware implements NestMiddleware {
+  public use(req: Request, _res: Response, next: NextFunction) {
+    const id = req.header("x-correlation-id") ?? randomUUID();
+    storage.run({ id }, next);
+  }
+}
+
+// Producer side: adds the id to the metadata of every emit and run.
+@Injectable()
+export class CorrelationClientInterceptor extends ClientInterceptor {
+  public override interceptEmit(
+    ctx: EmitCtx,
+    next: (options?: EmitOptions) => Promise<unknown>,
+  ) {
+    const id = correlationId();
+    if (!id) return next();
+
+    return next({
+      ...ctx.options,
+      additionalMetadata: {
+        correlationId: id,
+        ...ctx.options?.additionalMetadata,
+      },
+    });
+  }
+
+  public override interceptRun(
+    ctx: RunCtx,
+    next: (options?: RunOptions) => Promise<unknown>,
+  ) {
+    const id = correlationId();
+    if (!id) return next();
+
+    return next({
+      ...ctx.options,
+      additionalMetadata: {
+        correlationId: id,
+        ...ctx.options?.additionalMetadata,
+      },
+    });
+  }
+}
+
+// Worker side: restores the id from the metadata of the running task.
+@Injectable()
+export class CorrelationTaskInterceptor extends TaskInterceptor {
+  public intercept<T>(ctx: BaseCtx<any>, next: () => Promise<T>) {
+    const { correlationId: id = randomUUID() } =
+      ctx.fromSDK.additionalMetadata();
+
+    return storage.run({ id }, next);
+  }
+}
+```
+
+```typescript
+// app.module.ts
+import {
+  Client,
+  HatchetModule,
+  Host,
+  Task,
+  TaskCtx,
+  taskHost,
+  taskRef,
+} from "@abinnovision/nestjs-hatchet";
+import {
+  Controller,
+  Logger,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  Post,
+} from "@nestjs/common";
+import { z } from "zod";
+
+import {
+  CorrelationClientInterceptor,
+  CorrelationMiddleware,
+  CorrelationTaskInterceptor,
+  correlationId,
+} from "./correlation";
+
+@Host({ name: "send-welcome-mail" })
+export class SendWelcomeMailTask extends taskHost(
+  z.object({ userId: z.string() }),
+) {
+  private readonly logger = new Logger(SendWelcomeMailTask.name);
+
+  @Task({})
+  public async task(ctx: TaskCtx<typeof this>) {
+    // Same id as the HTTP request that started the run.
+    this.logger.log(`Sending mail to ${ctx.input.userId} [${correlationId()}]`);
+    return { sent: true };
+  }
+}
+
+@Controller("users")
+export class UsersController {
+  public constructor(private readonly client: Client) {}
+
+  @Post()
+  public async create() {
+    return this.client.run(taskRef(SendWelcomeMailTask), { userId: "123" });
+  }
+}
+
+@Module({
+  imports: [
+    HatchetModule.forRoot({
+      config: {},
+      worker: { name: "my-worker" },
+      clientInterceptors: [CorrelationClientInterceptor],
+      taskInterceptors: [CorrelationTaskInterceptor],
+    }),
+    HatchetModule.forFeature(taskRef(SendWelcomeMailTask)),
+  ],
+  controllers: [UsersController],
+  providers: [
+    SendWelcomeMailTask,
+    CorrelationClientInterceptor,
+    CorrelationTaskInterceptor,
+  ],
+})
+export class AppModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorrelationMiddleware).forRoutes("*");
+  }
+}
+```
+
+`POST /users` with the header `x-correlation-id: abc` logs `Sending mail to 123 [abc]` on the worker.
+Because the task interceptor restores the storage, a `client.run` or `client.emit` inside the task
+forwards the same id. Child runs started with `ctx.run` inherit the parent's metadata on Hatchet engine
+`>= v0.104.0`.
+
+### Behavior
+
+- Interceptors run in array order, the first one outermost. An interceptor may skip `next()` to
+  short-circuit the call.
+- A client interceptor can change the options but not the payload or input. `next(options)` replaces the
+  options for the rest of the chain, so spread `ctx.options` to keep the caller's values. `wait` cannot be
+  changed.
+- A bulk emit or a run with array input passes through each client interceptor once.
+- With `wait: true` (the default), `interceptRun` spans the whole run. With `wait: false`, it spans only
+  the enqueue.
+- Calling `client.emit` or `client.run` inside a client interceptor goes through the chain again, so guard
+  against recursion.
+- Task interceptors on durable tasks run again on every replay. See [Determinism](#determinism).
+
+## Durable tasks
+
+Durable tasks use Hatchet's durable execution. Waits, sleeps and child runs are recorded in a durable event
+log, so a durable task can be evicted from the worker and resumed later without repeating recorded work.
 
 Use `@DurableTask()` on a task host and `@DurableWorkflowTask()` on a workflow host. The method must take a
 `DurableTaskCtx` or `DurableWorkflowCtx`; any other context type is rejected at compile time. Durable and
@@ -382,9 +425,9 @@ export class OrderWorkflow extends workflowHost(
 }
 ```
 
-### Durable Context
+### Durable context
 
-In addition to the regular context members, a durable context provides:
+A durable context has these members on top of the regular ones:
 
 | Member                           | Description                                                                                                           |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -406,7 +449,7 @@ reject it, the same as with `isEvent` and `cast`.
 
 `isDurableCtx(ctx)` tells a durable context apart from a regular one, for example in a task interceptor.
 
-### Child Runs
+### Child runs
 
 Durable `ctx.run` spawns children through `DurableContext.spawnChild`/`spawnChildren`, so their results are
 recorded and returned on replay instead of spawning the children again. It has these limits:
@@ -430,7 +473,7 @@ own retries and timeouts.
 4. Task interceptors and input schemas run on every invocation, including re-invocations. Skip one-shot side
    effects in interceptors when `isDurableCtx(ctx) && ctx.isReplay` is true.
 
-### Engines Without Eviction Support
+### Engines without eviction support
 
 | Member                                | Behavior                                                  |
 | ------------------------------------- | --------------------------------------------------------- |
@@ -440,7 +483,7 @@ own retries and timeouts.
 | `waitForEvent` with `lookbackWindow`  | Forwarded to the SDK unchanged, not stable across replays |
 | `invocationCount`, `isReplay`         | Forwarded                                                 |
 
-## API Reference
+## API reference
 
 ### Module
 
@@ -468,7 +511,7 @@ Module options (extras to `forRoot`/`forRootAsync`):
 | `@DurableTask(opts)`         | Mark method as durable standalone task |
 | `@DurableWorkflowTask(opts)` | Mark method as durable workflow step   |
 
-### Host Factories
+### Host factories
 
 | Factory                 | Description                    |
 | ----------------------- | ------------------------------ |
@@ -484,15 +527,15 @@ Module options (extras to `forRoot`/`forRootAsync`):
 
 ### Client
 
-| Method                                    | Description                                    |
-| ----------------------------------------- | ---------------------------------------------- |
-| `client.run(ref, input, opts?)`           | Execute task/workflow                          |
-| `client.emit(event, payload \| payloads)` | Emit one or many events                        |
-| `client.emitBulk(event, payloads)`        | Emit multiple events (deprecated — use `emit`) |
+| Method                                    | Description                                   |
+| ----------------------------------------- | --------------------------------------------- |
+| `client.run(ref, input, opts?)`           | Execute task/workflow                         |
+| `client.emit(event, payload \| payloads)` | Emit one or many events                       |
+| `client.emitBulk(event, payloads)`        | Emit multiple events (deprecated, use `emit`) |
 
-Calls to `emit`, `emitBulk` and `run` pass through registered [client interceptors](#client-interceptors).
+Calls to `emit`, `emitBulk` and `run` pass through registered [client interceptors](#interceptors).
 
-### Context Types
+### Context types
 
 | Type                    | Description                        |
 | ----------------------- | ---------------------------------- |
@@ -502,7 +545,7 @@ Calls to `emit`, `emitBulk` and `run` pass through registered [client intercepto
 | `DurableTaskCtx<T>`     | Context for durable task execution |
 | `DurableWorkflowCtx<T>` | Context for durable workflow tasks |
 
-### Context Properties
+### Context properties
 
 ```typescript
 ctx.input       // Validated input data
