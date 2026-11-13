@@ -384,8 +384,9 @@ forwards the same id. Child runs started with `ctx.run` inherit the parent's met
 Durable tasks use Hatchet's durable execution. Waits, sleeps and child runs are recorded in a durable event
 log, so a durable task can be evicted from the worker and resumed later without repeating recorded work.
 
-Use `@DurableTask()` on a task host and `@DurableWorkflowTask()` on a workflow host. The method must take a
-`DurableTaskCtx` or `DurableWorkflowCtx`; any other context type is rejected at compile time. Durable and
+Pass `durable: true` to `@Task()` or `@WorkflowTask()`. The method must then take a `DurableTaskCtx` or
+`DurableWorkflowCtx`. A mismatch in either direction is rejected at compile time, as are options that only
+apply to the other kind (`evictionPolicy` without `durable: true`, `slotCost` or `batch` with it). Durable and
 non-durable tasks can be mixed in one workflow and can be each other's `parents`.
 
 ```typescript
@@ -393,7 +394,7 @@ non-durable tasks can be mixed in one workflow and can be each other's `parents`
 export class OrderFulfillmentTask extends taskHost(
   z.object({ orderId: z.string() }),
 ) {
-  @DurableTask({ executionTimeout: "1h" })
+  @Task({ durable: true, executionTimeout: "1h" })
   public async task(ctx: DurableTaskCtx<typeof this>) {
     const payment = await ctx.run(taskRef(ChargePaymentTask), {
       orderId: ctx.input.orderId,
@@ -418,7 +419,7 @@ export class OrderWorkflow extends workflowHost(
     return { valid: true };
   }
 
-  @DurableWorkflowTask<typeof OrderWorkflow>({ parents: ["validate"] })
+  @WorkflowTask<typeof OrderWorkflow>({ durable: true, parents: ["validate"] })
   public async approve(ctx: DurableWorkflowCtx<typeof this>) {
     return await ctx.waitForEvent("order:approved");
   }
@@ -503,13 +504,11 @@ Module options (extras to `forRoot`/`forRootAsync`):
 
 ### Decorators
 
-| Decorator                    | Description                            |
-| ---------------------------- | -------------------------------------- |
-| `@Host(opts)`                | Mark class as task or workflow host    |
-| `@Task(opts)`                | Mark method as standalone task         |
-| `@WorkflowTask(opts)`        | Mark method as workflow step           |
-| `@DurableTask(opts)`         | Mark method as durable standalone task |
-| `@DurableWorkflowTask(opts)` | Mark method as durable workflow step   |
+| Decorator             | Description                         |
+| --------------------- | ----------------------------------- |
+| `@Host(opts)`         | Mark class as task or workflow host |
+| `@Task(opts)`         | Mark method as standalone task      |
+| `@WorkflowTask(opts)` | Mark method as workflow step        |
 
 ### Host factories
 

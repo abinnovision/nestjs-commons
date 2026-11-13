@@ -144,11 +144,11 @@ describe("accessor.ts", () => {
 	});
 
 	describe("isDurable()", () => {
-		it("returns true for a @DurableTask method", () => {
+		it("returns true for a durable @Task method", () => {
 			expect(fromCtor(DurableTestTask).isDurable("execute")).toBe(true);
 		});
 
-		it("returns false for a @Task method", () => {
+		it("returns false for a non-durable @Task method", () => {
 			expect(fromCtor(TestTask).isDurable("execute")).toBe(false);
 		});
 
@@ -163,11 +163,11 @@ describe("accessor.ts", () => {
 	});
 
 	describe("durable metadata", () => {
-		it("stores @DurableTask opts under the task opts key", () => {
+		it("stores durable @Task opts without the durable flag", () => {
 			expect(fromCtor(DurableTestTask).getTaskMeta("execute")).toEqual({});
 		});
 
-		it("stores @DurableWorkflowTask opts under the workflow task opts key", () => {
+		it("stores durable @WorkflowTask opts without the durable flag", () => {
 			expect(
 				fromCtor(DurableTestWorkflow).getWorkflowTaskMeta("step2"),
 			).toEqual({ parents: ["step1"] });

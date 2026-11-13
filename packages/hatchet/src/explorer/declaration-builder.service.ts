@@ -264,7 +264,7 @@ export class DeclarationBuilderService implements OnModuleInit {
 		// Validate that there is exactly one decorated method.
 		if (accessor.methods.length !== 1) {
 			throw new Error(
-				`TaskHost '${input.constructor.name}' must have exactly one decorated method with @Task() or @DurableTask()`,
+				`TaskHost '${input.constructor.name}' must have exactly one decorated method with @Task()`,
 			);
 		}
 

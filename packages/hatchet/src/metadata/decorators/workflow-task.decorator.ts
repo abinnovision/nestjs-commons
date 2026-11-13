@@ -1,36 +1,63 @@
-import { METADATA_KEY_WORKFLOW_TASK_OPTS as METADATA_KEY } from "../keys.js";
+import {
+	METADATA_KEY_DURABLE,
+	METADATA_KEY_WORKFLOW_TASK_OPTS,
+} from "../keys.js";
 
-import type { DurableCtxMembers, WorkflowCtx } from "../../execution/index.js";
+import type { CtxGuard } from "./ctx-guard.js";
+import type { WorkflowCtx } from "../../execution/index.js";
 import type {
 	ContextMethodKeys,
 	WorkflowHostCtor,
 } from "../../references/shared.js";
-import type { CreateWorkflowTaskOpts } from "@hatchet-dev/typescript-sdk";
-
-export type WorkflowTaskOpts<C extends WorkflowHostCtor<any>> = Omit<
+import type {
+	CreateWorkflowDurableTaskOpts,
 	CreateWorkflowTaskOpts,
-	"fn" | "parents" | "name"
-> & {
+} from "@hatchet-dev/typescript-sdk";
+
+type OmittedKeys = "fn" | "parents" | "name";
+
+interface ParentsOpts<C extends WorkflowHostCtor<any>> {
 	parents?: ContextMethodKeys<InstanceType<C>, WorkflowCtx<any>>[];
-};
+}
+
+export type WorkflowTaskOpts<C extends WorkflowHostCtor<any>> =
+	| (Omit<CreateWorkflowTaskOpts, OmittedKeys> &
+			ParentsOpts<C> & { durable?: false })
+	| (Omit<CreateWorkflowDurableTaskOpts, OmittedKeys> &
+			ParentsOpts<C> & { durable: true });
 
 /**
  * Decorator to mark a method as a workflow task.
- * Methods taking a `DurableWorkflowCtx` must use `@DurableWorkflowTask()` instead.
+ * With `durable: true`, the task runs as a durable task and the method must take a `DurableWorkflowCtx`.
  */
+export function WorkflowTask<C extends WorkflowHostCtor<any>>(
+	opts: Extract<WorkflowTaskOpts<C>, { durable: true }>,
+): CtxGuard<true, "durable: true requires a DurableWorkflowCtx parameter">;
+export function WorkflowTask<C extends WorkflowHostCtor<any>>(
+	opts: Extract<WorkflowTaskOpts<C>, { durable?: false }>,
+): CtxGuard<false, "A DurableWorkflowCtx parameter requires durable: true">;
 export function WorkflowTask<C extends WorkflowHostCtor<any>>(
 	opts: WorkflowTaskOpts<C>,
 ) {
-	return <F extends (...args: any[]) => any>(
+	return (
 		_target: object,
 		_propertyKey: string | symbol,
-		descriptor: TypedPropertyDescriptor<F> &
-			(Parameters<F>[0] extends DurableCtxMembers
-				? {
-						error: "A DurableWorkflowCtx parameter requires @DurableWorkflowTask()";
-					}
-				: unknown),
+		descriptor: PropertyDescriptor,
 	): void => {
-		Reflect.defineMetadata(METADATA_KEY, opts, descriptor.value as object);
+		const { durable, ...rest } = opts;
+
+		Reflect.defineMetadata(
+			METADATA_KEY_WORKFLOW_TASK_OPTS,
+			rest,
+			descriptor.value as object,
+		);
+
+		if (durable) {
+			Reflect.defineMetadata(
+				METADATA_KEY_DURABLE,
+				true,
+				descriptor.value as object,
+			);
+		}
 	};
 }

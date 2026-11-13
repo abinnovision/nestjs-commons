@@ -96,7 +96,7 @@ class HostAccessor {
 	}
 
 	/**
-	 * Returns true if the method is decorated with a durable task decorator.
+	 * Returns true if the method is decorated with `durable: true`.
 	 */
 	public isDurable(method: string): boolean {
 		return (
