@@ -16,11 +16,12 @@ import {
 	HatchetFeatureRegistration,
 	InterceptorRegistration,
 } from "./internal/registrations.js";
+import { toHostCtor } from "./references/helpers.js";
 import { hatchetClientFactory } from "./sdk/index.js";
 
 import type { HatchetModuleConfig } from "./hatchet.module-config.js";
-import type { AnyCallableRef } from "./references/index.js";
-import type { AnyHostCtor } from "./references/shared.js";
+import type { AnyCallableRef } from "./references/refs.js";
+import type { AnyHostCtor, ValidHost } from "./references/shared.js";
 
 /**
  * Extra options for the module (processed at module definition time).
@@ -117,11 +118,17 @@ class HatchetFeatureModule {}
 export class HatchetModule extends ConfigurableModuleClass {
 	/**
 	 * Registers workflows and tasks for the global worker.
-	 * Call this in feature modules to register their hosts.
+	 * Call this in feature modules to register their host classes.
+	 * Each host is validated at compile time.
 	 */
-	public static forFeature(...refs: AnyCallableRef[]): DynamicModule {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-return
-		const hostRefs: AnyHostCtor[] = refs.map((ref) => ref.host);
+	public static forFeature<T extends (AnyHostCtor | AnyCallableRef)[]>(
+		...targets: {
+			[K in keyof T]: T[K] extends AnyHostCtor ? ValidHost<T[K]> : T[K];
+		}
+	): DynamicModule {
+		const hostRefs = (targets as (AnyHostCtor | AnyCallableRef)[]).map(
+			toHostCtor,
+		);
 
 		return {
 			module: HatchetFeatureModule,

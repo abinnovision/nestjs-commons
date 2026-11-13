@@ -1,8 +1,4 @@
-import {
-	HatchetModule,
-	taskRef,
-	workflowRef,
-} from "@abinnovision/nestjs-hatchet";
+import { HatchetModule } from "@abinnovision/nestjs-hatchet";
 import { Module } from "@nestjs/common";
 
 import { DomainController } from "./domain.controller";
@@ -12,11 +8,11 @@ import { ProcessDataTask, ProcessDataWorkflow } from "./process-data.task";
 @Module({
 	imports: [
 		HatchetModule.forFeature(
-			workflowRef(ProcessDataWorkflow),
-			taskRef(ProcessDataTask),
+			ProcessDataWorkflow,
+			ProcessDataTask,
 
 			// Event-triggered workflow
-			workflowRef(EventHandlerWorkflow),
+			EventHandlerWorkflow,
 		),
 	],
 

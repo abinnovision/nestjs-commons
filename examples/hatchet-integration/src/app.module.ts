@@ -1,4 +1,4 @@
-import { HatchetModule, taskRef } from "@abinnovision/nestjs-hatchet";
+import { HatchetModule } from "@abinnovision/nestjs-hatchet";
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import "dotenv/config";
 
@@ -40,7 +40,7 @@ import { LoggingInterceptor } from "./logging-interceptor";
 			// Producer-side interceptors for Client.emit and Client.run.
 			clientInterceptors: [CorrelationClientInterceptor],
 		}),
-		HatchetModule.forFeature(taskRef(CleanupTask)),
+		HatchetModule.forFeature(CleanupTask),
 		DomainModule,
 		AdminModule,
 	],

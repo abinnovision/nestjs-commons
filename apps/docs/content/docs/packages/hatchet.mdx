@@ -56,7 +56,7 @@ export class ProcessDataTask extends taskHost(z.object({ data: z.string() })) {
 
 ```typescript
 // Register in module
-HatchetModule.forFeature(taskRef(ProcessDataTask));
+HatchetModule.forFeature(ProcessDataTask);
 
 // Invoke from service/controller
 @Injectable()
@@ -64,7 +64,7 @@ export class MyService {
   constructor(private client: Client) {}
 
   async process(data: string) {
-    return this.client.run(taskRef(ProcessDataTask), { data });
+    return this.client.run(ProcessDataTask, { data });
   }
 }
 ```
@@ -144,7 +144,7 @@ await client.emit(UserCreatedEvent, {
 | ------------------------------------- | ------------------------------------------- |
 | `HatchetModule.forRoot(config)`       | Initialize with synchronous config          |
 | `HatchetModule.forRootAsync(options)` | Initialize with async config factory        |
-| `HatchetModule.forFeature(...refs)`   | Register tasks/workflows in feature modules |
+| `HatchetModule.forFeature(...hosts)`  | Register tasks/workflows in feature modules |
 
 Module options (extras to `forRoot`/`forRootAsync`):
 
@@ -169,18 +169,17 @@ Module options (extras to `forRoot`/`forRootAsync`):
 | `taskHost(schema?)`     | Create TaskHost base class     |
 | `workflowHost(schema?)` | Create WorkflowHost base class |
 
-### References
+### References (deprecated)
 
-| Function                     | Description                         |
-| ---------------------------- | ----------------------------------- |
-| `taskRef(TaskClass)`         | Create type-safe task reference     |
-| `workflowRef(WorkflowClass)` | Create type-safe workflow reference |
+`taskRef` and `workflowRef` (with the `TaskRef`, `WorkflowRef`, `AnyCallableRef`, `InputOfRef` and `OutputOfRef` types) are deprecated and will be removed. Pass the host class directly to `client.run`, `ctx.run` and `forFeature`.
+
+`run` does not validate the host shape at compile time. `forFeature` does that at compile time, and the worker validates hosts at startup.
 
 ### Client
 
 | Method                             | Description           |
 | ---------------------------------- | --------------------- |
-| `client.run(ref, input, opts?)`    | Execute task/workflow |
+| `client.run(Host, input, opts?)`   | Execute task/workflow |
 | `client.emit(event, payload)`      | Emit single event     |
 | `client.emitBulk(event, payloads)` | Emit multiple events  |
 
@@ -199,7 +198,7 @@ Calls to `emit`, `emitBulk` and `run` pass through registered [client intercepto
 ```typescript
 ctx.input       // Validated input data
 ctx.fromSDK     // Underlying Hatchet SDK context
-ctx.run(ref, input, opts ?)  // Invoke other tasks/workflows
+ctx.run(Host, input, opts ?) // Invoke other tasks/workflows
 ctx.parent(method)          // Get parent task output (WorkflowCtx only)
 ```
 
@@ -208,7 +207,7 @@ ctx.parent(method)          // Get parent task output (WorkflowCtx only)
 ### Non-Blocking Execution
 
 ```typescript
-const runRef = await ctx.run(taskRef(SomeTask), input, { wait: false });
+const runRef = await ctx.run(SomeTask, input, { wait: false });
 // Continue without waiting...
 const result = await runRef.output; // Await when needed
 ```

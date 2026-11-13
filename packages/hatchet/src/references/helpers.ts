@@ -14,6 +14,8 @@ import type {
  * Creates a reference to a task within a {@link TaskHost}.
  * The task method is automatically resolved since a TaskHost has exactly one task.
  * Compile-time validation ensures the host has exactly one task method.
+ *
+ * @deprecated Pass the host class directly, e.g. `client.run(MyTask, input)`.
  */
 export function taskRef<C extends TaskHostCtor<any>>(
 	host: ValidTaskHost<C>,
@@ -29,6 +31,8 @@ export function taskRef<C extends TaskHostCtor<any>>(
 /**
  * Creates a reference to a workflow as a {@link WorkflowHost}.
  * Compile-time validation ensures the host has at least one workflow task method.
+ *
+ * @deprecated Pass the host class directly, e.g. `client.run(MyWorkflow, input)`.
  */
 export function workflowRef<C extends WorkflowHostCtor<any>>(
 	host: ValidWorkflowHost<C>,
@@ -37,8 +41,8 @@ export function workflowRef<C extends WorkflowHostCtor<any>>(
 }
 
 /**
- * Gets the HostAccessor from a callable reference.
+ * Normalizes a host constructor or a callable reference to the host constructor.
  */
-export function getRefAccessor(ref: AnyCallableRef) {
-	return fromCtor(ref.host as AnyHostCtor);
+export function toHostCtor(target: AnyHostCtor | AnyCallableRef): AnyHostCtor {
+	return typeof target === "function" ? target : (target.host as AnyHostCtor);
 }

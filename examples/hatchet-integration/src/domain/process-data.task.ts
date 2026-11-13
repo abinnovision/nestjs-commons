@@ -4,7 +4,6 @@ import {
 	Task,
 	TaskCtx,
 	taskHost,
-	taskRef,
 	WorkflowCtx,
 	workflowHost,
 	WorkflowTask,
@@ -56,7 +55,7 @@ export class ProcessDataWorkflow extends workflowHost(
 		const result = await ctx.parent(this.cleanUpData);
 
 		const runResult = await ctx.run(
-			taskRef(ProcessDataTask),
+			ProcessDataTask,
 			{ data: result.output },
 			{ wait: false },
 		);

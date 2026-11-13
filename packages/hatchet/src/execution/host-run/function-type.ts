@@ -2,7 +2,15 @@ import type {
 	AnyCallableRef,
 	InputOfRef,
 	OutputOfRef,
-} from "../../references/index.js";
+	TaskRef,
+	WorkflowRef,
+} from "../../references/refs.js";
+import type {
+	TaskHostCtor,
+	TaskInput,
+	WorkflowHostCtor,
+	WorkflowInput,
+} from "../../references/shared.js";
 import type { WorkflowRunRef } from "../../sdk/types.js";
 import type { RunOpts } from "@hatchet-dev/typescript-sdk";
 
@@ -42,15 +50,41 @@ export interface HostRunOpts<W extends boolean> extends Omit<
 }
 
 /**
- * Runs a child task or workflow. This can be used to run multiple tasks in parallel.
+ * Runs a task or workflow by its host class. Pass an array of inputs to run
+ * multiple instances in parallel.
  * If `wait` is set to `false`, a `WorkflowRunRef` is returned.
  */
-export type HostRunFn = <
-	R extends AnyCallableRef,
-	I extends InputOfRef<R> | InputOfRef<R>[],
-	W extends boolean = true,
->(
-	ref: R,
-	input: I,
-	options?: HostRunOpts<W>,
-) => Promise<HostRunReturn<I, R, W>>;
+export interface HostRunFn {
+	<
+		C extends TaskHostCtor<any>,
+		I extends TaskInput<C> | TaskInput<C>[],
+		W extends boolean = true,
+	>(
+		host: C,
+		input: I,
+		options?: HostRunOpts<W>,
+	): Promise<HostRunReturn<I, TaskRef<C>, W>>;
+
+	<
+		C extends WorkflowHostCtor<any>,
+		I extends WorkflowInput<C> | WorkflowInput<C>[],
+		W extends boolean = true,
+	>(
+		host: C,
+		input: I,
+		options?: HostRunOpts<W>,
+	): Promise<HostRunReturn<I, WorkflowRef<C>, W>>;
+
+	/**
+	 * @deprecated Pass the host class directly, e.g. `run(MyTask, input)`.
+	 */
+	<
+		R extends AnyCallableRef,
+		I extends InputOfRef<R> | InputOfRef<R>[],
+		W extends boolean = true,
+	>(
+		ref: R,
+		input: I,
+		options?: HostRunOpts<W>,
+	): Promise<HostRunReturn<I, R, W>>;
+}

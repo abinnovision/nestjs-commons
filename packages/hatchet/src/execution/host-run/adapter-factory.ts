@@ -3,11 +3,13 @@ import {
 	DurableRunNoWaitException,
 } from "../../exceptions/index.js";
 import { chainWithOptions } from "../../interceptor/chain.js";
-import { getRefAccessor } from "../../references/helpers.js";
+import { fromCtor } from "../../metadata/accessor.js";
+import { toHostCtor } from "../../references/helpers.js";
 
-import type { HostRunFn, HostRunOpts, HostRunReturn } from "./function-type.js";
+import type { HostRunFn, HostRunOpts } from "./function-type.js";
 import type { ClientInterceptor, RunCtx } from "../../interceptor/index.js";
-import type { AnyCallableRef, InputOfRef } from "../../references/index.js";
+import type { AnyCallableRef } from "../../references/refs.js";
+import type { AnyHostCtor, TaskMethodKey } from "../../references/shared.js";
 import type { WorkflowRunRef } from "../../sdk/types.js";
 import type {
 	Context,
@@ -46,16 +48,13 @@ function createHostRunFn(
 	runner: Runner,
 	getInterceptors?: () => ClientInterceptor[],
 ): HostRunFn {
-	return async <
-		R extends AnyCallableRef,
-		I extends InputOfRef<R> | InputOfRef<R>[],
-		W extends boolean = true,
-	>(
-		ref: R,
-		input: I,
-		options?: HostRunOpts<W>,
-	): Promise<HostRunReturn<I, R, W>> => {
-		const accessor = getRefAccessor(ref);
+	const run = async (
+		target: AnyHostCtor | AnyCallableRef,
+		input: unknown,
+		options?: HostRunOpts<boolean>,
+	): Promise<unknown> => {
+		const host = toHostCtor(target);
+		const accessor = fromCtor(host);
 		const workflowName = accessor.name;
 		const wait = options?.wait ?? true;
 
@@ -87,14 +86,21 @@ function createHostRunFn(
 			return wait ? await runRef.output : runRef;
 		};
 
+		const ref: AnyCallableRef =
+			typeof target !== "function"
+				? target
+				: accessor.isTask
+					? { host, method: accessor.methods[0] as TaskMethodKey<any> }
+					: { host };
 		const ctx: RunCtx = { ref, name: workflowName, input, options };
 		const layers = (getInterceptors?.() ?? []).flatMap((i) =>
 			i.interceptRun ? [i.interceptRun.bind(i)] : [],
 		);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-		return (await chainWithOptions(ctx, layers, execute)) as any;
+		return await chainWithOptions(ctx, layers, execute);
 	};
+
+	return run as HostRunFn;
 }
 
 /**
@@ -136,7 +142,7 @@ export function createHostRunForDurableContext(
 ): HostRunFn {
 	// No await before the spawn call, so concurrent runs keep their call order.
 	const run = async (
-		ref: AnyCallableRef,
+		target: AnyHostCtor | AnyCallableRef,
 		input: unknown,
 		options?: HostRunOpts<boolean>,
 	): Promise<unknown> => {
@@ -148,7 +154,7 @@ export function createHostRunForDurableContext(
 			throw new DurableEvictionNotSupportedException();
 		}
 
-		const workflowName = getRefAccessor(ref).name;
+		const workflowName = fromCtor(toHostCtor(target)).name;
 		const childOpts = toChildOpts(options);
 
 		if (Array.isArray(input)) {

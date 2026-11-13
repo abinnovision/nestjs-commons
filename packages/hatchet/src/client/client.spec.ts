@@ -434,7 +434,6 @@ describe("client/client.ts", () => {
 			}
 		}
 
-		const ref = taskRef(TestTask);
 		const input = { data: "test" };
 
 		const createClient = (interceptor: ClientInterceptor) => {
@@ -460,13 +459,31 @@ describe("client/client.ts", () => {
 			);
 			const options = { additionalMetadata: { key: "caller" } };
 
-			await client.run(ref, input, options);
+			await client.run(TestTask, input, options);
 
 			expect(interceptor.seen).toHaveLength(1);
-			expect(interceptor.seen[0]?.ref).toBe(ref);
+			expect(interceptor.seen[0]?.ref).toEqual({
+				host: TestTask,
+				method: "execute",
+			});
 			expect(interceptor.seen[0]?.name).toBe("test-task");
 			expect(interceptor.seen[0]?.input).toBe(input);
 			expect(interceptor.seen[0]?.options).toBe(options);
+		});
+
+		it("passes the deprecated ref through to interceptRun", async () => {
+			const interceptor = new RecordingInterceptor();
+			const client = createClient(interceptor);
+			mockHatchetClient.runNoWait.mockResolvedValue(
+				runRefWith(Promise.resolve("out")),
+			);
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref overload
+			const ref = taskRef(TestTask);
+
+			// eslint-disable-next-line @typescript-eslint/no-deprecated -- covers the deprecated ref overload
+			await client.run(ref, input);
+
+			expect(interceptor.seen[0]?.ref).toBe(ref);
 		});
 
 		it("invokes interceptRun once for array input", async () => {
@@ -477,7 +494,7 @@ describe("client/client.ts", () => {
 				runRefWith(Promise.resolve("out")),
 			]);
 
-			await client.run(ref, [input, input]);
+			await client.run(TestTask, [input, input]);
 
 			expect(interceptor.seen).toHaveLength(1);
 			expect(mockHatchetClient.admin.runWorkflows).toHaveBeenCalledTimes(1);
@@ -491,7 +508,9 @@ describe("client/client.ts", () => {
 				runRefWith(Promise.resolve("out")),
 			);
 
-			await client.run(ref, input, { additionalMetadata: { key: "caller" } });
+			await client.run(TestTask, input, {
+				additionalMetadata: { key: "caller" },
+			});
 
 			expect(mockHatchetClient.runNoWait).toHaveBeenCalledWith(
 				"test-task",
@@ -506,7 +525,7 @@ describe("client/client.ts", () => {
 			const runRef = runRefWith(Promise.resolve("out"));
 			mockHatchetClient.runNoWait.mockResolvedValue(runRef);
 
-			const result = await client.run(ref, input, { wait: false });
+			const result = await client.run(TestTask, input, { wait: false });
 
 			expect(result).toBe(runRef);
 		});
@@ -518,7 +537,7 @@ describe("client/client.ts", () => {
 			);
 			const options = { additionalMetadata: { key: "caller" } };
 
-			await client.run(ref, input, options);
+			await client.run(TestTask, input, options);
 
 			expect(mockHatchetClient.runNoWait.mock.calls[0]?.[2]).toBe(options);
 		});
@@ -529,7 +548,7 @@ describe("client/client.ts", () => {
 				runRefWith(Promise.resolve("out")),
 			);
 
-			await expect(client.run(ref, input)).resolves.toBe("out");
+			await expect(client.run(TestTask, input)).resolves.toBe("out");
 		});
 
 		it("wraps the awaited output when wait is true", async () => {
@@ -544,7 +563,7 @@ describe("client/client.ts", () => {
 				),
 			);
 
-			const pending = client.run(ref, input);
+			const pending = client.run(TestTask, input);
 			await vi.waitFor(() => {
 				expect(mockHatchetClient.runNoWait).toHaveBeenCalled();
 			});
