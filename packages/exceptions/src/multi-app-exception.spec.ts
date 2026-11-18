@@ -4,8 +4,8 @@ import { AppException } from "./app-exception.js";
 import { MultiAppException } from "./multi-app-exception.js";
 
 class TestException extends AppException {
-	public code = "TEST__ERROR";
-	public httpStatus = 400;
+	public readonly code = "TEST__ERROR";
+	public readonly httpStatus = 400;
 }
 
 describe("multi-app-exception.ts", () => {

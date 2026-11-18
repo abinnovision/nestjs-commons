@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * declare module '@abinnovision/nestjs-exceptions' {
+ * declare module '@abinnovision/nestjs-exceptions/entity' {
  *   interface EntityRegistry {
  *     entities: 'user' | 'organization' | 'user_profile';
  *   }
@@ -74,9 +74,4 @@ export interface EntityFocusedException {
 	 * The ID of the entity.
 	 */
 	readonly entityId: string;
-
-	/**
-	 * The human-readable display name for the entity.
-	 */
-	readonly entityDisplayName: string;
 }

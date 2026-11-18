@@ -1,16 +1,11 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
-import {
-	configureEntityNameRenderer,
-	resetEntityNameRenderer,
-} from "./entity-name-renderer.js";
 import { EntityMutationFailedException } from "./mutation-failed.exception.js";
 
-describe("entity-focused/mutation-failed.exception.ts", () => {
-	afterEach(() => {
-		resetEntityNameRenderer();
-	});
+import type { EntityFocusedMeta } from "./entity-focused.interface.js";
+import type { EntityMutationType } from "./mutation-failed.exception.js";
 
+describe("entity-focused/mutation-failed.exception.ts", () => {
 	describe("mutationFailedException", () => {
 		it("creates error for create mutation", () => {
 			const error = new EntityMutationFailedException({
@@ -40,18 +35,6 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 			});
 
 			expect(error.message).toBe("Failed to delete user with ID '123'");
-		});
-
-		it("creates error with configured renderer", () => {
-			configureEntityNameRenderer({ user: "User" });
-
-			const error = new EntityMutationFailedException({
-				entity: "user",
-				entityId: "123",
-				mutationType: "update",
-			});
-
-			expect(error.message).toBe("Failed to update User with ID '123'");
 		});
 
 		it("has correct code", () => {
@@ -105,7 +88,20 @@ describe("entity-focused/mutation-failed.exception.ts", () => {
 			expect(error.meta).toEqual({
 				entityName: "user",
 				entityId: "123",
+				mutationType: "create",
 			});
+		});
+
+		it("has typed meta", () => {
+			const error = new EntityMutationFailedException({
+				entity: "user",
+				entityId: "123",
+				mutationType: "create",
+			});
+
+			expectTypeOf(error.meta).toEqualTypeOf<
+				EntityFocusedMeta & { mutationType: EntityMutationType }
+			>();
 		});
 	});
 });

@@ -6,4 +6,5 @@
 
 export * from "./app-exception.js";
 export * from "./multi-app-exception.js";
+export * from "./exception-localizer.js";
 export * from "./generic-exception-filter.js";
