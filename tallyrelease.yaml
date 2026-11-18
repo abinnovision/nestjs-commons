@@ -15,6 +15,7 @@ branches:
 
 units:
   "packages/*": { release: true, tags: [dist] }
+  "packages/i18n": { initialVersion: "0.1.0" }
 
 # Changes here rebuild every unit (added to the node plugin defaults).
 globalInputs:
