@@ -20,6 +20,12 @@ const packages = [
 			"NestJS integration for Hatchet — distributed workflow orchestration.",
 	},
 	{
+		name: "@abinnovision/nestjs-i18n",
+		slug: "i18n",
+		description:
+			"Type-safe backend i18n for NestJS with ICU MessageFormat catalogs.",
+	},
+	{
 		name: "@abinnovision/nestjs-toolkit",
 		slug: "toolkit",
 		description:
