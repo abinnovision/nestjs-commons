@@ -1,0 +1,259 @@
+---
+title: "@abinnovision/nestjs-i18n"
+description: Type-safe backend i18n for NestJS with ICU MessageFormat catalogs.
+---
+
+Type-safe backend i18n for NestJS. Messages use [ICU MessageFormat](https://formatjs.github.io/docs/core-concepts/icu-syntax) and are formatted with [`intl-messageformat`](https://formatjs.github.io/docs/intl-messageformat). Keys and parameters are inferred from the default-locale catalog.
+
+## Installation
+
+```bash
+npm install @abinnovision/nestjs-i18n
+# or
+yarn add @abinnovision/nestjs-i18n
+```
+
+## Quick Start
+
+### 1. Define the catalogs
+
+The default locale is a TypeScript module. `defineCatalog` keeps the message literals, so keys and parameters can be inferred.
+
+```typescript
+// i18n/en.ts
+import { defineCatalog } from "@abinnovision/nestjs-i18n";
+
+export const en = defineCatalog({
+  greeting: "Hello {name}",
+  items: "{count, plural, one {# item} other {# items}}",
+});
+```
+
+Other locales can be plain objects or JSON files with the same keys.
+
+```json
+{
+  "greeting": "Hallo {name}",
+  "items": "{count, plural, one {# Eintrag} other {# Einträge}}"
+}
+```
+
+### 2. Register the catalog type
+
+Augment `I18nRegistry` once. `t()` then only accepts known keys and the parameters of the default-locale message.
+
+```typescript
+import type { en } from "./i18n/en";
+
+declare module "@abinnovision/nestjs-i18n" {
+  interface I18nRegistry {
+    catalog: typeof en;
+    locales: "en" | "de";
+  }
+}
+```
+
+Without the augmentation, keys are `string` and parameters are loosely typed.
+
+### 3. Register the module
+
+```typescript
+import { Module } from "@nestjs/common";
+import {
+  I18nModule,
+  acceptLanguage,
+  fromRequest,
+  queryParam,
+} from "@abinnovision/nestjs-i18n";
+
+import de from "./i18n/de.json";
+import { en } from "./i18n/en";
+
+@Module({
+  imports: [
+    I18nModule.forRoot({
+      defaultLocale: "en",
+      catalogs: { en, de },
+      resolvers: [
+        queryParam("lang"),
+        fromRequest((req) => req.user?.locale),
+        acceptLanguage(),
+      ],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+`I18nModule` is global. It throws at startup when `defaultLocale` has no catalog, and the type of `catalogs` requires one catalog per locale in the registry.
+
+### 4. Translate
+
+```typescript
+@Injectable()
+export class GreetingService {
+  public constructor(private readonly i18n: I18nService) {}
+
+  public greet(name: string): string {
+    return this.i18n.t("greeting", { name });
+  }
+}
+```
+
+## Async configuration
+
+`forRootAsync` takes `inject` and `useFactory`. Use it to read the default locale from configuration. `defaultLocale` is typed with the registry locales, so validate the environment value with `z.enum` to narrow it.
+
+```typescript
+import { configx } from "@abinnovision/nestjs-configx";
+import { z } from "zod";
+
+export class AppConfigx extends configx(
+  z.object({
+    DEFAULT_LOCALE: z.enum(["en", "de"]).default("en"),
+  }),
+) {}
+
+@Module({
+  imports: [
+    I18nModule.forRootAsync({
+      inject: [AppConfigx],
+      useFactory: (config: AppConfigx) => ({
+        defaultLocale: config.DEFAULT_LOCALE,
+        catalogs: { en, de },
+      }),
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+## Resolvers
+
+Resolvers determine the locale of a request. They are tried in order and the first supported match wins. A resolver returns one locale or a list of candidates in order of preference. Candidates are matched against the configured catalogs, so `de-AT` can match `de`. If nothing matches, `defaultLocale` is used.
+
+| Resolver | Source |
+| --- | --- |
+| `acceptLanguage()` | The `Accept-Language` header, ordered by quality. Default when `resolvers` is omitted. |
+| `queryParam(name?)` | A query parameter, `lang` by default. |
+| `fromRequest(fn)` | A custom function, for example `(req) => req.user?.locale`. |
+
+A resolver is a plain function of type `(request) => string | readonly string[] | undefined`, so custom resolvers need no helper. Resolvers are synchronous.
+
+## Translating
+
+`I18nService.t(key, params?, opts?)` formats a message. The locale is taken from, in order:
+
+1. `opts.locale`
+2. The locale set by `run()`
+3. The locale resolved from the current request
+4. `defaultLocale`
+
+Explicit locales from `opts.locale` and `run()` are matched against the catalogs like request locales, so `de-AT` uses `de` and an unknown locale uses `defaultLocale`. The locale is resolved on every call, so values set later in the request, such as `req.user` populated by a guard, are picked up. A key missing in a locale falls back to the default locale. A key missing in the default locale is returned as is and logged as a warning.
+
+### Outside a request
+
+Code without a request, such as Hatchet tasks, queue processors or cron jobs, has no locale to resolve. Pass the locale explicitly, or wrap the work in `run()`.
+
+```typescript
+// Explicit locale for a single call
+this.i18n.t("greeting", { name }, { locale: "de" });
+
+// Locale for everything inside the callback
+await this.i18n.run("de", async () => {
+  await this.mailer.send(this.i18n.t("greeting", { name }));
+});
+```
+
+Store the locale with the job payload when the work is scheduled in a request, and apply it with `run()` in the worker.
+
+### Resolving a locale
+
+`resolveLocale(request)` applies the configured resolvers to any request-like object with `headers` and `query`. `locale` returns the locale of the current context.
+
+## Request context middleware
+
+By default, the module mounts a middleware on all routes that stores the request in an `AsyncLocalStorage`, so `t()` can resolve the locale without it being passed around. Disable it with `middleware: false`:
+
+```typescript
+I18nModule.forRoot({
+  defaultLocale: "en",
+  catalogs: { en, de },
+  middleware: false,
+});
+```
+
+Without the middleware, only an explicit `locale` and `run()` apply. Everything else uses `defaultLocale`.
+
+## Exceptions integration
+
+The `@abinnovision/nestjs-i18n/exceptions` subpath localizes the `detail` of error responses produced by the `GenericExceptionFilter` of [`@abinnovision/nestjs-exceptions`](/docs/packages/exceptions). Both packages must be loaded in the same module system (both ESM or both CJS), so the `ExceptionLocalizer` token is identical.
+
+### Wiring
+
+Provide `I18nExceptionLocalizer` as the `ExceptionLocalizer` and register the filter.
+
+```typescript
+import { APP_FILTER } from "@nestjs/core";
+import {
+  ExceptionLocalizer,
+  GenericExceptionFilter,
+} from "@abinnovision/nestjs-exceptions";
+import { I18nExceptionLocalizer } from "@abinnovision/nestjs-i18n/exceptions";
+
+@Module({
+  providers: [
+    { provide: ExceptionLocalizer, useClass: I18nExceptionLocalizer },
+    { provide: APP_FILTER, useClass: GenericExceptionFilter },
+  ],
+})
+export class AppModule {}
+```
+
+When the filter is created manually, pass the localizer: `new GenericExceptionFilter(app.get(ExceptionLocalizer))`.
+
+### Message keys
+
+- `exceptions.<CODE>` is the message for an exception code, for example `exceptions.USER__EMAIL_TAKEN`. The exception `meta` provides the message parameters.
+- `entities.<name>` is the display name of an entity. For entity-focused exceptions it is passed as the `entity` parameter. Without such a key, the raw entity name is used.
+
+`defaultExceptionMessages` contains English messages for the built-in codes (`COMMON__NOT_FOUND`, `COMMON__MUTATION_FAILED`, `DEFAULT__INTERNAL_SERVER_ERROR`, `DEFAULT__MULTIPLE_ERRORS`). Spread it into the default-locale catalog and add your own.
+
+```typescript
+import { defineCatalog } from "@abinnovision/nestjs-i18n";
+import { defaultExceptionMessages } from "@abinnovision/nestjs-i18n/exceptions";
+
+import type { ExceptionMessages } from "@abinnovision/nestjs-i18n/exceptions";
+
+export const en = defineCatalog({
+  ...defaultExceptionMessages,
+  "exceptions.USER__EMAIL_TAKEN": "Email ''{email}'' is already taken",
+  "entities.user": "User",
+}) satisfies ExceptionMessages<typeof EmailTakenException>;
+```
+
+Write a literal apostrophe as `''` in ICU messages.
+
+### Coverage
+
+`ExceptionMessages<E>` requires an `exceptions.<CODE>` key for each exception class listed in `E` and allows all other keys. It only checks the classes you list. Codes of unlisted exceptions are not checked at compile time.
+
+At runtime, an exception whose code has no message keeps its English `details` as the response `detail`. The missing key is logged at debug level. The localizer never throws: a formatting error also keeps the original `detail`.
+
+## Testing
+
+`verifyCatalogs` compares every catalog against the default locale and parses all messages.
+
+```typescript
+import { verifyCatalogs } from "@abinnovision/nestjs-i18n";
+
+it("has complete catalogs", () => {
+  expect(verifyCatalogs({ en, de }, "en")).toEqual([]);
+});
+```
+
+It returns a list of `{ locale, key, kind }` issues, where `kind` is `missing`, `extra`, `parse-error` or `unknown-argument` (an argument the default-locale message does not have, such as a `{nmae}` typo).
+
+## License
+
+Apache-2.0
