@@ -1,5 +1,4 @@
 import { AppException } from "../app-exception.js";
-import { getEntityDisplayName } from "./entity-name-renderer.js";
 
 import type { AppExceptionOptsWithoutMeta } from "../app-exception.js";
 import type {
@@ -13,21 +12,17 @@ import type {
  * Abstract base class for entity-focused exceptions.
  *
  * Extend this class to create exceptions that are related to specific
- * entities. The exception will automatically use the global entity
- * name renderer to generate human-readable messages.
+ * entities. The entity name and ID are exposed as `meta`, so localizers
+ * can render a user-facing message.
  *
  * @example
  * ```typescript
  * export class DuplicateEntityException extends EntityFocusedAppException {
- *   public override code = 'COMMON__DUPLICATE';
- *   public override httpStatus = 409;
+ *   public readonly code = 'COMMON__DUPLICATE';
+ *   public readonly httpStatus = 409;
  *
  *   constructor(args: EntityFocusedArgs, opts?: AppExceptionOptsWithoutMeta) {
- *     super(
- *       args,
- *       (displayName, entityId) => `${displayName} with ID '${entityId}' already exists`,
- *       opts
- *     );
+ *     super(args, `${args.entity} with ID '${args.entityId}' already exists`, opts);
  *   }
  * }
  * ```
@@ -47,32 +42,23 @@ export abstract class EntityFocusedAppException
 	public readonly entityId: string;
 
 	/**
-	 * The human-readable display name for the entity.
-	 */
-	public readonly entityDisplayName: string;
-
-	/**
 	 * Creates a new entity-focused exception.
 	 *
 	 * @param args - The entity and entityId
-	 * @param messageTemplate - Function that generates the error message
+	 * @param details - English developer message
 	 * @param opts - Additional exception options
 	 */
-	public constructor(
+	protected constructor(
 		args: EntityFocusedArgs,
-		messageTemplate: (displayName: string, entityId: string) => string,
+		details: string,
 		opts?: AppExceptionOptsWithoutMeta,
 	) {
-		const displayName = getEntityDisplayName(args.entity);
-		const message = messageTemplate(displayName, args.entityId);
-
-		super(message, {
+		super(details, {
 			...opts,
 			meta: { entityName: args.entity, entityId: args.entityId },
 		});
 
 		this.entity = args.entity;
 		this.entityId = args.entityId;
-		this.entityDisplayName = displayName;
 	}
 }

@@ -4,7 +4,10 @@ import type {
 	AppExceptionOptsWithoutMeta,
 	HttpAwareException,
 } from "../app-exception.js";
-import type { EntityFocusedArgs } from "./entity-focused.interface.js";
+import type {
+	EntityFocusedArgs,
+	EntityFocusedMeta,
+} from "./entity-focused.interface.js";
 
 /**
  * The type of mutation that failed.
@@ -26,30 +29,24 @@ export interface EntityMutationFailedArgs extends EntityFocusedArgs {
  *
  * @example
  * ```typescript
- * // Basic usage
  * throw new EntityMutationFailedException({
  *   entity: 'user',
  *   entityId: '123',
  *   mutationType: 'update',
  * });
  * // Error message: "Failed to update user with ID '123'"
- *
- * // With configured entity name renderer
- * configureEntityNameRenderer({ user: 'User' });
- * throw new EntityMutationFailedException({
- *   entity: 'user',
- *   entityId: '123',
- *   mutationType: 'delete',
- * });
- * // Error message: "Failed to delete User with ID '123'"
  * ```
  */
 export class EntityMutationFailedException
 	extends EntityFocusedAppException
 	implements HttpAwareException
 {
-	public override code = "COMMON__MUTATION_FAILED";
+	public readonly code = "COMMON__MUTATION_FAILED";
 	public readonly httpStatus = 400;
+
+	declare public readonly meta: EntityFocusedMeta & {
+		mutationType: EntityMutationType;
+	};
 
 	/**
 	 * The type of mutation that failed.
@@ -68,11 +65,11 @@ export class EntityMutationFailedException
 	) {
 		super(
 			args,
-			(displayName, entityId) =>
-				`Failed to ${args.mutationType} ${displayName} with ID '${entityId}'`,
+			`Failed to ${args.mutationType} ${args.entity} with ID '${args.entityId}'`,
 			opts,
 		);
 
 		this.mutationType = args.mutationType;
+		this.meta = { ...this.meta, mutationType: args.mutationType };
 	}
 }

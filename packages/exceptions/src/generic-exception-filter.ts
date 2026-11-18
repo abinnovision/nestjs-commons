@@ -1,6 +1,7 @@
-import { Catch, HttpException, Logger } from "@nestjs/common";
+import { Catch, HttpException, Logger, Optional } from "@nestjs/common";
 
 import { AppException, isHttpAwareException } from "./app-exception.js";
+import { ExceptionLocalizer } from "./exception-localizer.js";
 import { MultiAppException } from "./multi-app-exception.js";
 
 import type { ArgumentsHost, ExceptionFilter } from "@nestjs/common";
@@ -27,12 +28,18 @@ interface IntermediateErrorObject {
 	source?: { pointer?: string | undefined } | undefined;
 	meta?: unknown;
 	headers?: Record<string, string> | undefined;
+	exception?: unknown;
 }
 
 const INTERNAL_SERVER_ERROR: IntermediateErrorObject = {
 	code: "DEFAULT__INTERNAL_SERVER_ERROR",
 	detail: "An internal server error occurred",
 	status: "500",
+};
+
+const MULTIPLE_ERRORS: IntermediateErrorObject = {
+	code: "DEFAULT__MULTIPLE_ERRORS",
+	detail: "Multiple errors occurred",
 };
 
 /**
@@ -86,6 +93,9 @@ function resolveGraphQLError(): GraphQLErrorConstructor | undefined {
  * For HTTP responses, the filter uses the {@link HttpAwareException}
  * interface to determine status codes and headers.
  *
+ * When an {@link ExceptionLocalizer} provider is registered, each `detail`
+ * (and the GraphQL message) is localized. Without one, `detail` is used as is.
+ *
  * @example Register globally
  * ```typescript
  * // main.ts
@@ -107,6 +117,10 @@ function resolveGraphQLError(): GraphQLErrorConstructor | undefined {
 export class GenericExceptionFilter implements ExceptionFilter {
 	private readonly logger = new Logger(GenericExceptionFilter.name);
 
+	public constructor(
+		@Optional() private readonly localizer?: ExceptionLocalizer,
+	) {}
+
 	/**
 	 * Handles an exception and converts it to an appropriate response.
 	 *
@@ -123,13 +137,17 @@ export class GenericExceptionFilter implements ExceptionFilter {
 		} else if (exception instanceof HttpException) {
 			errors.push(this.convertHttpException(exception));
 		} else {
-			errors.push(INTERNAL_SERVER_ERROR);
+			errors.push({ ...INTERNAL_SERVER_ERROR, exception });
 		}
 
 		this.logError(exception);
 
+		for (const error of errors) {
+			error.detail = this.safeLocalize(error, host);
+		}
+
 		if (isGraphQLContext(host)) {
-			const graphqlError = this.createGraphQLError(errors);
+			const graphqlError = this.createGraphQLError(errors, host);
 
 			if (graphqlError) {
 				throw graphqlError;
@@ -148,14 +166,49 @@ export class GenericExceptionFilter implements ExceptionFilter {
 		}
 
 		response.status(statusCode).json({
-			errors: errors.map(({ headers: _headers, ...rest }) => rest),
+			errors: errors.map(
+				({ headers: _headers, exception: _exception, ...rest }) => rest,
+			),
 		});
+	}
+
+	/**
+	 * Localizes the detail of an error. Falls back to the original detail
+	 * when no localizer is registered, it returns `undefined`, or it throws.
+	 */
+	private safeLocalize(
+		error: IntermediateErrorObject,
+		host: ArgumentsHost,
+	): string {
+		if (!this.localizer) {
+			return error.detail;
+		}
+
+		try {
+			return (
+				this.localizer.localize(
+					{
+						code: error.code,
+						detail: error.detail,
+						meta: error.meta,
+						exception: error.exception,
+					},
+					host,
+				) ?? error.detail
+			);
+		} catch (localizeError) {
+			this.logger.warn(localizeError, "Failed to localize error detail");
+
+			return error.detail;
+		}
 	}
 
 	/**
 	 * Converts an AppException to an intermediate error object.
 	 */
-	private convertAppException(input: AppException): IntermediateErrorObject {
+	private convertAppException(
+		input: AppException<any>,
+	): IntermediateErrorObject {
 		const httpAware = isHttpAwareException(input);
 
 		return {
@@ -165,8 +218,10 @@ export class GenericExceptionFilter implements ExceptionFilter {
 			source: input.sourcePointer
 				? { pointer: input.sourcePointer }
 				: undefined,
-			meta: input.meta,
+			meta:
+				Object.keys(input.meta as object).length > 0 ? input.meta : undefined,
 			headers: httpAware ? input.headers : undefined,
+			exception: input,
 		};
 	}
 
@@ -187,6 +242,7 @@ export class GenericExceptionFilter implements ExceptionFilter {
 			code: `HTTP_EXCEPTION__${input.name.toUpperCase().replace(/\s+/g, "_")}`,
 			detail: input.message,
 			status: input.getStatus().toString(10),
+			exception: input,
 		};
 	}
 
@@ -196,6 +252,7 @@ export class GenericExceptionFilter implements ExceptionFilter {
 	 */
 	private createGraphQLError(
 		intermediates: IntermediateErrorObject[],
+		host: ArgumentsHost,
 	): Error | undefined {
 		const GraphQLError = resolveGraphQLError();
 
@@ -206,7 +263,7 @@ export class GenericExceptionFilter implements ExceptionFilter {
 		const primary = intermediates[0] ?? INTERNAL_SERVER_ERROR;
 
 		if (intermediates.length > 1) {
-			return new GraphQLError("Multiple errors occurred", {
+			return new GraphQLError(this.safeLocalize(MULTIPLE_ERRORS, host), {
 				extensions: {
 					app_exception: {
 						code: primary.code,

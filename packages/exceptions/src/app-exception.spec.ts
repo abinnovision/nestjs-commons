@@ -1,21 +1,36 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { AppException, isHttpAwareException } from "./app-exception.js";
 
-import type { HttpAwareException } from "./app-exception.js";
+import type {
+	AppExceptionOptsWithoutMeta,
+	ExceptionCode,
+	ExceptionMeta,
+	HttpAwareException,
+} from "./app-exception.js";
 
 class TestException extends AppException<{ field: string }> {
-	public code = "TEST__ERROR";
+	public readonly code = "TEST__ERROR";
 }
 
 class HttpAwareTestException
 	extends AppException
 	implements HttpAwareException
 {
-	public code = "TEST__HTTP_AWARE";
+	public readonly code = "TEST__HTTP_AWARE";
 	public readonly httpStatus = 400;
 	public readonly headers = { "X-Custom": "value" };
 }
+
+class EmailTakenException extends AppException<{ email: string }> {
+	public readonly code = "USER__EMAIL_TAKEN";
+
+	public constructor(email: string, opts?: AppExceptionOptsWithoutMeta) {
+		super(`Email '${email}' is already taken`, { ...opts, meta: { email } });
+	}
+}
+
+class SpecialEmailTakenException extends EmailTakenException {}
 
 describe("app-exception.ts", () => {
 	describe("appException", () => {
@@ -35,6 +50,12 @@ describe("app-exception.ts", () => {
 			const error = new TestException("Error", { meta: { field: "name" } });
 
 			expect(error.meta).toEqual({ field: "name" });
+		});
+
+		it("defaults meta to an empty object", () => {
+			const error = new HttpAwareTestException("Error");
+
+			expect(error.meta).toEqual({});
 		});
 
 		it("sets cause from options", () => {
@@ -103,6 +124,53 @@ describe("app-exception.ts", () => {
 		it("does not detect null or undefined", () => {
 			expect(isHttpAwareException(null)).toBe(false);
 			expect(isHttpAwareException(undefined)).toBe(false);
+		});
+	});
+
+	describe("types", () => {
+		it("preserves the literal code", () => {
+			expectTypeOf<
+				ExceptionCode<typeof EmailTakenException>
+			>().toEqualTypeOf<"USER__EMAIL_TAKEN">();
+			expectTypeOf<ExceptionMeta<typeof EmailTakenException>>().toEqualTypeOf<{
+				email: string;
+			}>();
+		});
+
+		it("preserves the literal code on a subclass of a subclass", () => {
+			expect(new SpecialEmailTakenException("a").code).toBe(
+				"USER__EMAIL_TAKEN",
+			);
+			expectTypeOf<
+				ExceptionCode<typeof SpecialEmailTakenException>
+			>().toEqualTypeOf<"USER__EMAIL_TAKEN">();
+			expectTypeOf<
+				ExceptionMeta<typeof SpecialEmailTakenException>
+			>().toEqualTypeOf<{ email: string }>();
+		});
+
+		it("resolves codes of a union", () => {
+			expectTypeOf<
+				ExceptionCode<typeof EmailTakenException | typeof TestException>
+			>().toEqualTypeOf<"USER__EMAIL_TAKEN" | "TEST__ERROR">();
+		});
+
+		it("resolves the code of an abstract class", () => {
+			expectTypeOf<
+				ExceptionCode<typeof AppException>
+			>().toEqualTypeOf<string>();
+		});
+
+		it("enforces the subclass constructor", () => {
+			// Type-level only; never called.
+			const _calls = () => [
+				// @ts-expect-error missing email
+				new EmailTakenException(),
+				// @ts-expect-error wrong email type
+				new EmailTakenException(1),
+			];
+
+			expectTypeOf(_calls).toBeFunction();
 		});
 	});
 });

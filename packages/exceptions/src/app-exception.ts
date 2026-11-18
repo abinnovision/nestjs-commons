@@ -1,7 +1,12 @@
 /**
+ * Meta type of exceptions without meta-information.
+ */
+export type EmptyMeta = Record<never, never>;
+
+/**
  * Additional (optional) options for the {@link AppException}.
  */
-export interface AppExceptionOpts<M = unknown> {
+export interface AppExceptionOpts<M extends object = EmptyMeta> {
 	/**
 	 * A JSON Pointer (RFC 6901) to the source of the error.
 	 */
@@ -27,8 +32,11 @@ export type AppExceptionOptsWithoutMeta = Omit<AppExceptionOpts, "meta">;
  * The base exception class for standardized error handling.
  *
  * Extend this class to create domain-specific exceptions with consistent
- * error codes and typed metadata. This class is transport-agnostic — it
+ * error codes and typed metadata. This class is transport-agnostic and
  * does not assume HTTP or any other protocol.
+ *
+ * Declare `code` as `public readonly code = "NS__NAME"` to keep its literal
+ * type. The subclass constructor defines which arguments are required.
  *
  * For HTTP-aware exceptions, implement the {@link HttpAwareException}
  * interface on your subclass.
@@ -41,7 +49,7 @@ export type AppExceptionOptsWithoutMeta = Omit<AppExceptionOpts, "meta">;
  * }
  *
  * export class ValidationException extends AppException<ValidationMeta> {
- *   public override code = 'VALIDATION__FAILED';
+ *   public readonly code = 'VALIDATION__FAILED';
  *
  *   constructor(field: string, constraint: string) {
  *     super(`Validation failed for field '${field}': ${constraint}`, {
@@ -54,17 +62,17 @@ export type AppExceptionOptsWithoutMeta = Omit<AppExceptionOpts, "meta">;
  * @see MultiAppException for handling multiple exceptions at once.
  * @see HttpAwareException for HTTP-specific properties.
  */
-export abstract class AppException<M = unknown> extends Error {
+export abstract class AppException<M extends object = EmptyMeta> extends Error {
 	/**
 	 * The error code identifying this exception type.
 	 * Should follow the pattern: `NAMESPACE__ERROR_NAME`
 	 *
 	 * @example "COMMON__NOT_FOUND", "AUTH__UNAUTHORIZED"
 	 */
-	public abstract code: string;
+	public abstract readonly code: string;
 
 	/**
-	 * The human-readable error message.
+	 * The English developer message, intended for logs.
 	 */
 	public readonly details: string;
 
@@ -79,9 +87,11 @@ export abstract class AppException<M = unknown> extends Error {
 	public readonly sourcePointer?: string;
 
 	/**
-	 * Additional typed meta-information about the exception.
+	 * Public, typed meta-information about the exception. It is serialized
+	 * into the response and used as message parameters by localizers.
+	 * Defaults to `{}`.
 	 */
-	public readonly meta?: M;
+	public readonly meta: M;
 
 	/**
 	 * Creates a new {@link AppException} instance.
@@ -102,11 +112,27 @@ export abstract class AppException<M = unknown> extends Error {
 			this.sourcePointer = opts.sourcePointer;
 		}
 
-		if (opts?.meta !== undefined) {
-			this.meta = opts.meta;
-		}
+		this.meta = (opts?.meta ?? {}) as M;
 	}
 }
+
+/**
+ * Matches any {@link AppException} class, including abstract classes and
+ * classes with protected constructors.
+ */
+export interface AppExceptionClass {
+	readonly prototype: AppException<any>;
+}
+
+/**
+ * The `code` type of an {@link AppException} class.
+ */
+export type ExceptionCode<E extends AppExceptionClass> = E["prototype"]["code"];
+
+/**
+ * The `meta` type of an {@link AppException} class.
+ */
+export type ExceptionMeta<E extends AppExceptionClass> = E["prototype"]["meta"];
 
 /**
  * Interface for exceptions that carry HTTP-specific information.
@@ -120,7 +146,7 @@ export abstract class AppException<M = unknown> extends Error {
  *   extends AppException
  *   implements HttpAwareException {
  *
- *   public override code = 'AUTH__UNAUTHORIZED';
+ *   public readonly code = 'AUTH__UNAUTHORIZED';
  *   public readonly httpStatus = 401;
  *   public readonly headers = { 'WWW-Authenticate': 'Bearer' };
  *
