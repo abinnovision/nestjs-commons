@@ -1,0 +1,10 @@
+{
+	"extends": ["../../tsconfig.base.json"],
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"noEmit": false
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["src/**/*.spec.ts", "src/__fixtures__"]
+}
