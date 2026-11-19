@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/abinnovision/nestjs-commons/compare/nestjs-exceptions-v0.2.1...nestjs-exceptions-v0.3.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **exceptions:** localizable exceptions via ExceptionLocalizer token ([#320](https://github.com/abinnovision/nestjs-commons/issues/320))
+
+### Features
+
+* **exceptions:** localizable exceptions via ExceptionLocalizer token ([#320](https://github.com/abinnovision/nestjs-commons/issues/320)) ([6e7af60](https://github.com/abinnovision/nestjs-commons/commit/6e7af60ae36755029ad1f1a589d6a6d26e986d51))
+
 ## [0.2.1](https://github.com/abinnovision/nestjs-commons/compare/nestjs-exceptions-v0.2.0...nestjs-exceptions-v0.2.1) (2026-11-08)
 
 
