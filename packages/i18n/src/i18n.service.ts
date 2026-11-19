@@ -145,6 +145,10 @@ export class I18nService {
 		let message = catalogs[locale]?.[key];
 
 		if (message === undefined) {
+			if (locale !== this.config.defaultLocale) {
+				this.logger.debug(`Message '${key}' is missing in locale '${locale}'`);
+			}
+
 			target = this.config.defaultLocale;
 			message = catalogs[target]?.[key];
 		}
