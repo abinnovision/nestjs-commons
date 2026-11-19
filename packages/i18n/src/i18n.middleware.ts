@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { I18nContext } from "./i18n.context.js";
+import { I18nService } from "./i18n.service.js";
 
 import type { I18nRequest } from "./i18n.module-config.js";
 import type { NestMiddleware } from "@nestjs/common";
@@ -10,11 +10,9 @@ import type { NestMiddleware } from "@nestjs/common";
  */
 @Injectable()
 export class I18nMiddleware implements NestMiddleware {
-	public constructor(
-		@Inject(I18nContext) private readonly context: I18nContext,
-	) {}
+	public constructor(@Inject(I18nService) private readonly i18n: I18nService) {}
 
 	public use(request: I18nRequest, _response: unknown, next: () => void): void {
-		this.context.run({ request }, next);
+		this.i18n.runForRequest(request, next);
 	}
 }

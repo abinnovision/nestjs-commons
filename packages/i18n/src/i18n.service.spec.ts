@@ -90,6 +90,56 @@ describe("i18nService", () => {
 		});
 	});
 
+	it("resolves the request locale inside runForRequest", () => {
+		const { service } = createService();
+		const request = { headers: { "accept-language": "de" } };
+
+		expect(service.runForRequest(request, () => service.t("farewell"))).toBe(
+			"Auf Wiedersehen",
+		);
+	});
+
+	it("picks up request fields set inside runForRequest", () => {
+		const { service } = createService({
+			resolvers: [
+				fromRequest(
+					(request: { user?: { locale: string } }) => request.user?.locale,
+				),
+			],
+		});
+		const request: {
+			headers: Record<string, string>;
+			user?: { locale: string };
+		} = {
+			headers: {},
+		};
+
+		service.runForRequest(request, () => {
+			expect(service.t("farewell")).toBe("Goodbye");
+
+			request.user = { locale: "de" };
+
+			expect(service.t("farewell")).toBe("Auf Wiedersehen");
+		});
+	});
+
+	it("drops the locale of an outer run() in runForRequest", () => {
+		const { service } = createService();
+		const request = { headers: {} };
+
+		const result = service.run("de", () =>
+			service.runForRequest(request, () => service.t("farewell")),
+		);
+
+		expect(result).toBe("Goodbye");
+	});
+
+	it("returns the value of fn from runForRequest", () => {
+		const { service } = createService();
+
+		expect(service.runForRequest({ headers: {} }, () => 42)).toBe(42);
+	});
+
 	it("falls back to the default locale for a missing key", () => {
 		const { service } = createService({ catalogs: { en, de: deIncomplete } });
 
