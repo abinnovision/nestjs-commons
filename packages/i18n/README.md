@@ -65,6 +65,8 @@ export class AppModule {}
 
 `forRootAsync({ inject, useFactory })` is available as well. The module throws at startup when `defaultLocale` has no catalog.
 
+`I18nModule` shares its name with the NestJS i18n packages. Alias the import (`import { I18nModule as NestI18nModule }`) or name your own module differently, e.g. `LocalizationModule`.
+
 ### 4. Translate
 
 ```typescript
@@ -115,6 +117,35 @@ export class AppModule {}
 
 Codes without a message keep the English `details`.
 
+### Exception coverage
+
+`ExceptionsOf` turns the exports of a module into the union of its exception classes, so a new class is covered once it is exported:
+
+```typescript
+import type * as userExceptions from "./user.exceptions.js";
+
+export const en = defineCatalog({
+  ...defaultExceptionMessages,
+  "exceptions.USER__EMAIL_TAKEN": "Email ''{email}'' is already taken",
+}) satisfies ExceptionMessages<ExceptionsOf<typeof userExceptions>>;
+```
+
+Only exported exception classes with a literal `code` count. Non-exception exports and bases with a wide `code: string` are excluded.
+
+### Entity messages
+
+`EntityMessages` requires an `entities.<name>` message per entity name. Combine it with `ExceptionMessages` using `&`:
+
+```typescript
+export const en = defineCatalog({
+  ...defaultExceptionMessages,
+  "entities.user": "User",
+}) satisfies ExceptionMessages<ExceptionsOf<typeof userExceptions>> &
+  EntityMessages;
+```
+
+It checks nothing until `EntityRegistry` is augmented. Use `EntityMessages<"user" | "org">` to name the entities explicitly.
+
 ## Testing
 
 ```typescript
@@ -124,5 +155,7 @@ it("has complete catalogs", () => {
   expect(verifyCatalogs({ en, de }, "en")).toEqual([]);
 });
 ```
+
+Missing messages: `CatalogShape` enforces keys only when `I18nRegistry` is augmented and the catalogs are not cast. `verifyCatalogs` covers the rest in tests. At runtime, a fallback from a non-default locale is logged at debug level, which is visible when debug logging is enabled (the default with Nest's `ConsoleLogger`).
 
 `verifyCatalogs` reports missing keys, extra keys, messages that fail to parse, and arguments that the default-locale message does not have (for example a `{nmae}` typo).

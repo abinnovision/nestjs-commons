@@ -96,6 +96,25 @@ describe("i18nService", () => {
 		expect(service.t("only.en", {}, { locale: "de" })).toBe("Only in English");
 	});
 
+	it("logs at debug level when falling back from a non-default locale", () => {
+		const debug = vi
+			.spyOn(Logger.prototype, "debug")
+			.mockImplementation(() => {});
+		const { service } = createService({ catalogs: { en, de: deIncomplete } });
+
+		service.t("only.en", {}, { locale: "de" });
+
+		expect(debug).toHaveBeenCalledOnce();
+
+		debug.mockClear();
+		service.t("farewell", {}, { locale: "de" });
+		service.t("only.en");
+
+		expect(debug).not.toHaveBeenCalled();
+
+		debug.mockRestore();
+	});
+
 	it("returns the key and warns when missing in the default locale", () => {
 		const warn = vi
 			.spyOn(Logger.prototype, "warn")
