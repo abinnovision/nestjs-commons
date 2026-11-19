@@ -82,6 +82,17 @@ The locale is taken from `opts.locale`, then from `i18n.run(locale, fn)`, then r
 
 Set `middleware: false` to disable the request context middleware. Then only an explicit `locale` and `run()` apply.
 
+### Handlers outside Nest
+
+Handlers registered on the raw HTTP adapter (e.g. better-auth) run outside the middleware, whether or not `middleware: false` is set. Wrap them with `runForRequest`:
+
+```typescript
+const i18n = app.get(I18nService);
+app.use((req, _res, next) => i18n.runForRequest(req, next));
+```
+
+Register it before those handlers. `app.get(I18nService)` works because the module is global. The locale is still resolved from the request on every call. Callbacks from streams or `EventEmitter`s can lose the async context, same as with the middleware.
+
 ## Localized exceptions
 
 With `@abinnovision/nestjs-exceptions`, the `./exceptions` subpath localizes the `detail` of error responses with the `exceptions.<CODE>` messages. The exception `meta` is used as message parameters. Entity-focused exceptions also get an `entity` parameter from the `entities.<name>` message, or the raw entity name.

@@ -16,7 +16,7 @@ import { I18nModule } from "./i18n.module.js";
 import { I18nService } from "./i18n.service.js";
 import { acceptLanguage, fromRequest } from "./resolvers.js";
 
-import type { I18nModuleConfig } from "./i18n.module-config.js";
+import type { I18nModuleConfig, I18nRequest } from "./i18n.module-config.js";
 import type {
 	CanActivate,
 	ExecutionContext,
@@ -70,13 +70,17 @@ const config: I18nModuleConfig = {
 
 let app: INestApplication | undefined;
 
-async function start(module: ReturnType<typeof I18nModule.forRoot>) {
+async function start(
+	module: ReturnType<typeof I18nModule.forRoot>,
+	setup?: (app: INestApplication) => void,
+) {
 	const moduleRef = await Test.createTestingModule({
 		imports: [module],
 		controllers: [GreetingController],
 	}).compile();
 
 	app = moduleRef.createNestApplication({ logger: false });
+	setup?.(app);
 	await app.listen(0, "127.0.0.1");
 
 	const url = await app.getUrl();
@@ -172,6 +176,44 @@ describe("i18nModule", () => {
 		expect(await get("/greeting", { "accept-language": "de" })).toBe(
 			"Hello Ada",
 		);
+	});
+
+	describe("handlers outside Nest", () => {
+		const setup = (nestApp: INestApplication) => {
+			const i18n = nestApp.get(I18nService);
+
+			nestApp.use((req: I18nRequest, _res: unknown, next: () => void) => {
+				i18n.runForRequest(req, next);
+			});
+			nestApp
+				.getHttpAdapter()
+				.get(
+					"/raw",
+					async (_req: unknown, res: { send: (body: string) => void }) => {
+						await Promise.resolve();
+						res.send(i18n.t("farewell"));
+					},
+				);
+		};
+
+		it("resolves the locale with runForRequest", async () => {
+			const get = await start(I18nModule.forRoot(config), setup);
+
+			expect(await get("/raw", { "accept-language": "de" })).toBe(
+				"Auf Wiedersehen",
+			);
+		});
+
+		it("resolves the locale with middleware: false", async () => {
+			const get = await start(
+				I18nModule.forRoot({ ...config, middleware: false }),
+				setup,
+			);
+
+			expect(await get("/raw", { "accept-language": "de" })).toBe(
+				"Auf Wiedersehen",
+			);
+		});
 	});
 
 	it("checks catalogs and locales at compile time", () => {

@@ -37,9 +37,12 @@ export interface TranslateOptions {
 /**
  * Translates messages of the configured catalogs.
  *
- * The locale is taken from `opts.locale`, then from `run()`, then resolved
- * from the current request, then the default locale. It is resolved on
- * every call, so values set later in the request (e.g. `req.user`) apply.
+ * The locale is taken from `opts.locale`, then from the innermost `run()`,
+ * then resolved from the request of the innermost `runForRequest()` or
+ * middleware context, then the default locale. Both `run()` and
+ * `runForRequest()` start a new context: `run()` keeps the outer request,
+ * `runForRequest()` drops the outer locale. The request locale is resolved
+ * on every call, so values set later in the request (e.g. `req.user`) apply.
  */
 @Injectable()
 export class I18nService {
@@ -94,6 +97,15 @@ export class I18nService {
 			{ ...this.context.store, locale: this.negotiate(locale) },
 			fn,
 		);
+	}
+
+	/**
+	 * Runs `fn` in a new context holding the request. The locale is resolved
+	 * from the request on every call. A locale set by an outer `run()` does
+	 * not apply inside.
+	 */
+	public runForRequest<T>(request: I18nRequest, fn: () => T): T {
+		return this.context.run({ request }, fn);
 	}
 
 	/**
